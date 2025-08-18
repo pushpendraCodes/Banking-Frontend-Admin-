@@ -1,45 +1,66 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { FaEye, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
-const customers = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "JohnDoe@example.com",
-    phone: "98765 43210",
-    address: "123, Elm Street, New Delhi, India",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    phone: "98765 43211",
-    address: "456, Oak Avenue, Mumbai, India",
-  },
-  {
-    id: 3,
-    name: "Robert Johnson",
-    email: "robert.j@example.com",
-    phone: "98765 43212",
-    address: "789, Pine Road, Bangalore, India",
-  },
-  {
-    id: 4,
-    name: "Emily Davis",
-    email: "emily.d@example.com",
-    phone: "98765 43213",
-    address: "321, Maple Lane, Hyderabad, India",
-  },
-  {
-    id: 5,
-    name: "Michael Wilson",
-    email: "michael.w@example.com",
-    phone: "98765 43214",
-    address: "654, Cedar Blvd, Pune, India",
-  },
-];
+import { apiCustomerUrl } from "../../api/apiRoutes";
 
 export default function CustomerList() {
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [search, setSearch] = useState(""); // 🔹 Search state
+
+  // 🔹 Fetch Customers from API
+  const fetchCustomers = async (query = "") => {
+    setLoading(true);
+    try {
+      const url = query
+        ? `${apiCustomerUrl}?name=${query}`
+        : `${apiCustomerUrl}`;
+
+      const res = await axios.get(url);
+      setCustomers(res.data?.data || res.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
+
+  // 🔹 Search Effect (जब search बदले तो API कॉल हो)
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchCustomers(search.trim());
+    }, 500); // 500ms delay (debounce)
+
+    return () => clearTimeout(delayDebounce);
+  }, [search]);
+
+  // 🔹 Delete Function
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this customer?")) return;
+
+    try {
+      await axios.delete(`${apiCustomerUrl}/${id}`);
+      alert("Customer deleted successfully ✅");
+      setCustomers((prev) => prev.filter((cust) => cust._id !== id));
+    } catch (error) {
+      alert("Failed to delete customer ❌");
+    }
+  };
+
+  if (loading) {
+    return <p className="text-center text-gray-500">Loading customers...</p>;
+  }
+
+  if (error) {
+    return <p className="text-center text-red-500">Error: {error}</p>;
+  }
+
   return (
     <div className="">
       {/* Header */}
@@ -59,7 +80,9 @@ export default function CustomerList() {
           <label className="text-sm font-medium whitespace-nowrap">Search:</label>
           <input
             type="text"
-            placeholder="Customer name"
+            placeholder="Search by name or email"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)} // 🔹 Search state update
             className="border border-gray-400 px-3 py-1 rounded w-full sm:w-64"
           />
         </div>
@@ -91,47 +114,59 @@ export default function CustomerList() {
             </tr>
           </thead>
           <tbody>
-            {customers.map((cust, idx) => (
-              <tr key={cust.id} className="odd:bg-white even:bg-yellow-50">
-                <td className="px-4 py-2 border whitespace-nowrap">
-                  {String(idx + 1).padStart(2, "0")}
-                </td>
-                <td className="px-4 py-2 border whitespace-nowrap">{cust.name}</td>
-                <td className="px-4 py-2 border whitespace-nowrap">
-                  <a href={`mailto:${cust.email}`} className="text-blue-600 hover:underline">
-                    {cust.email}
-                  </a>
-                </td>
-                <td className="px-4 py-2 border whitespace-nowrap">
-                  <a href={`tel:${cust.phone.replace(/\s/g, '')}`} className="text-blue-600 hover:underline">
-                    {cust.phone}
-                  </a>
-                </td>
-                <td className="px-4 py-2 border">{cust.address}</td>
-                <td className="px-4 py-2 border whitespace-nowrap">
-                  <div className="flex gap-2">
-                    <Link
-                      to={`/coustomers/View-Edit/${cust.id}`}
-                      className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
-                      title="View/Edit"
+            {Array.isArray(customers) && customers.length > 0 ? (
+              customers.map((cust, idx) => (
+                <tr key={cust._id} className="odd:bg-white even:bg-yellow-50">
+                  <td className="px-4 py-2 border whitespace-nowrap">
+                    {String(idx + 1).padStart(2, "0")}
+                  </td>
+                  <td className="px-4 py-2 border whitespace-nowrap">{cust.name}</td>
+                  <td className="px-4 py-2 border whitespace-nowrap">
+                    <a href={`mailto:${cust.email}`} className="text-blue-600 hover:underline">
+                      {cust.email}
+                    </a>
+                  </td>
+                  <td className="px-4 py-2 border whitespace-nowrap">
+                    <a
+                      href={`tel:${cust.contact?.replace(/\s/g, "")}`}
+                      className="text-blue-600 hover:underline"
                     >
-                      <FaEye size={14} />
-                    </Link>
-                    <button
-                      className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
-                      title="Delete"
-                    >
-                      <FaTrash size={14} />
-                    </button>
-                  </div>
+                      {cust.contact}
+                    </a>
+                  </td>
+                  <td className="px-4 py-2 border">{cust.address}</td>
+                  <td className="px-4 py-2 border whitespace-nowrap">
+                    <div className="flex gap-2">
+                      <Link
+                        to={`/coustomers/View-Edit/${cust._id}`}
+                        className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
+                        title="View/Edit"
+                      >
+                        <FaEye size={14} />
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(cust._id)}
+                        className="bg-red-500 hover:bg-red-600 text-white p-2 rounded"
+                        title="Delete"
+                      >
+                        <FaTrash size={14} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="text-center py-4 text-gray-500">
+                  No customers found
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
 
-      {/* Pagination */}
+      {/* Pagination (Static for now) */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 text-sm text-gray-600 gap-2">
         <div className="whitespace-nowrap">
           Showing 1 to {customers.length} of {customers.length} Entries

@@ -1,20 +1,93 @@
 import { FaArrowLeft } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { apiAgentUrl } from "../../api/apiRoutes";
 
 const ViewEditAgent = () => {
+  const navigate = useNavigate();
+  const { id } = useParams(); // ✅get  agent id form URL  
 
-    const navigate = useNavigate()
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    contact: "",
+    address: "",
+    education: "",
+    alternateNumber: "",
+    password: "",
+  });
+
+  const [loading, setLoading] = useState(true);
+
+  // 🔹 Agent Data Fetch
+  useEffect(() => {
+    axios
+      .get(`${apiAgentUrl}/${id}`)
+      .then((res) => {
+        console.log("Fetched Agent:", res.data);
+
+        // ✅  API response structure { success: true, data: {...} } है
+        const agent = res.data.data || res.data;
+
+        // API  data prefill
+        setFormData({
+          name: agent.name || "",
+          email: agent.email || "",
+          contact: agent.contact || "",
+          address: agent.address || "",
+          education: agent.education || "",
+          alternateNumber: agent.alternateNumber || "",
+          password: agent.password || "",
+        });
+      })
+      .catch((err) => {
+        console.error("Error fetching agent:", err);
+        alert("Failed to load agent data ❌");
+      })
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  // 🔹 Input change handler
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // 🔹 Save (Edit API)
+  const handleSave = async () => {
+    try {
+      await axios.put(
+        `${apiAgentUrl}/${id}`,
+        formData
+      );
+      alert("Agent updated successfully ✅");
+      navigate(-1); // back to list
+    } catch (error) {
+      console.error("Update Error:", error);
+      alert("Failed to update agent ❌");
+    }
+  };
+
+  if (loading) return <p className="text-center text-gray-500">Loading...</p>;
+
   return (
     <div className="">
       {/* Header */}
       <div className="flex items-center justify-between bg-[#fefaf5] p-4 rounded">
         <div className="flex items-center gap-2">
-          <button onClick={()=>navigate(-1)} className="text-black">
+          <button onClick={() => navigate(-1)} className="text-black">
             <FaArrowLeft />
           </button>
-          <h2 className="text-lg font-semibold">Edit Agent</h2>
+          <h2 className="text-lg font-semibold">View/Edit Agent</h2>
         </div>
-        <button className="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-5 py-2 rounded">
+        <button
+          onClick={handleSave}
+          className="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-5 py-2 rounded"
+        >
           Save
         </button>
       </div>
@@ -23,10 +96,12 @@ const ViewEditAgent = () => {
       <div className="bg-yellow-50 p-6 mt-6 rounded shadow-sm max-w-3xl">
         <form className="space-y-4">
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Name</label>
+            <label className="w-40 font-medium text-sm">Agent Name</label>
             <input
               type="text"
-              defaultValue="John Doe"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
             />
           </div>
@@ -35,7 +110,9 @@ const ViewEditAgent = () => {
             <label className="w-40 font-medium text-sm">Email Address</label>
             <input
               type="email"
-              defaultValue="JohnDoe@example.com"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
             />
           </div>
@@ -44,7 +121,9 @@ const ViewEditAgent = () => {
             <label className="w-40 font-medium text-sm">Contact No.</label>
             <input
               type="text"
-              defaultValue="98765 43210"
+              name="contact"
+              value={formData.contact}
+              onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
             />
           </div>
@@ -53,43 +132,42 @@ const ViewEditAgent = () => {
             <label className="w-40 font-medium text-sm">Address</label>
             <input
               type="text"
-              defaultValue="123, Elm Street, New Delhi, India"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
             />
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Scheme</label>
+            <label className="w-40 font-medium text-sm">Education</label>
             <input
               type="text"
-              defaultValue="FD"
+              name="education"
+              value={formData.education}
+              onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
             />
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Amount</label>
+            <label className="w-40 font-medium text-sm">Alternate No.</label>
             <input
               type="text"
-              defaultValue="₹1500"
+              name="alternateNumber"
+              value={formData.alternateNumber}
+              onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
             />
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Duration</label>
+            <label className="w-40 font-medium text-sm">Password</label>
             <input
               type="text"
-              defaultValue="2 Years"
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
-            />
-          </div>
-
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Pending</label>
-            <input
-              type="text"
-              defaultValue="6 Days"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
             />
           </div>

@@ -25,14 +25,16 @@ import ApplicationsList from './modules/settings/ApplicationList';
 import AddApplicationForm from './modules/settings/AddApplicationsForm';
 import AddCareer from './modules/settings/AddCareer';
 import CareerList from './modules/settings/CareerList';
+import LoginPage from './modules/login/LoginPage';
 
 function App() {
   return (
     <Router>
       <Routes>
         {/* Wrap all admin pages inside Layout */}
-
-
+         <Route path="/login" element={<Layout>
+              <LoginPage />
+            </Layout>} />
           <Route path="/" element={<Layout>
               <CoustomerList />
             </Layout>} />
@@ -105,9 +107,6 @@ function App() {
           <Route path="/settings/recruitment" element={<Layout>
               <CareerList />
             </Layout>} />
-
-
-
         {/* Add other public routes here if needed */}
       </Routes>
     </Router>

@@ -1,96 +1,96 @@
 import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
+import { apiCustomerUrl } from "../../api/apiRoutes";
 
 const AddCustomer = () => {
-    const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  // ✅ Controlled form state
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    contact: "",
+    address: "",
+    scheme: "",
+    amount: "",
+    duration: "",
+    pending: "",
+  });
+
+  // ✅ Input change handler
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // ✅ Save (POST API call)
+  const handleSave = async (e) => {
+    e.preventDefault(); // 🚀 prevent page refresh
+
+    try {
+      const res = await axios.post(
+        `${apiCustomerUrl}`,
+        formData
+      );
+
+      if (res.status === 201 || res.status === 200) {
+        alert("Customer added successfully!");
+        navigate(-1); // Back to previous page
+      }
+    } catch (err) {
+      console.error("Error adding customer:", err.response?.data || err.message);
+      alert("Failed to add customer");
+    }
+  };
+
   return (
     <div className="">
       {/* Header */}
       <div className="flex items-center justify-between bg-[#fefaf5] p-4 rounded">
         <div className="flex items-center gap-2">
-           <button onClick={()=>navigate(-1)} className="text-black">
+          <button onClick={() => navigate(-1)} className="text-black">
             <FaArrowLeft />
           </button>
           <h2 className="text-lg font-semibold">Add Customer</h2>
         </div>
-        <button className="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-5 py-2 rounded">
-          Save
-        </button>
       </div>
 
       {/* Form */}
       <div className="bg-yellow-50 p-6 mt-6 rounded shadow-sm max-w-3xl">
-        <form className="space-y-4">
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Name</label>
-            <input
-              type="text"
-              defaultValue="John Doe"
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
-            />
-          </div>
+        <form className="space-y-4" onSubmit={handleSave}>
+          {[
+            { label: "Name", key: "name", type: "text" },
+            { label: "Email Address", key: "email", type: "email" },
+            { label: "Contact No.", key: "contact", type: "text" },
+            { label: "Address", key: "address", type: "text" },
+            { label: "Scheme", key: "scheme", type: "text" },
+            { label: "Amount", key: "amount", type: "text" },
+            { label: "Duration", key: "duration", type: "text" },
+            { label: "Pending", key: "pending", type: "text" },
+          ].map((field) => (
+            <div key={field.key} className="flex items-center">
+              <label className="w-40 font-medium text-sm">{field.label}</label>
+              <input
+                type={field.type}
+                name={field.key}
+                value={formData[field.key]}
+                onChange={handleChange}
+                placeholder={`Enter ${field.label}`}
+                className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
+              />
+            </div>
+          ))}
 
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Email Address</label>
-            <input
-              type="email"
-              defaultValue="JohnDoe@example.com"
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
-            />
-          </div>
-
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Contact No.</label>
-            <input
-              type="text"
-              defaultValue="98765 43210"
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
-            />
-          </div>
-
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Address</label>
-            <input
-              type="text"
-              defaultValue="123, Elm Street, New Delhi, India"
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
-            />
-          </div>
-
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Scheme</label>
-            <input
-              type="text"
-              defaultValue="FD"
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
-            />
-          </div>
-
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Amount</label>
-            <input
-              type="text"
-              defaultValue="₹1500"
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
-            />
-          </div>
-
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Duration</label>
-            <input
-              type="text"
-              defaultValue="2 Years"
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
-            />
-          </div>
-
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Pending</label>
-            <input
-              type="text"
-              defaultValue="6 Days"
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
-            />
+          {/* ✅ Save button inside form */}
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              className="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-5 py-2 rounded"
+            >
+              Save
+            </button>
           </div>
         </form>
       </div>
