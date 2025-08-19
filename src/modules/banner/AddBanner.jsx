@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { apiAdminBannerUrl } from "../../api/apiRoutes";
 
 const AddBanner = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -12,7 +13,7 @@ const AddBanner = () => {
       formData.append("title", data.title);
       formData.append("image", data.image[0]);
 
-      const res = await axios.post("/api/gallery", formData, {
+      const res = await axios.post(`$${apiAdminBannerUrl}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

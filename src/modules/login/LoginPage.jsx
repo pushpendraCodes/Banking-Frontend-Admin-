@@ -10,21 +10,23 @@ function Login() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // form reload को रोकता है
+    e.preventDefault(); 
     setError("");
 
     try {
-      const response = await axios.post(
-        `${apiAdminLoginUrl}`,
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${apiAdminLoginUrl}`, {
+        email,
+        password,
+      });
 
       if (response.data.success) {
-        // token save karna
+        // 🟢 token save karna
         localStorage.setItem("token", response.data.token);
+
+        // 🟢 user data save karna (agar API se user ka data aa raha hai)
+        if (response.data.data) {
+          localStorage.setItem("user", JSON.stringify(response.data.data));
+        }
 
         // dashboard par redirect
         navigate("/");

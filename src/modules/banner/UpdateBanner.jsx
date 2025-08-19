@@ -1,28 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { useParams } from "react-router-dom";
+import { apiAdminBannerUrl } from "../../api/apiRoutes";
 
 const UpdateBanner = () => {
+  const { id } = useParams(); // URL से bannerId
   const { register, handleSubmit, reset } = useForm();
   const [imagePreview, setImagePreview] = useState(null);
 
+  // 🔹 localStorage से पुराना banner data लाना
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      const parsedUser = JSON.parse(savedUser);
+
+      // user के अंदर banners निकालना
+      let banners = [];
+      if (Array.isArray(parsedUser)) {
+        banners = parsedUser[0]?.banners || [];
+      } else {
+        banners = parsedUser.banners || [];
+      }
+
+      // id match करने वाला banner ढूंढना
+      const bannerToEdit = banners.find(
+        (banner, idx) => String(banner.id || idx) === id
+      );
+
+      if (bannerToEdit) {
+        setImagePreview(bannerToEdit.image || bannerToEdit.imageUrl || null);
+      }
+    }
+  }, [id]);
+
+  // 🔹 Update करने का function
   const onSubmit = async (data) => {
     try {
       const formData = new FormData();
-      formData.append("title", data.title);
-      formData.append("image", data.image[0]);
+      if (data.image && data.image.length > 0) {
+        formData.append("image", data.image[0]);
+      }
 
-      const res = await axios.post("/api/gallery", formData, {
+      // 👉 Debugging के लिए console में log
+      console.log("Submitting Banner Update:", {
+        bannerId: id,
+        file: data.image ? data.image[0] : null,
+        apiUrl: `${apiAdminBannerUrl}/${id}`,
+      });
+
+      const token = localStorage.getItem("token");
+      await axios.post(`${apiAdminBannerUrl}/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       });
 
-      alert("Gallery added successfully!");
+      alert("Banner updated successfully!");
       reset();
       setImagePreview(null);
     } catch (error) {
-      console.error("Error uploading gallery:", error);
+      console.error("Error updating banner:", error);
     }
   };
 
@@ -37,24 +76,13 @@ const UpdateBanner = () => {
     <div className="max-w-5xl mx-auto mt-10 bg-[#fef7ef] p-6 rounded shadow">
       <h2 className="text-2xl font-bold mb-4">Update Banner</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Title */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium">Banner Type</label>
-          <input
-            type="text"
-            {...register("title", { required: true })}
-            className="mt-1  border px-3 py-2 rounded"
-            placeholder="Enter title"
-          />
-        </div>
-
         {/* Image Upload */}
         <div className="mb-4">
           <label className="block text-sm font-medium">Banner Image</label>
           <input
             type="file"
             accept="image/*"
-            {...register("image", { required: true })}
+            {...register("image")}
             onChange={handleImageChange}
             className="mt-1"
           />
