@@ -1,7 +1,40 @@
 import { FaEye } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { WithdrawalHistoryData } from "../../api/apiCall";
+import { useEffect, useState } from "react";
 
-export default function WithdrawalHistory() {
+export default  function  WithdrawalHistory() {
+const [transactions, setTransactions] = useState([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      setLoading(true);
+      const result = await WithdrawalHistoryData()
+     
+
+      // const result = await WithdrawalHistory();
+
+      if (result.success) {
+        setTransactions(result.data); // API data state me daal diya
+      } else {
+        setError(result.message); // error state me daal diya
+      }
+      setLoading(false);
+    };
+
+    fetchHistory();
+  }, []);
+
+  if (loading) {
+    return <p className="text-gray-600">Loading...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-500">Error: {error}</p>;
+  }
+ console.log(transactions.data,",,.resultData")
   return (
     <div className="bg-[#fef7ef]  sm:p-6 rounded-lg shadow-md">
       <h2 className="text-xl sm:text-2xl font-semibold mb-4">Withdrawal History</h2>
@@ -20,13 +53,13 @@ export default function WithdrawalHistory() {
             </tr>
           </thead>
           <tbody>
-            {[1, 2].map((_, index) => (
+            {transactions.data.map((data, index) => (
               <tr key={index} className="odd:bg-white even:bg-yellow-50">
-                <td className="p-2 border">1</td>
-                <td className="p-2 border">Ravi</td>
-                <td className="p-2 border">Kishan</td>
-                <td className="p-2 border">5000</td>
-                <td className="p-2 border text-green-600">Cash</td>
+                <td className="p-2 border">{index+1}</td>
+                <td className="p-2 border">{data.customerId.name}</td>
+                <td className="p-2 border">{data.collectedByAgentId.name}</td>
+                <td className="p-2 border">{data.amount}</td>
+                <td className="p-2 border text-green-600">{data.paymentMethod}</td>
                 <td className="p-2 border">
                   <div className="flex gap-2">
                     <Link

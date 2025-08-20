@@ -1,108 +1,122 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { apiAdminBannerUrl } from "../../api/apiRoutes";
 
 const UpdateBanner = () => {
-  const { id } = useParams(); // URL से bannerId
+  const { id } = useParams(); // yaha id = bannerId (na ki adminId)
   const { register, handleSubmit, reset } = useForm();
   const [imagePreview, setImagePreview] = useState(null);
+  const [updatedData, setUpdatedData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // 🔹 localStorage से पुराना banner data लाना
-  useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      const parsedUser = JSON.parse(savedUser);
-
-      // user के अंदर banners निकालना
-      let banners = [];
-      if (Array.isArray(parsedUser)) {
-        banners = parsedUser[0]?.banners || [];
-      } else {
-        banners = parsedUser.banners || [];
-      }
-
-      // id match करने वाला banner ढूंढना
-      const bannerToEdit = banners.find(
-        (banner, idx) => String(banner.id || idx) === id
-      );
-
-      if (bannerToEdit) {
-        setImagePreview(bannerToEdit.image || bannerToEdit.imageUrl || null);
-      }
-    }
-  }, [id]);
-
-  // 🔹 Update करने का function
   const onSubmit = async (data) => {
     try {
-      const formData = new FormData();
-      if (data.image && data.image.length > 0) {
-        formData.append("image", data.image[0]);
+      setLoading(true);
+      let imageUrl = "";
+
+      // CASE 1: direct URL
+      if (data.imageUrl && data.imageUrl.trim() !== "") {
+        imageUrl = data.imageUrl.trim();
+      }
+      // CASE 2: file upload
+      else if (data.image && data.image.length > 0) {
+        const file = data.image[0];
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "your-upload-preset"); 
+        formData.append("cloud_name", "your-cloud-name");
+
+        const uploadRes = await axios.post(
+          // "https://api.cloudinary.com/v1_1/your-cloud-name/image/upload",
+          `${apiAdminBannerUrl}/${id}`,
+          formData
+        );
+
+        imageUrl = uploadRes.data.secure_url;
+      } else {
+        alert("Please provide either an image file or an image URL!");
+        return;
       }
 
-      // 👉 Debugging के लिए console में log
-      console.log("Submitting Banner Update:", {
-        bannerId: id,
-        file: data.image ? data.image[0] : null,
-        apiUrl: `${apiAdminBannerUrl}/${id}`,
-      });
-
+      // STEP 2: call backend
       const token = localStorage.getItem("token");
-      await axios.post(`${apiAdminBannerUrl}/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
+      const res = await axios.post(
+        `${apiAdminBannerUrl}/${id}`,  // 🔥 banner ki ID use karo
+        {
+          imageUrl: imageUrl,
+          isActive: true,
         },
-      });
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
+      setUpdatedData(res.data);
       alert("Banner updated successfully!");
       reset();
       setImagePreview(null);
     } catch (error) {
-      console.error("Error updating banner:", error);
-    }
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImagePreview(URL.createObjectURL(file));
+      console.error("Error updating banner:", error.response?.data || error);
+      alert("Something went wrong! Check console.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-5xl mx-auto mt-10 bg-[#fef7ef] p-6 rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">Update Banner</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Image Upload */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium">Banner Image</label>
-          <input
-            type="file"
-            accept="image/*"
-            {...register("image")}
-            onChange={handleImageChange}
-            className="mt-1"
-          />
-          {imagePreview && (
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="mt-2 h-40 object-cover rounded"
-            />
-          )}
-        </div>
+    <div style={{ maxWidth: "500px", margin: "20px auto" }}>
+      <h2>Update Banner</h2>
 
-        {/* Submit */}
-        <button
-          type="submit"
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Update Banner
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <label>Upload Image:</label>
+        <input
+          type="file"
+          accept="image/*"
+          {...register("image")}
+          onChange={(e) =>
+            setImagePreview(URL.createObjectURL(e.target.files[0]))
+          }
+          style={{ display: "block", marginBottom: "10px" }}
+        />
+
+        <label>Or Enter Image URL:</label>
+        <input
+          type="text"
+          placeholder="https://example.com/image.png"
+          {...register("imageUrl")}
+          style={{
+            display: "block",
+            marginBottom: "10px",
+            width: "100%",
+            padding: "8px",
+          }}
+        />
+
+        {imagePreview && (
+          <img
+            src={imagePreview}
+            alt="Preview"
+            width="200"
+            height="100"
+            style={{ marginBottom: "10px", objectFit: "cover" }}
+          />
+        )}
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Uploading..." : "Upload"}
         </button>
       </form>
+
+      {updatedData && (
+        <div style={{ marginTop: "20px" }}>
+          <h3>Updated Banner Response:</h3>
+          <pre>{JSON.stringify(updatedData, null, 2)}</pre>
+        </div>
+      )}
     </div>
   );
 };

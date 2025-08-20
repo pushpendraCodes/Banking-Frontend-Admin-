@@ -71,7 +71,7 @@ export default function Banners() {
                     <div className="flex gap-2">
                       <Link
                         // ✅ अब adminId और bannerId दोनों URL में जाएंगे
-                        to={`/banner/update/${banner._id || idx}`}
+                        to={`/banner/update/${adminId || idx}`}
                         className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
                       >
                         <FaEye size={14} />
