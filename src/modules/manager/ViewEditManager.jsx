@@ -84,7 +84,7 @@ const ViewEditManager = () => {
       {/* Header */}
       <div className="flex items-center justify-between bg-[#fefaf5] p-4 rounded">
         <div className="flex items-center gap-2">
-          <button onClick={() => navigate(-1)} className="text-black">
+          <button onClick={() => navigate(-1)} className="text-black p-1 border-2 rounded-4xl">
             <FaArrowLeft />
           </button>
           <h2 className="text-lg font-semibold">Edit Manager</h2>
@@ -98,7 +98,7 @@ const ViewEditManager = () => {
               : "bg-yellow-400 hover:bg-yellow-500"
           } text-white font-semibold px-5 py-2 rounded`}
         >
-          {saving ? "Saving..." : "Save"}
+          {saving ? "Update..." : "Update"}
         </button>
       </div>
 

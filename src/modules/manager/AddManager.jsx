@@ -47,7 +47,7 @@ const AddManager = () => {
       {/* Header */}
       <div className="flex items-center justify-between bg-[#fefaf5] p-4 rounded">
         <div className="flex items-center gap-2">
-          <button onClick={() => navigate(-1)} className="text-black">
+          <button onClick={() => navigate(-1)} className="text-black p-1 border-2 rounded-4xl">
             <FaArrowLeft />
           </button>
           <h2 className="text-lg font-semibold">Add Manager</h2>
@@ -64,7 +64,7 @@ const AddManager = () => {
       <div className="bg-yellow-50 p-6 mt-6 rounded shadow-sm max-w-3xl">
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Name</label>
+            <label className="w-40 font-medium text-sm">Manager Name</label>
             <input
               type="text"
               name="name"

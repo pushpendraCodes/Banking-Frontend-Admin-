@@ -116,7 +116,7 @@ export default function AgentList() {
           <thead className="bg-gray-100 text-gray-700">
             <tr>
               <th className="px-4 py-2 border">Serial No.</th>
-              <th className="px-4 py-2 border">Customer Name</th>
+              <th className="px-4 py-2 border">Agent Name</th>
               <th className="px-4 py-2 border">Email Address</th>
               <th className="px-4 py-2 border">Contact No.</th>
               <th className="px-4 py-2 border">Address</th>

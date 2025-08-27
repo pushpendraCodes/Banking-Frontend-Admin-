@@ -86,11 +86,11 @@ export default function ManagerList() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Manager name"
-          className="border border-gray-400 px-3 py-1 rounded w-64"
+          className="border border-gray-400 px-3 py-1 rounded w-64 mr-auto"
         />
-        <button
+        {/* <button
           type="submit"
-          className="ml-auto flex items-center gap-1 text-sm border border-yellow-400 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-100"
+          className=" ml-auto flex items-center gap-1 text-sm border border-yellow-400 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-100"
         >
           <svg
             className="w-4 h-4"
@@ -102,7 +102,7 @@ export default function ManagerList() {
             <path d="M4 6h16M4 12h16M4 18h7" />
           </svg>
           <span className="hidden md:block">Search</span>
-        </button>
+        </button> */}
       </form>
 
       {/* 📋 Table */}
