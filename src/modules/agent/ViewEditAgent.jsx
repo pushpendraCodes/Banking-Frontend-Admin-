@@ -6,7 +6,7 @@ import { apiAgentUrl } from "../../api/apiRoutes";
 
 const ViewEditAgent = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // ✅get  agent id form URL  
+  const { id } = useParams(); // ✅get  agent id form URL
 
   const [formData, setFormData] = useState({
     name: "",

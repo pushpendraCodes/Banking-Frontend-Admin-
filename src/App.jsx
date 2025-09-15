@@ -29,7 +29,7 @@ import LoginPage from './modules/login/LoginPage';
 import LegalDocuments from './modules/settings/LegalDocuments';
 import LegalDocumentsAdd from './modules/settings/LegalDocumentsAdd';
 import ProfilePage from './modules/settings/ProfilePage';
-import ViewDetails from './modules/coustomer/Viewdetails';
+import ViewDetails from './modules/coustomer/ViewDetails';
 import PaymentDetails from './modules/coustomer/PaymentDetails';
 import ViewAgent from './modules/agent/viewAgent';
 import ViewManager from './modules/manager/ViewManager';
@@ -135,7 +135,7 @@ function App() {
              <Route path="/settings/profilepage" element={<Layout>
               <ProfilePage />
             </Layout>} />
-            
+
         {/* Add other public routes here if needed */}
       </Routes>
     </Router>

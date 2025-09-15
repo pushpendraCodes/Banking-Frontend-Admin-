@@ -2,37 +2,77 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaEye, FaTrash, FaPen } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { apiCustomerUrl } from "../../api/apiRoutes";
+import { apiCustomerUrl, apiManagerUrl, apiAgentUrl } from "../../api/apiRoutes";
 import ShortPopup from "../../component/ShortPopup";
 import DeletePopup from "../../component/DeletePopup";
 
 export default function CustomerList() {
   const [customers, setCustomers] = useState([]);
+  const [managers, setManagers] = useState([]);
+  const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [search, setSearch] = useState("");
-  const [selectedManager, setSelectedManager] = useState("All");
-  const [selectedAgent, setSelectedAgent] = useState("All");
 
-  // 🔹 Modal States
+  // Filters & search
+  const [search, setSearch] = useState("");
+  const [selectedManager, setSelectedManager] = useState("");
+  const [selectedAgent, setSelectedAgent] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  // Pagination
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    page: 1,
+    pages: 0,
+  });
+
+  // Modals
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [showSortModal, setShowSortModal] = useState(false);
 
-  // Dummy dropdown data
-  const managers = ["All", "Theresa Webb", "Wade Warren", "Robert Fox"];
-  const agents = ["All", "Courtney Henry", "Guy Hawkins", "Brooklyn Simmons"];
+  // 🔹 Fetch Managers
+  const fetchManagers = async () => {
+    try {
+      const res = await axios.get(apiManagerUrl);
+      setManagers(res.data.data);
+    } catch (err) {
+      console.error("Error fetching managers:", err);
+    }
+  };
 
-  // 🔹 Fetch Customers
-  const fetchCustomers = async (query = "") => {
+  // 🔹 Fetch Agents
+  const fetchAgents = async () => {
+    try {
+      const res = await axios.get(apiAgentUrl);
+      setAgents(res.data.data);
+    } catch (err) {
+      console.error("Error fetching agents:", err);
+    }
+  };
+
+  // 🔹 Fetch Customers with filters & pagination
+  const fetchCustomers = async () => {
     setLoading(true);
     try {
-      const url = query
-        ? `${apiCustomerUrl}?name=${query}`
-        : `${apiCustomerUrl}`;
+      let url = `${apiCustomerUrl}?page=${page}&limit=${limit}`;
+      const params = [];
+
+      if (search.trim())
+        params.push(`search=${encodeURIComponent(search.trim())}`);
+      if (selectedManager) params.push(`managerId=${selectedManager}`);
+      if (selectedAgent) params.push(`agentId=${selectedAgent}`);
+      if (startDate) params.push(`fromDate=${startDate}`);
+      if (endDate) params.push(`toDate=${endDate}`);
+
+      if (params.length > 0) url += `&${params.join("&")}`;
 
       const res = await axios.get(url);
-      setCustomers(res.data?.data || res.data);
+      setCustomers(res.data?.data || []);
+      setPagination(res.data.pagination);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -40,17 +80,20 @@ export default function CustomerList() {
     }
   };
 
+  // Initial fetch
   useEffect(() => {
+    fetchManagers();
+    fetchAgents();
     fetchCustomers();
   }, []);
 
-  // 🔹 Debounced search
+  // Re-fetch on filter/search/page/limit change
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
-      fetchCustomers(search.trim());
+      fetchCustomers();
     }, 500);
     return () => clearTimeout(delayDebounce);
-  }, [search]);
+  }, [search, selectedManager, selectedAgent, startDate, endDate, page, limit]);
 
   // 🔹 Delete Confirm
   const confirmDelete = (id) => {
@@ -78,7 +121,7 @@ export default function CustomerList() {
   }
 
   return (
-    <div className="">
+    <div>
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
         <h2 className="text-lg sm:text-xl font-bold">Customer Management</h2>
@@ -92,43 +135,57 @@ export default function CustomerList() {
 
       {/* Search & Filters */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4">
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <label className="text-sm font-medium whitespace-nowrap">Select Manager:</label>
-          <select
-            value={selectedManager}
-            onChange={(e) => setSelectedManager(e.target.value)}
-            className="border border-gray-400 px-3 py-1 rounded w-full sm:w-64"
-          >
-            {managers.map((m, i) => (
-              <option key={i} value={m}>{m}</option>
-            ))}
-          </select>
-        </div>
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <label className="text-sm font-medium whitespace-nowrap">Select Agent:</label>
-          <select
-            value={selectedAgent}
-            onChange={(e) => setSelectedAgent(e.target.value)}
-            className="border border-gray-400 px-3 py-1 rounded w-full sm:w-64"
-          >
-            {agents.map((a, i) => (
-              <option key={i} value={a}>{a}</option>
-            ))}
-          </select>
-        </div>
+        {/* Search */}
+        <input
+          type="text"
+          placeholder="Search by name or contact"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1); // reset to first page
+          }}
+          className="border border-gray-400 px-3 py-1 rounded w-full sm:w-64"
+        />
+
+        {/* Manager Dropdown */}
+        <select
+          value={selectedManager}
+          onChange={(e) => {
+            setSelectedManager(e.target.value);
+            setPage(1);
+          }}
+          className="border border-gray-400 px-3 py-1 rounded w-full sm:w-64"
+        >
+          <option value="">All Managers</option>
+          {managers.map((m, i) => (
+            <option key={i} value={m._id}>
+              {m.name}
+            </option>
+          ))}
+        </select>
+
+        {/* Agent Dropdown */}
+        <select
+          value={selectedAgent}
+          onChange={(e) => {
+            setSelectedAgent(e.target.value);
+            setPage(1);
+          }}
+          className="border border-gray-400 px-3 py-1 rounded w-full sm:w-64"
+        >
+          <option value="">All Agents</option>
+          {agents.map((a, i) => (
+            <option key={i} value={a._id}>
+              {a.name}
+            </option>
+          ))}
+        </select>
+
+        {/* Sort */}
         <button
           onClick={() => setShowSortModal(true)}
           className="sm:ml-auto flex items-center gap-1 text-sm border border-yellow-400 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-100 whitespace-nowrap"
         >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path d="M4 6h16M4 12h16M4 18h7" />
-          </svg>
           Sort By
         </button>
       </div>
@@ -151,16 +208,22 @@ export default function CustomerList() {
               customers.map((cust, idx) => (
                 <tr key={cust._id} className="odd:bg-white even:bg-yellow-50">
                   <td className="px-4 py-2 border">
-                    {String(idx + 1).padStart(2, "0")}
+                    {String((page - 1) * limit + idx + 1).padStart(2, "0")}
                   </td>
                   <td className="px-4 py-2 border">{cust.name}</td>
                   <td className="px-4 py-2 border">
-                    <a href={`mailto:${cust.email}`} className="text-blue-600 hover:underline">
+                    <a
+                      href={`mailto:${cust.email}`}
+                      className="text-blue-600 hover:underline"
+                    >
                       {cust.email}
                     </a>
                   </td>
                   <td className="px-4 py-2 border">
-                    <a href={`tel:${cust.contact?.replace(/\s/g, "")}`} className="text-blue-600 hover:underline">
+                    <a
+                      href={`tel:${cust.contact?.replace(/\s/g, "")}`}
+                      className="text-blue-600 hover:underline"
+                    >
                       {cust.contact}
                     </a>
                   </td>
@@ -204,55 +267,62 @@ export default function CustomerList() {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
-        <div>Showing 1 to {customers.length} of {customers.length} Entries</div>
-        <div className="flex gap-2">
-          <button className="border border-red-400 text-red-500 px-3 py-1 rounded hover:bg-red-50">
-            Previous
-          </button>
-          <button className="bg-red-500 text-white px-3 py-1 rounded">1</button>
-          <button className="border border-red-400 text-red-500 px-3 py-1 rounded hover:bg-red-50">
-            Next
-          </button>
-        </div>
+      <div className="flex items-center justify-between mt-4">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          Prev
+        </button>
+
+        <span>
+          Page {pagination.page} of {pagination.pages}
+        </span>
+
+        <button
+          disabled={page === pagination.pages}
+          onClick={() => setPage((prev) => prev + 1)}
+          className="px-3 py-1 border rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+
+      {/* Page Size Dropdown */}
+      <div className="mt-3">
+        <label className="mr-2">Rows per page:</label>
+        <select
+          value={limit}
+          onChange={(e) => {
+            setLimit(Number(e.target.value));
+            setPage(1);
+          }}
+          className="border rounded px-2 py-1"
+        >
+          <option value={5}>5</option>
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+          <option value={50}>50</option>
+        </select>
       </div>
 
       {/* Delete Modal */}
-      {/* {showDeleteModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-[#0000007a]  bg-opacity-40 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-md w-80">
-            <h3 className="text-lg font-semibold mb-3">Delete this Customer?</h3>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 rounded border border-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDelete}
-                className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
-       <DeletePopup 
-       show={showDeleteModal} 
-       onClose={() => setShowDeleteModal(false)} 
-      onDelete={handleDelete}
+      <DeletePopup
+        show={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onDelete={handleDelete}
       />
 
       {/* Sort Modal */}
-      {/* {showSortModal && (
-       
-      )} */}
-       <ShortPopup 
-           show={showSortModal} 
-             onClose={() => setShowSortModal(false)} />
-
+      <ShortPopup
+        setStartDate={setStartDate}
+        setEndDate={setEndDate}
+        startDate={startDate}
+        endDate={endDate}
+        show={showSortModal}
+        onClose={() => setShowSortModal(false)}
+      />
     </div>
   );
 }

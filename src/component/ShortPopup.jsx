@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 
-function ShortPopup({ show, onClose }) {
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+function ShortPopup({ show, onClose ,setStartDate,setEndDate,startDate,endDate}) {
+
 
   if (!show) return null; // Agar show false hai toh kuch render hi na ho
 
@@ -11,17 +10,17 @@ function ShortPopup({ show, onClose }) {
       <div className="bg-white p-6 rounded-lg shadow-md w-96">
         <h3 className="text-lg font-semibold mb-3">Sort Datewise</h3>
         <div className="flex flex-col gap-3">
-          <input 
-            type="date" 
+          <input
+            type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="border px-3 py-2 rounded" 
+            className="border px-3 py-2 rounded"
           />
-          <input 
-            type="date" 
+          <input
+            type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="border px-3 py-2 rounded" 
+            className="border px-3 py-2 rounded"
           />
         </div>
         <div className="flex justify-end gap-3 mt-4">
@@ -31,7 +30,7 @@ function ShortPopup({ show, onClose }) {
           >
             Cancel
           </button>
-          <button
+          {/* <button
             onClick={() => {
               console.log("Apply filter from", startDate, "to", endDate);
               onClose(); // close karne ke liye
@@ -39,7 +38,7 @@ function ShortPopup({ show, onClose }) {
             className="px-4 py-2 rounded bg-yellow-400 text-white hover:bg-yellow-500"
           >
             Apply
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

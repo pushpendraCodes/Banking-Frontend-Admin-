@@ -11,7 +11,7 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const navItems = [
   { name: "Customer", icon: <FaUser />, path: "/coustomers" },
@@ -22,11 +22,18 @@ const navItems = [
   { name: "Website Gallery", icon: <FaImages />, path: "/gallary" },
   { name: "Website Banner", icon: <FaImages />, path: "/banners" },
   { name: "Website Settings", icon: <FaCog />, path: "/settings" },
-  { name: "Logout", icon: <FaSignOutAlt />, path: "/" },
 ];
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // ✅ clear token
+    localStorage.removeItem("user");  // ✅ clear user
+    setIsOpen(false);
+    navigate("/login"); // ✅ redirect to login
+  };
 
   return (
     <>
@@ -62,6 +69,15 @@ const Sidebar = () => {
               {item.name}
             </NavLink>
           ))}
+
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-4 py-2 text-sm font-semibold border rounded-md text-red-600 border-red-300 hover:bg-red-50 transition"
+          >
+            <FaSignOutAlt />
+            Logout
+          </button>
         </nav>
       </aside>
     </>
