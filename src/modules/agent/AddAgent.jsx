@@ -70,8 +70,8 @@ const AddAgent = () => {
       </div>
 
       {/* Form */}
-      <div className="bg-yellow-50 p-6 mt-6 rounded shadow-sm max-w-3xl">
-        <form className="space-y-4" onSubmit={handleSubmit}>
+      <div className="flex justify-center bg-yellow-50 p-6 mt-6 rounded shadow-sm max-w-3xl">
+        <form className="space-y-4 w-100" onSubmit={handleSubmit}>
           <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Agent Name</label>
             <input
@@ -116,7 +116,7 @@ const AddAgent = () => {
             />
           </div>
 
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Education</label>
             <input
               type="text"
@@ -125,9 +125,9 @@ const AddAgent = () => {
               onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-white"
             />
-          </div>
+          </div> */}
 
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Alternate No</label>
             <input
               type="text"
@@ -136,7 +136,7 @@ const AddAgent = () => {
               onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-white"
             />
-          </div>
+          </div> */}
 
           <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Password</label>
@@ -150,7 +150,7 @@ const AddAgent = () => {
           </div>
 
           {/* ✅ Gender Dropdown */}
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Gender</label>
             <select
               name="gender"
@@ -162,7 +162,7 @@ const AddAgent = () => {
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select>
-          </div>
+          </div> */}
 
           {/* ✅ Manager Dropdown */}
           <div className="flex items-center">

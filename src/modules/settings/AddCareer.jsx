@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function AddCareer() {
+          const navigate = useNavigate();
+  
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -15,10 +18,13 @@ export default function AddCareer() {
     <div className="min-h-screen bg-white  sm:p-6 md:p-8">
       <div className="max-w-screen-md mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between bg-yellow-50 p-4 rounded shadow-sm mb-6">
+        <div className="flex items-center justify-between bg-[#fef7ef] p-4 rounded  mb-6">
           <div className="flex items-center gap-2 text-base sm:text-lg font-semibold">
+           <button onClick={() => navigate(-1)} className="text-black  p-1 border-2 rounded-4xl">
             <FaArrowLeft />
-            <span>Official Notification / Recruitment</span>
+           </button>
+          
+            <span className="font-bold">Official Notification / Recruitment</span>
           </div>
         </div>
 
@@ -26,7 +32,7 @@ export default function AddCareer() {
         <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Title Input */}
           <div>
-            <label className="block font-semibold mb-1">Add Title</label>
+            <label className="block font-bold mb-1">Add Title</label>
             <input
               type="text"
               placeholder="Enter Title"
@@ -39,7 +45,7 @@ export default function AddCareer() {
 
           {/* Description Input */}
           <div>
-            <label className="block font-semibold mb-1">Add Description</label>
+            <label className="block font-bold mb-1">Add Description</label>
             <textarea
               placeholder="Enter Description"
               value={description}

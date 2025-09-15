@@ -35,16 +35,16 @@ export default function PaymentHistory() {
       return <p className="text-red-500">Error: {error}</p>;
     }
    console.log(transactions.data,",,.resultData")
-  return (
-    <div className="bg-[#fef7ef]  sm:p-6 rounded-lg shadow-md">
-      <h2 className="text-xl sm:text-2xl font-semibold mb-4">Payment History</h2>
+  return (<>
+      <h2 className="bg-[#fef7ef] px-3 text-xl sm:text-2xl font-semibold mb-4">Payment History</h2>
+    <div className="bg-[#fef7ef]  sm:p-6 rounded-lg ">
 
       {/* Table wrapper for responsiveness */}
       <div className="overflow-x-auto">
         <table className="min-w-full border text-sm">
           <thead>
             <tr className="bg-gray-200 text-left">
-              <th className="p-2 border whitespace-nowrap">Sr.</th>
+              <th className="p-2 border whitespace-nowrap">Serial No.</th>
               <th className="p-2 border whitespace-nowrap">Customer Name</th>
               <th className="p-2 border whitespace-nowrap">Agent Name</th>
               <th className="p-2 border whitespace-nowrap">Amount</th>
@@ -56,7 +56,7 @@ export default function PaymentHistory() {
             {transactions.data.map((data, index) => (
               <tr key={index} className="odd:bg-white even:bg-yellow-50">
                 <td className="p-2 border">{index+1}</td>
-                <td className="p-2 border">{data.customerId.name}</td>
+                <td className="p-2 border">{data.customerId?.name}</td>
                 <td className="p-2 border">{data.collectedByAgentId.name}</td>
                 <td className="p-2 border">{data.amount}</td>
                 <td className="p-2 border text-green-600">{data.paymentMethod}</td>
@@ -91,5 +91,7 @@ export default function PaymentHistory() {
         </div>
       </div>
     </div>
+  </>
+
   );
 }

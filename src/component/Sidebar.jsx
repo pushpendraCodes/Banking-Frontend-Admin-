@@ -18,7 +18,7 @@ const navItems = [
   { name: "Agent", icon: <FaUserTie />, path: "/agent" },
   { name: "Manager", icon: <FaUserTie />, path: "/managers" },
   { name: "Payment History", icon: <FaMoneyBillWave />, path: "/payments-history" },
-  { name: "Withdrawal History", icon: <FaCreditCard />, path: "/withdrawal-history" },
+  { name: "Withdrawal History", icon: <FaCreditCard />, path: "/withdrawalhistory" },
   { name: "Website Gallery", icon: <FaImages />, path: "/gallary" },
   { name: "Website Banner", icon: <FaImages />, path: "/banners" },
   { name: "Website Settings", icon: <FaCog />, path: "/settings" },
@@ -40,7 +40,7 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed z-40 top-0 left-0 h-full w-[220px] bg-[#fef7ef] border-r p-4 transition-transform transform ${
+        className={`fixed z-40 top-0 left-0 h-full w-[220px] bg-[#fef7ef] drop-shadow-sm p-4 transition-transform transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 lg:static lg:block`}
       >

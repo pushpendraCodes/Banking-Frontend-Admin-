@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 const AddGallery = () => {
+      const navigate = useNavigate();
+  
   const { register, handleSubmit, reset } = useForm();
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -33,9 +37,15 @@ const AddGallery = () => {
     }
   };
 
-  return (
-    <div className="max-w-5xl mx-auto mt-10 bg-[#fef7ef] p-6 rounded shadow">
-      <h2 className="text-2xl font-bold mb-4">Add Gallery</h2>
+  return (<>
+    <div className="bg-[#fef7ef] flex items-center gap-2 mb-4 p-2 rounded">
+                    <button onClick={() => navigate(-1)} className="text-black p-1 border-2 rounded-4xl">
+                      <FaArrowLeft />
+                    </button>
+                    <h2 className="text-2xl font-bold ">Website Gallery</h2>
+     </div>
+    <div className="max-w-5xl mx-auto mt-10 p-6  ">
+      {/* <h2 className="text-2xl font-bold mb-4">Add Gallery</h2> */}
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Title */}
         <div className="mb-4">
@@ -70,12 +80,13 @@ const AddGallery = () => {
         {/* Submit */}
         <button
           type="submit"
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-yellow-400 text-white px-9 py-1 rounded hover:bg-yellow-500"
         >
-          Add Gallery
+          Add 
         </button>
       </form>
     </div>
+    </>
   );
 };
 

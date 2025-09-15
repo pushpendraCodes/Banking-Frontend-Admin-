@@ -1,16 +1,29 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { FaEye, FaTrash } from "react-icons/fa";
+import { FaEye, FaTrash, FaPen } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { apiCustomerUrl } from "../../api/apiRoutes";
+import ShortPopup from "../../component/ShortPopup";
+import DeletePopup from "../../component/DeletePopup";
 
 export default function CustomerList() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [search, setSearch] = useState(""); // 🔹 Search state
+  const [search, setSearch] = useState("");
+  const [selectedManager, setSelectedManager] = useState("All");
+  const [selectedAgent, setSelectedAgent] = useState("All");
 
-  // 🔹 Fetch Customers from API
+  // 🔹 Modal States
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [showSortModal, setShowSortModal] = useState(false);
+
+  // Dummy dropdown data
+  const managers = ["All", "Theresa Webb", "Wade Warren", "Robert Fox"];
+  const agents = ["All", "Courtney Henry", "Guy Hawkins", "Brooklyn Simmons"];
+
+  // 🔹 Fetch Customers
   const fetchCustomers = async (query = "") => {
     setLoading(true);
     try {
@@ -31,23 +44,26 @@ export default function CustomerList() {
     fetchCustomers();
   }, []);
 
-  // 🔹 Search Effect (जब search बदले तो API कॉल हो)
+  // 🔹 Debounced search
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       fetchCustomers(search.trim());
-    }, 500); // 500ms delay (debounce)
-
+    }, 500);
     return () => clearTimeout(delayDebounce);
   }, [search]);
 
-  // 🔹 Delete Function
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this customer?")) return;
+  // 🔹 Delete Confirm
+  const confirmDelete = (id) => {
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
 
+  const handleDelete = async () => {
     try {
-      await axios.delete(`${apiCustomerUrl}/${id}`);
-      alert("Customer deleted successfully ✅");
-      setCustomers((prev) => prev.filter((cust) => cust._id !== id));
+      await axios.delete(`${apiCustomerUrl}/${deleteId}`);
+      setCustomers((prev) => prev.filter((cust) => cust._id !== deleteId));
+      setShowDeleteModal(false);
+      setDeleteId(null);
     } catch (error) {
       alert("Failed to delete customer ❌");
     }
@@ -74,19 +90,36 @@ export default function CustomerList() {
         </Link>
       </div>
 
-      {/* Search & Sort */}
+      {/* Search & Filters */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-4">
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <label className="text-sm font-medium whitespace-nowrap">Search:</label>
-          <input
-            type="text"
-            placeholder="Search by name or email"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)} // 🔹 Search state update
+          <label className="text-sm font-medium whitespace-nowrap">Select Manager:</label>
+          <select
+            value={selectedManager}
+            onChange={(e) => setSelectedManager(e.target.value)}
             className="border border-gray-400 px-3 py-1 rounded w-full sm:w-64"
-          />
+          >
+            {managers.map((m, i) => (
+              <option key={i} value={m}>{m}</option>
+            ))}
+          </select>
         </div>
-        <button className="sm:ml-auto flex items-center gap-1 text-sm border border-yellow-400 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-100 whitespace-nowrap">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <label className="text-sm font-medium whitespace-nowrap">Select Agent:</label>
+          <select
+            value={selectedAgent}
+            onChange={(e) => setSelectedAgent(e.target.value)}
+            className="border border-gray-400 px-3 py-1 rounded w-full sm:w-64"
+          >
+            {agents.map((a, i) => (
+              <option key={i} value={a}>{a}</option>
+            ))}
+          </select>
+        </div>
+        <button
+          onClick={() => setShowSortModal(true)}
+          className="sm:ml-auto flex items-center gap-1 text-sm border border-yellow-400 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-100 whitespace-nowrap"
+        >
           <svg
             className="w-4 h-4"
             fill="none"
@@ -105,48 +138,52 @@ export default function CustomerList() {
         <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100 text-gray-700">
             <tr>
-              <th className="px-4 py-2 border whitespace-nowrap">Serial No.</th>
-              <th className="px-4 py-2 border whitespace-nowrap">Customer Name</th>
-              <th className="px-4 py-2 border whitespace-nowrap">Email Address</th>
-              <th className="px-4 py-2 border whitespace-nowrap">Contact No.</th>
-              <th className="px-4 py-2 border whitespace-nowrap">Address</th>
-              <th className="px-4 py-2 border whitespace-nowrap">Action</th>
+              <th className="px-4 py-2 border">Serial No.</th>
+              <th className="px-4 py-2 border">Customer Name</th>
+              <th className="px-4 py-2 border">Email Address</th>
+              <th className="px-4 py-2 border">Contact No.</th>
+              <th className="px-4 py-2 border">Address</th>
+              <th className="px-4 py-2 border">Action</th>
             </tr>
           </thead>
           <tbody>
             {Array.isArray(customers) && customers.length > 0 ? (
               customers.map((cust, idx) => (
                 <tr key={cust._id} className="odd:bg-white even:bg-yellow-50">
-                  <td className="px-4 py-2 border whitespace-nowrap">
+                  <td className="px-4 py-2 border">
                     {String(idx + 1).padStart(2, "0")}
                   </td>
-                  <td className="px-4 py-2 border whitespace-nowrap">{cust.name}</td>
-                  <td className="px-4 py-2 border whitespace-nowrap">
+                  <td className="px-4 py-2 border">{cust.name}</td>
+                  <td className="px-4 py-2 border">
                     <a href={`mailto:${cust.email}`} className="text-blue-600 hover:underline">
                       {cust.email}
                     </a>
                   </td>
-                  <td className="px-4 py-2 border whitespace-nowrap">
-                    <a
-                      href={`tel:${cust.contact?.replace(/\s/g, "")}`}
-                      className="text-blue-600 hover:underline"
-                    >
+                  <td className="px-4 py-2 border">
+                    <a href={`tel:${cust.contact?.replace(/\s/g, "")}`} className="text-blue-600 hover:underline">
                       {cust.contact}
                     </a>
                   </td>
                   <td className="px-4 py-2 border">{cust.address}</td>
-                  <td className="px-4 py-2 border whitespace-nowrap">
+                  <td className="px-4 py-2 border">
                     <div className="flex gap-2">
                       <Link
-                        to={`/coustomers/View-Edit/${cust._id}`}
+                        to={`/coustomers/viewdetails/${cust._id}`}
                         className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
-                        title="View/Edit"
+                        title="View"
                       >
                         <FaEye size={14} />
                       </Link>
+                      <Link
+                        to={`/coustomers/View-Edit/${cust._id}`}
+                        className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
+                        title="Edit"
+                      >
+                        <FaPen size={14} />
+                      </Link>
                       <button
-                        onClick={() => handleDelete(cust._id)}
-                        className="bg-red-500 hover:bg-red-600 text-white p-2 rounded"
+                        onClick={() => confirmDelete(cust._id)}
+                        className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
                         title="Delete"
                       >
                         <FaTrash size={14} />
@@ -166,21 +203,56 @@ export default function CustomerList() {
         </table>
       </div>
 
-      {/* Pagination (Static for now) */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 text-sm text-gray-600 gap-2">
-        <div className="whitespace-nowrap">
-          Showing 1 to {customers.length} of {customers.length} Entries
-        </div>
+      {/* Pagination */}
+      <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
+        <div>Showing 1 to {customers.length} of {customers.length} Entries</div>
         <div className="flex gap-2">
-          <button className="border border-red-400 text-red-500 px-3 py-1 rounded hover:bg-red-50 whitespace-nowrap">
+          <button className="border border-red-400 text-red-500 px-3 py-1 rounded hover:bg-red-50">
             Previous
           </button>
-          <button className="bg-red-500 text-white px-3 py-1 rounded whitespace-nowrap">1</button>
-          <button className="border border-red-400 text-red-500 px-3 py-1 rounded hover:bg-red-50 whitespace-nowrap">
+          <button className="bg-red-500 text-white px-3 py-1 rounded">1</button>
+          <button className="border border-red-400 text-red-500 px-3 py-1 rounded hover:bg-red-50">
             Next
           </button>
         </div>
       </div>
+
+      {/* Delete Modal */}
+      {/* {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-[#0000007a]  bg-opacity-40 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-md w-80">
+            <h3 className="text-lg font-semibold mb-3">Delete this Customer?</h3>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 rounded border border-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )} */}
+       <DeletePopup 
+       show={showDeleteModal} 
+       onClose={() => setShowDeleteModal(false)} 
+      onDelete={handleDelete}
+      />
+
+      {/* Sort Modal */}
+      {/* {showSortModal && (
+       
+      )} */}
+       <ShortPopup 
+           show={showSortModal} 
+             onClose={() => setShowSortModal(false)} />
+
     </div>
   );
 }

@@ -26,6 +26,13 @@ import AddApplicationForm from './modules/settings/AddApplicationsForm';
 import AddCareer from './modules/settings/AddCareer';
 import CareerList from './modules/settings/CareerList';
 import LoginPage from './modules/login/LoginPage';
+import LegalDocuments from './modules/settings/LegalDocuments';
+import LegalDocumentsAdd from './modules/settings/LegalDocumentsAdd';
+import ProfilePage from './modules/settings/ProfilePage';
+import ViewDetails from './modules/coustomer/Viewdetails';
+import PaymentDetails from './modules/coustomer/PaymentDetails';
+import ViewAgent from './modules/agent/viewAgent';
+import ViewManager from './modules/manager/ViewManager';
 
 function App() {
   return (
@@ -47,7 +54,7 @@ function App() {
           <Route path="/payments-history" element={<Layout>
               <PaymentHistory />
             </Layout>} />
-          <Route path="/withdrawal-history" element={<Layout>
+          <Route path="/withdrawalhistory" element={<Layout>
               <WithdrawalHistory />
             </Layout>} />
           <Route path="/payments-history/:id" element={<Layout>
@@ -59,11 +66,20 @@ function App() {
           <Route path="/managers/view-edit/:id" element={<Layout>
               <ViewEditManager />
             </Layout>} />
+            <Route path="/managers/view/:id" element={<Layout>
+              <ViewManager />
+            </Layout>} />
           <Route path="/coustomers/add" element={<Layout>
               <AddCustomer />
             </Layout>} />
           <Route path="/coustomers/View-Edit/:id" element={<Layout>
               <ViewEditCoustomer />
+            </Layout>} />
+             <Route path="/coustomers/viewdetails/:id" element={<Layout>
+              <ViewDetails />
+            </Layout>} />
+             <Route path="/coustomers/paymentdetails/:id" element={<Layout>
+              <PaymentDetails />
             </Layout>} />
           <Route path="/agent" element={<Layout>
               <AgentList />
@@ -92,6 +108,9 @@ function App() {
           <Route path="/agent/View-Edit/:id" element={<Layout>
               <ViewEditAgent />
             </Layout>} />
+            <Route path="/agent/view/:id" element={<Layout>
+              <ViewAgent />
+            </Layout>} />
           <Route path="/settings" element={<Layout>
               <Settings />
             </Layout>} />
@@ -107,6 +126,16 @@ function App() {
           <Route path="/settings/recruitment" element={<Layout>
               <CareerList />
             </Layout>} />
+              <Route path="/settings/forms/legal" element={<Layout>
+              <LegalDocuments />
+            </Layout>} />
+              <Route path="/settings/forms/legal/add" element={<Layout>
+              <LegalDocumentsAdd />
+            </Layout>} />
+             <Route path="/settings/profilepage" element={<Layout>
+              <ProfilePage />
+            </Layout>} />
+            
         {/* Add other public routes here if needed */}
       </Routes>
     </Router>

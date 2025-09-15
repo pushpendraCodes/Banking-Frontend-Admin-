@@ -1,35 +1,23 @@
-import { FaEye, FaTrash } from "react-icons/fa";
+import { FaEye, FaPen, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const customers = [
   {
     id: 1,
-    name: "John Doe",
-    email: "JohnDoe@example.com",
-    phone: "98765 43210",
-    address: "123, Elm Street, New Delhi, India",
+    image: "vite.svg",
+    title: "Our Society", 
   },
   {
     id: 2,
-    name: "John Doe",
-    email: "JohnDoe@example.com",
-    phone: "98765 43210",
-    address: "123, Elm Street, New Delhi, India",
+    image: "vite.svg",
+    title: "Our Employee",
   },
   {
     id: 3,
-    name: "John Doe",
-    email: "JohnDoe@example.com",
-    phone: "98765 43210",
-    address: "123, Elm Street, New Delhi, India",
+    image: "vite.svg",
+    title: "Others",
   },
-  {
-    id: 4,
-    name: "John Doe",
-    email: "JohnDoe@example.com",
-    phone: "98765 43210",
-    address: "123, Elm Street, New Delhi, India",
-  },
+  
 ];
 
 export default function GalleryList() {
@@ -49,10 +37,8 @@ export default function GalleryList() {
           <thead className="bg-gray-100 text-gray-700">
             <tr>
               <th className="px-4 py-2 border">Serial No.</th>
-              <th className="px-4 py-2 border">Customer Name</th>
-              <th className="px-4 py-2 border">Email Address</th>
-              <th className="px-4 py-2 border">Contact No.</th>
-              <th className="px-4 py-2 border">Address</th>
+              <th className="px-4 py-2 border">Gallery Image</th>
+              <th className="px-4 py-2 border">Gallery Title</th>
               <th className="px-4 py-2 border">Action</th>
             </tr>
           </thead>
@@ -60,14 +46,18 @@ export default function GalleryList() {
             {customers.map((cust, idx) => (
               <tr key={cust.id} className="odd:bg-white even:bg-yellow-50">
                 <td className="px-4 py-2 border">{String(idx + 1).padStart(2, "0")}</td>
-                <td className="px-4 py-2 border">{cust.name}</td>
-                <td className="px-4 py-2 border">{cust.email}</td>
-                <td className="px-4 py-2 border">{cust.phone}</td>
-                <td className="px-4 py-2 border">{cust.address}</td>
+                <td className="px-4 py-2 border">
+                   <img
+                      src={cust.image||"vite.svg"}
+                      alt="vite.svg"
+                      className="w-32 h-16 object-cover rounded"
+                    />
+                </td>
+                <td className="px-4 py-2 border">{cust.title}</td>
                 <td className="px-4 py-2 border">
                   <div className="flex gap-2">
                     <Link to="/gallary/update/1" className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded">
-                      <FaEye size={14} />
+                      <FaPen size={14} />
                     </Link>
                     <button className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded">
                       <FaTrash size={14} />

@@ -3,8 +3,10 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { apiAdminBannerUrl } from "../../api/apiRoutes";
-
+import { FaArrowLeft } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 const UpdateBanner = () => {
+  const navigate = useNavigate();
   const { id } = useParams(); // yaha id = bannerId (na ki adminId)
   const { register, handleSubmit, reset } = useForm();
   const [imagePreview, setImagePreview] = useState(null);
@@ -67,12 +69,19 @@ const UpdateBanner = () => {
     }
   };
 
-  return (
-    <div style={{ maxWidth: "500px", margin: "20px auto" }}>
-      <h2>Update Banner</h2>
+  return (<>
+<div className="bg-[#fef7ef] flex items-center gap-2 mb-4 p-2 rounded">
+                      <button onClick={() => navigate(-1)} className="text-black p-1 border-2 rounded-4xl">
+                        <FaArrowLeft />
+                      </button>
+                      <h2 className="text-2xl font-bold ">Website Banner</h2>
+       </div>
 
+{/* .......... */}
+    <div className="max-w-5xl mx-auto mt-10 p-6 " >
+      
       <form onSubmit={handleSubmit(onSubmit)}>
-        <label>Upload Image:</label>
+        <label>Select Banner Type:</label>
         <input
           type="file"
           accept="image/*"
@@ -80,20 +89,16 @@ const UpdateBanner = () => {
           onChange={(e) =>
             setImagePreview(URL.createObjectURL(e.target.files[0]))
           }
-          style={{ display: "block", marginBottom: "10px" }}
+           placeholder="Select"
+          className="block border px-1 py-2 mt-3 mb-5 rounded border-gray-200"
         />
 
-        <label>Or Enter Image URL:</label>
+        <label>Bammer Image:</label>
         <input
           type="text"
-          placeholder="https://example.com/image.png"
+          placeholder="Choose file"
           {...register("imageUrl")}
-          style={{
-            display: "block",
-            marginBottom: "10px",
-            width: "100%",
-            padding: "8px",
-          }}
+         className="block mt-1 border px-1 py-2 mb-5 rounded"
         />
 
         {imagePreview && (
@@ -106,7 +111,10 @@ const UpdateBanner = () => {
           />
         )}
 
-        <button type="submit" disabled={loading}>
+        <button
+         className="bg-yellow-400 py-1 px-9 rounded text-white hover:bg-yellow-500"
+         type="submit" 
+         disabled={loading}>
           {loading ? "Uploading..." : "Upload"}
         </button>
       </form>
@@ -118,6 +126,7 @@ const UpdateBanner = () => {
         </div>
       )}
     </div>
+  </>
   );
 };
 

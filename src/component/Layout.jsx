@@ -21,7 +21,7 @@ const Layout = ({ children }) => {
         {!shouldHideSidebar &&  <Sidebar />}
 
         {/* Main content area */}
-        <main className="p-6 bg-[#fefaf5] flex-1 overflow-y-auto">
+        <main className="p-6 bg-[#ffffff] flex-1 overflow-y-auto">
           {children}
         </main>
       </div>

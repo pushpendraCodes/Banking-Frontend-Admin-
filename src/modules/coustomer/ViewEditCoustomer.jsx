@@ -13,10 +13,10 @@ const ViewEditCoustomer = () => {
     email: "",
     contact: "",
     address: "",
-    scheme: "",
-    amount: "",
-    duration: "",
-    pending: "",
+    agent: "",
+    // amount: "",
+    // duration: "",
+    // pending: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -37,10 +37,10 @@ const ViewEditCoustomer = () => {
           email: customer.email || "",
           contact: customer.contact || "",
           address: customer.address || "",
-          scheme: customer.scheme || "",
-          amount: customer.amount || "",
-          duration: customer.duration || "",
-          pending: customer.pending || "",
+          agent: customer.agent || "",
+          // amount: customer.amount || "",
+          // duration: customer.duration || "",
+          // pending: customer.pending || "",
         });
 
         setLoading(false);
@@ -86,7 +86,7 @@ const ViewEditCoustomer = () => {
           <button onClick={() => navigate(-1)} className="text-black p-1 border-2 rounded-4xl">
             <FaArrowLeft />
           </button>
-          <h2 className="text-lg font-semibold">View/Edit Customer</h2>
+          <h2 className="text-lg font-semibold">Edit Customer</h2>
         </div>
         <button
           onClick={handleSave}
@@ -97,17 +97,17 @@ const ViewEditCoustomer = () => {
       </div>
 
       {/* Form */}
-      <div className="bg-yellow-50 p-6 mt-6 rounded shadow-sm max-w-3xl">
-        <form className="space-y-4">
+      <div className="flex justify-center bg-[#fff9f1] p-6 mt-6 rounded ">
+        <form className="space-y-4 w-100">
           {[
             { label: "Name", key: "name", type: "text" },
             { label: "Email Address", key: "email", type: "email" },
             { label: "Contact No.", key: "contact", type: "text" },
             { label: "Address", key: "address", type: "text" },
-            { label: "Scheme", key: "scheme", type: "text" },
-            { label: "Amount", key: "amount", type: "text" },
-            { label: "Duration", key: "duration", type: "text" },
-            { label: "Pending", key: "pending", type: "text" },
+            { label: "Agent", key: "agent", type: "text" },
+            // { label: "Amount", key: "amount", type: "text" },
+            // { label: "Duration", key: "duration", type: "text" },
+            // { label: "Pending", key: "pending", type: "text" },
           ].map((field) => (
             <div key={field.key} className="flex items-center">
               <label className="w-40 font-medium text-sm">{field.label}</label>

@@ -87,7 +87,7 @@ const ViewEditManager = () => {
           <button onClick={() => navigate(-1)} className="text-black p-1 border-2 rounded-4xl">
             <FaArrowLeft />
           </button>
-          <h2 className="text-lg font-semibold">Edit Manager</h2>
+          <h2 className="text-lg font-semibold">View/Edit Manager</h2>
         </div>
         <button
           onClick={handleSave}

@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaEye, FaTrash } from "react-icons/fa";
+import { FaEye, FaPen, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { apiManagerUrl } from "../../api/apiRoutes";
+import DeletePopup from "../../component/DeletePopup";
 
 export default function ManagerList() {
   const [data, setData] = useState([]);
@@ -10,6 +11,9 @@ export default function ManagerList() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState(""); // ✅ search state
 
+    // ✅ Delete popup ke liye state
+   const [showDeleteModal, setShowDeleteModal] = useState(false);
+   const [deleteId, setDeleteId] = useState(null);
   // ✅ Fetch managers
   const fetchManagers = async (query = "") => {
     try {
@@ -30,20 +34,19 @@ export default function ManagerList() {
   }, []);
 
   // ✅ Delete manager by ID
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this manager?")) return;
+  const handleDelete = async () => {
+  try {
+    await axios.delete(`${apiManagerUrl}/${deleteId}`);
+    alert("Manager deleted successfully ✅");
+    fetchManagers(search); // refresh after delete
+    setShowDeleteModal(false);
+    setDeleteId(null);
+  } catch (err) {
+    console.error("Delete Error:", err);
+    alert("Failed to delete manager ❌");
+  }
+};
 
-    try {
-      await axios.delete(
-        `${apiManagerUrl}/${id}`
-      );
-      alert("Manager deleted successfully ✅");
-      fetchManagers(search); // refresh list with current search
-    } catch (err) {
-      console.error("Delete Error:", err);
-      alert("Failed to delete manager ❌");
-    }
-  };
 
   // ✅ Handle search submit
   const handleSearch = (e) => {
@@ -110,7 +113,7 @@ export default function ManagerList() {
         <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100 text-gray-700">
             <tr>
-              <th className="px-4 py-2 border">Serial No.</th>
+              <th className="px-4 py-2 border">Manager ID.</th>
               <th className="px-4 py-2 border">Manager Name</th>
               <th className="px-4 py-2 border">Email Address</th>
               <th className="px-4 py-2 border">Contact No.</th>
@@ -135,17 +138,26 @@ export default function ManagerList() {
                   <td className="px-4 py-2 border">
                     <div className="flex gap-2">
                       <Link
+                        to={`/managers/view/${cust._id}`}
+                        className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
+                      >
+                        <FaPen size={14} />
+                      </Link>
+                       <Link
                         to={`/managers/view-edit/${cust._id}`}
                         className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
                       >
                         <FaEye size={14} />
                       </Link>
-                      <button
-                        onClick={() => handleDelete(cust._id)}
-                        className="bg-red-500 hover:bg-red-600 text-white p-2 rounded"
-                      >
-                        <FaTrash size={14} />
-                      </button>
+                        <button
+                              onClick={() => {
+                                setDeleteId(cust._id);
+                                setShowDeleteModal(true);
+                              }}
+                              className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
+                            >
+                              <FaTrash size={14} />
+                            </button>
                     </div>
                   </td>
                 </tr>
@@ -163,6 +175,13 @@ export default function ManagerList() {
           </tbody>
         </table>
       </div>
+        {/* ✅ Delete Popup */}
+       <DeletePopup
+        show={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onDelete={handleDelete}
+      />
+      
     </div>
   );
 }

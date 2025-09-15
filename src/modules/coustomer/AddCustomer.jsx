@@ -13,10 +13,10 @@ const AddCustomer = () => {
     email: "",
     contact: "",
     address: "",
-    scheme: "",
-    amount: "",
-    duration: "",
-    pending: "",
+    agent: "",
+    // amount: "",
+    // duration: "",
+    // pending: "",
   });
 
   // ✅ Input change handler
@@ -48,27 +48,36 @@ const AddCustomer = () => {
   return (
     <div className="">
       {/* Header */}
-      <div className="flex items-center justify-between bg-[#fefaf5] p-4 rounded">
+      <div className="flex items-center justify-between bg-[#fff9f1] p-4 rounded">
         <div className="flex items-center gap-2">
           <button onClick={() => navigate(-1)} className="text-black p-1 border-2 rounded-4xl">
             <FaArrowLeft />
           </button>
           <h2 className="text-lg font-semibold">Add Customer</h2>
         </div>
+          {/* ✅ Save button inside form */}
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              className="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-5 py-2 rounded"
+            >
+              Save
+            </button>
+          </div>
       </div>
 
       {/* Form */}
-      <div className="bg-yellow-50 p-6 mt-6 rounded shadow-sm max-w-3xl">
-        <form className="space-y-4" onSubmit={handleSave}>
+      <div className="flex justify-center bg-[#fff9f1] p-6 mt-6 rounded">
+        <form className="space-y-4 w-100" onSubmit={handleSave}>
           {[
             { label: "Name", key: "name", type: "text" },
             { label: "Email Address", key: "email", type: "email" },
             { label: "Contact No.", key: "contact", type: "text" },
             { label: "Address", key: "address", type: "text" },
-            { label: "Scheme", key: "scheme", type: "text" },
-            { label: "Amount", key: "amount", type: "text" },
-            { label: "Duration", key: "duration", type: "text" },
-            { label: "Pending", key: "pending", type: "text" },
+            { label: "Agent", key: "agent", type: "text" },
+            // { label: "Amount", key: "amount", type: "text" },
+            // { label: "Duration", key: "duration", type: "text" },
+            // { label: "Pending", key: "pending", type: "text" },
           ].map((field) => (
             <div key={field.key} className="flex items-center">
               <label className="w-40 font-medium text-sm">{field.label}</label>
@@ -84,14 +93,14 @@ const AddCustomer = () => {
           ))}
 
           {/* ✅ Save button inside form */}
-          <div className="flex justify-end">
+          {/* <div className="flex justify-end">
             <button
               type="submit"
               className="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-5 py-2 rounded"
             >
               Save
             </button>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>

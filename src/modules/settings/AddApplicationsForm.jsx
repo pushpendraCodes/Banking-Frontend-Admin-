@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { FaArrowLeft, FaCloudUploadAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function AddApplicationForm() {
+        const navigate = useNavigate();
+
   const [title, setTitle] = useState("");
   const [file, setFile] = useState(null);
 
@@ -19,9 +22,12 @@ export default function AddApplicationForm() {
   return (
     <div className=" bg-white min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between bg-yellow-50 p-4 rounded shadow-sm">
+      <div className="flex items-center justify-between bg-[#fef7ef] p-4 rounded shadow-sm">
         <div className="flex items-center gap-2 text-lg font-semibold">
-          <FaArrowLeft />
+         <button onClick={() => navigate(-1)} className="text-black p-1 border-2 rounded-4xl">
+                        <FaArrowLeft />
+                      </button>
+        
           <span>New Loan Application</span>
         </div>
       </div>

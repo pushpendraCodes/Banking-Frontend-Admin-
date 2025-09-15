@@ -35,32 +35,34 @@ const [transactions, setTransactions] = useState([]);
     return <p className="text-red-500">Error: {error}</p>;
   }
  console.log(transactions.data,",,.resultData")
-  return (
-    <div className="bg-[#fef7ef]  sm:p-6 rounded-lg shadow-md">
-      <h2 className="text-xl sm:text-2xl font-semibold mb-4">Withdrawal History</h2>
+  return (<>
+  
+      <h2 className="bg-[#fef7ef]  px-3 text-xl sm:text-2xl font-semibold mb-4">Withdrawal History</h2>
+    <div className="bg-[#fef7ef]  sm:p-6 rounded-lg ">
 
       {/* Responsive table wrapper */}
       <div className="overflow-x-auto">
         <table className="min-w-full border text-sm">
           <thead>
             <tr className="bg-gray-200 text-left">
-              <th className="p-2 border whitespace-nowrap">Sr.</th>
+              <th className="p-2 border whitespace-nowrap">Transaction ID</th>
               <th className="p-2 border whitespace-nowrap">Customer Name</th>
-              <th className="p-2 border whitespace-nowrap">Agent Name</th>
               <th className="p-2 border whitespace-nowrap">Amount</th>
-              <th className="p-2 border whitespace-nowrap">Payment Mode</th>
-              <th className="p-2 border whitespace-nowrap">Action</th>
+              <th className="p-2 border whitespace-nowrap">Reason</th>
+              <th className="p-2 border whitespace-nowrap">Time</th>
+              <th className="p-2 border whitespace-nowrap">Status</th>
             </tr>
           </thead>
           <tbody>
-            {transactions.data.map((data, index) => (
+            {transactions?.data.map((data, index) => (
               <tr key={index} className="odd:bg-white even:bg-yellow-50">
                 <td className="p-2 border">{index+1}</td>
-                <td className="p-2 border">{data.customerId.name}</td>
-                <td className="p-2 border">{data.collectedByAgentId.name}</td>
+                <td className="p-2 border">{data?.customerId?.name}</td>
                 <td className="p-2 border">{data.amount}</td>
-                <td className="p-2 border text-green-600">{data.paymentMethod}</td>
-                <td className="p-2 border">
+                <td className="p-2 border">{data.transactionType}</td>
+                <td className="p-2 border">{data.transactionDate}</td>
+                <td className="p-2 border text-green-600">{data.status}</td>
+                {/* <td className="p-2 border">
                   <div className="flex gap-2">
                     <Link
                       to={index === 0 ? "/payments-history/1" : "/managers/view-edit/1"}
@@ -70,7 +72,7 @@ const [transactions, setTransactions] = useState([]);
                       <FaEye size={14} />
                     </Link>
                   </div>
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>
@@ -91,5 +93,7 @@ const [transactions, setTransactions] = useState([]);
         </div>
       </div>
     </div>
+  </>
+
   );
 }

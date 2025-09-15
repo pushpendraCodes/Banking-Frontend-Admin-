@@ -12,7 +12,7 @@ const ViewPayment = () => {
           <button onClick={()=>navigate(-1)} className="text-black p-1 border-2 rounded-4xl ">
             <FaArrowLeft />
           </button>
-          <h2 className="text-lg font-semibold">View Payment History</h2>
+          <h2 className="text-lg font-semibold">View History</h2>
         </div>
         {/* <button className="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-5 py-2 rounded">
           Save
@@ -20,10 +20,10 @@ const ViewPayment = () => {
       </div>
 
       {/* Form */}
-      <div className="bg-yellow-50 p-6 mt-6 rounded shadow-sm max-w-3xl">
-        <form className="space-y-4">
+      <div className=" flex justify-center bg-[#fefaf5] p-6 mt-6 rounded ">
+        <form className="space-y-4 w-100">
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Name</label>
+            <label className="w-40 font-medium text-sm">Costomer Name</label>
             <input
               type="text"
               defaultValue="John Doe"
@@ -32,7 +32,7 @@ const ViewPayment = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Email Address</label>
+            <label className="w-40 font-medium text-sm">Agent Name</label>
             <input
               type="email"
               defaultValue="JohnDoe@example.com"
@@ -41,7 +41,7 @@ const ViewPayment = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Contact No.</label>
+            <label className="w-40 font-medium text-sm">Amount</label>
             <input
               type="text"
               defaultValue="98765 43210"
@@ -50,7 +50,7 @@ const ViewPayment = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Address</label>
+            <label className="w-40 font-medium text-sm">Payment Mode</label>
             <input
               type="text"
               defaultValue="123, Elm Street, New Delhi, India"
@@ -59,7 +59,7 @@ const ViewPayment = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Scheme</label>
+            <label className="w-40 font-medium text-sm">Transaction No.</label>
             <input
               type="text"
               defaultValue="FD"
@@ -68,7 +68,7 @@ const ViewPayment = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Amount</label>
+            <label className="w-40 font-medium text-sm">Date</label>
             <input
               type="text"
               defaultValue="₹1500"
@@ -77,7 +77,7 @@ const ViewPayment = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Duration</label>
+            <label className="w-40 font-medium text-sm">Time</label>
             <input
               type="text"
               defaultValue="2 Years"
@@ -86,7 +86,7 @@ const ViewPayment = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Pending</label>
+            <label className="w-40 font-medium text-sm">Tenure</label>
             <input
               type="text"
               defaultValue="6 Days"

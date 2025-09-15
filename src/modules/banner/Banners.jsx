@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaEye, FaTrash } from "react-icons/fa";
+import { FaEye, FaTrash, FaPen } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 export default function Banners() {
@@ -35,7 +35,7 @@ export default function Banners() {
   return (
     <div className="">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Website Banner Management</h2>
+        <h2 className="text-xl font-bold">Website Banner</h2>
         <Link
           to="/banner/add"
           className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded"
@@ -48,8 +48,9 @@ export default function Banners() {
         <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100 text-gray-700">
             <tr>
-              <th className="px-4 py-2 border">Serial No.</th>
+              <th className="px-4 py-2 border">SR. No.</th>
               <th className="px-4 py-2 border">Banner Image</th>
+              <th className="px-4 py-2 border">Banner Type</th>
               <th className="px-4 py-2 border">Action</th>
             </tr>
           </thead>
@@ -67,6 +68,9 @@ export default function Banners() {
                       className="w-32 h-16 object-cover rounded"
                     />
                   </td>
+                   <td className="px-4 py-2 border">
+                    {banner.type || "N/A"}
+                  </td>
                   <td className="px-4 py-2 border">
                     <div className="flex gap-2">
                       <Link
@@ -74,7 +78,7 @@ export default function Banners() {
                         to={`/banner/update/${adminId || idx}`}
                         className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
                       >
-                        <FaEye size={14} />
+                        <FaPen size={14} />
                       </Link>
                       <button className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded">
                         <FaTrash size={14} />

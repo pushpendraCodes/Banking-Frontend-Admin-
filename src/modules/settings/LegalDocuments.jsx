@@ -1,3 +1,4 @@
+import React from 'react'
 import { FaArrowLeft, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -14,19 +15,18 @@ const applications = [
     image: "/path/to/gold-loan.jpg",
   },
 ];
-
-export default function ApplicationsList() {
+function LegalDocuments() {
         const navigate = useNavigate();
-  
+
   return (<>
    <div className="bg-[#fef7ef] flex items-center gap-2 mb-4 p-2 rounded">
                       <button onClick={() => navigate(-1)} className="text-black p-1 border-2 rounded-4xl">
                         <FaArrowLeft />
                       </button>
-                      <h2 className="text-2xl font-bold ">Loan Application</h2>
-                       <Link to="/settings/forms/add/loan"
+                      <h2 className="text-2xl font-bold ">Legal Documents</h2>
+                       <Link to="/settings/forms/legal/add"
                       className="bg-yellow-400 hover:bg-yellow-500 text-white font-semibold px-4 py-2 rounded w-full sm:w-auto text-center ml-auto">
-                      Add New Application
+                      Add New Documents
                     </Link>
     </div>
     <div className=" bg-white min-h-screen">
@@ -56,6 +56,8 @@ export default function ApplicationsList() {
       </div>
     </div>
   </>
-
-  );
+    
+  )
 }
+
+export default LegalDocuments
