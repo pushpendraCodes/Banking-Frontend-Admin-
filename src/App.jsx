@@ -31,7 +31,7 @@ import LegalDocumentsAdd from './modules/settings/LegalDocumentsAdd';
 import ProfilePage from './modules/settings/ProfilePage';
 import ViewDetails from './modules/coustomer/ViewDetails';
 import PaymentDetails from './modules/coustomer/PaymentDetails';
-import ViewAgent from './modules/agent/viewAgent';
+import ViewAgent from './modules/agent/ViewAgent';
 import ViewManager from './modules/manager/ViewManager';
 
 function App() {
