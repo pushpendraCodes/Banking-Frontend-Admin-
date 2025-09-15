@@ -21,7 +21,7 @@ export default function AgentList() {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${apiAgentUrl}${query ? `?search=${query}` : ""}`
+        `${apiAgentUrl}${query ? `?name=${query}` : ""}`
       );
       if (response.data?.data) {
         setData(response.data.data);

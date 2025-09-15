@@ -11,6 +11,7 @@ const AddCustomer = () => {
     name: "",
     email: "",
     contact: "",
+    password: "",
     address: "",
     gender: "",
     password: "",

@@ -1,6 +1,7 @@
+// src/pages/Login.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../api/api"; // centralized axios instance
 import { apiAdminLoginUrl } from "../../api/apiRoutes";
 
 function Login() {
@@ -16,10 +17,7 @@ function Login() {
     setLoading(true); // ✅ start loading
 
     try {
-      const response = await axios.post(`${apiAdminLoginUrl}`, {
-        email,
-        password,
-      });
+      const response = await api.post(apiAdminLoginUrl, { email, password });
 
       if (response.data.success) {
         localStorage.setItem("token", response.data.token);

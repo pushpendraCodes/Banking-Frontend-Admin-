@@ -1,11 +1,10 @@
-import axios from "axios";
+// import api from "../api"; // centralized axios instance
+import api from "./api";
 import { apiDepositUrl, apiWithdrawalUrl } from "./apiRoutes";
-
-// const BASE_URL = apiWithdrawalUrl;
 
 export const WithdrawalHistoryData = async () => {
   try {
-    const response = await axios.get(apiWithdrawalUrl);
+    const response = await api.get(apiWithdrawalUrl); // api instance use kiya
     return {
       success: true,
       data: response.data,
@@ -25,39 +24,20 @@ export const WithdrawalHistoryData = async () => {
 
 export const PaymentHistoryData = async () => {
   try {
-    const response = await axios.get(apiDepositUrl);
+    const response = await api.get(apiDepositUrl); // api instance use kiya
     return {
       success: true,
       data: response.data,
     };
   } catch (error) {
-    console.error("Error fetching withdrawal history:", error);
+    console.error("Error fetching payment history:", error);
 
     return {
       success: false,
       message:
         error.response?.data?.message ||
         error.message ||
-        "Something went wrong while fetching withdrawal history",
+        "Something went wrong while fetching payment history",
     };
   }
 };
-
-
- // src/api.js
-// import axios from "axios";
-
-// const api = axios.create({
-//   baseURL: "http://localhost:8000/api", // अपना base URL डालो
-// });
-
-// // हर request के साथ token भेजेगा
-// api.interceptors.request.use((config) => {
-//   const token = localStorage.getItem("token");
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
-
-// export default api;

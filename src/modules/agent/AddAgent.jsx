@@ -13,11 +13,11 @@ const AddAgent = () => {
     email: "",
     contact: "",
     address: "",
-    education: "",
-    alternateNumber: "",
     password: "",
     gender: "",
     managerId: "",
+    // education: "",
+    // alternateNumber: "",
   });
 
   // ✅ Managers list fetch
