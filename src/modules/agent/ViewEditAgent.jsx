@@ -2,35 +2,31 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { apiAgentUrl } from "../../api/apiRoutes";
+import { apiAgentUrl, apiManagerUrl } from "../../api/apiRoutes";
 
 const ViewEditAgent = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // ✅get  agent id form URL  
+  const { id } = useParams(); // ✅ get agent id from URL
 
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
     contact: "",
+    email: "",
+    gender: "",
     address: "",
     password: "",
-    gender: "",
     managerId: "",
   });
 
   const [loading, setLoading] = useState(true);
+  const [managers, setManagers] = useState([]); // ✅ manager list
 
-  // 🔹 Agent Data Fetch
+  // 🔹 Fetch agent data
   useEffect(() => {
     axios
       .get(`${apiAgentUrl}/${id}`)
       .then((res) => {
-        console.log("Fetched Agent:", res.data);
-
-        // ✅  API response structure { success: true, data: {...} } है
         const agent = res.data.data || res.data;
-
-        // API  data prefill
         setFormData({
           name: agent.name || "",
           email: agent.email || "",
@@ -48,7 +44,19 @@ const ViewEditAgent = () => {
       .finally(() => setLoading(false));
   }, [id]);
 
-  // 🔹 Input change handler
+  // 🔹 Fetch managers list
+  useEffect(() => {
+    axios
+      .get(apiManagerUrl)
+      .then((res) => {
+        setManagers(res.data.data || res.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching managers:", err);
+      });
+  }, []);
+
+  // 🔹 Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -57,17 +65,26 @@ const ViewEditAgent = () => {
     }));
   };
 
-  // 🔹 Save (Edit API)
+  // 🔹 Save (PUT API)
   const handleSave = async () => {
     try {
-      await axios.put(
-        `${apiAgentUrl}/${id}`,
-        formData
-      );
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        contact: formData.contact,
+        address: formData.address,
+        gender: formData.gender,
+        password: formData.password,
+        managerId: formData.managerId,
+      };
+
+      console.log("Sending payload:", payload);
+
+      await axios.put(`${apiAgentUrl}/${id}`, payload);
       alert("Agent updated successfully ✅");
-      navigate(-1); // back to list
+      navigate(-1);
     } catch (error) {
-      console.error("Update Error:", error);
+      console.error("Update Error:", error.response?.data || error.message);
       alert("Failed to update agent ❌");
     }
   };
@@ -75,11 +92,14 @@ const ViewEditAgent = () => {
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
 
   return (
-    <div className="">
+    <div>
       {/* Header */}
       <div className="flex items-center justify-between bg-[#fefaf5] p-4 rounded">
         <div className="flex items-center gap-2">
-          <button onClick={() => navigate(-1)} className="text-black p-1 border-2 rounded-4xl">
+          <button
+            onClick={() => navigate(-1)}
+            className="text-black p-1 border-2 rounded-4xl"
+          >
             <FaArrowLeft />
           </button>
           <h2 className="text-lg font-semibold">View/Edit Agent</h2>
@@ -95,6 +115,7 @@ const ViewEditAgent = () => {
       {/* Form */}
       <div className="bg-yellow-50 p-6 mt-6 rounded shadow-sm max-w-3xl">
         <form className="space-y-4">
+          {/* Agent Name */}
           <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Agent Name</label>
             <input
@@ -106,6 +127,7 @@ const ViewEditAgent = () => {
             />
           </div>
 
+          {/* Email */}
           <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Email Address</label>
             <input
@@ -117,6 +139,7 @@ const ViewEditAgent = () => {
             />
           </div>
 
+          {/* Contact */}
           <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Contact No.</label>
             <input
@@ -128,6 +151,7 @@ const ViewEditAgent = () => {
             />
           </div>
 
+          {/* Address */}
           <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Address</label>
             <input
@@ -139,6 +163,7 @@ const ViewEditAgent = () => {
             />
           </div>
 
+          {/* Gender */}
           <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Gender</label>
             <input
@@ -150,17 +175,25 @@ const ViewEditAgent = () => {
             />
           </div>
 
+          {/* ✅ Manager Dropdown */}
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">ManagerId</label>
-            <input
-              type="text"
+            <label className="w-40 font-medium text-sm">Manager</label>
+            <select
               name="managerId"
               value={formData.managerId}
               onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
-            />
+            >
+              <option value="">-- Select Manager --</option>
+              {managers.map((mng) => (
+                <option key={mng._id} value={mng._id}>
+                  {mng.name}
+                </option>
+              ))}
+            </select>
           </div>
 
+          {/* Password */}
           <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Password</label>
             <input
