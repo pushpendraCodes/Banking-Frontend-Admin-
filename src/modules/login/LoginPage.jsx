@@ -1,6 +1,7 @@
+// src/pages/Login.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../api/api"; // centralized axios instance
 import { apiAdminLoginUrl } from "../../api/apiRoutes";
 
 function Login() {
@@ -10,32 +11,29 @@ function Login() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
     setError("");
 
     try {
-      const response = await axios.post(`${apiAdminLoginUrl}`, {
-        email,
-        password,
-      });
+      const response = await api.post(apiAdminLoginUrl, { email, password });
 
       if (response.data.success) {
-        // 🟢 token save karna
+        // 🟢 token save
         localStorage.setItem("token", response.data.token);
 
-        // 🟢 user data save karna (agar API se user ka data aa raha hai)
+        // 🟢 user data save (agar aa raha hai)
         if (response.data.data) {
           localStorage.setItem("user", JSON.stringify(response.data.data));
         }
 
-        // dashboard par redirect
+        // redirect to dashboard
         navigate("/");
       } else {
         setError("Invalid credentials!");
       }
     } catch (err) {
       setError("Login failed. Please try again.");
-      console.error(err);
+      console.error("Login error:", err);
     }
   };
 

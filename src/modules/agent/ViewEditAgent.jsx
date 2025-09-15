@@ -13,9 +13,9 @@ const ViewEditAgent = () => {
     email: "",
     contact: "",
     address: "",
-    education: "",
-    alternateNumber: "",
     password: "",
+    gender: "",
+    managerId: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -36,8 +36,8 @@ const ViewEditAgent = () => {
           email: agent.email || "",
           contact: agent.contact || "",
           address: agent.address || "",
-          education: agent.education || "",
-          alternateNumber: agent.alternateNumber || "",
+          gender: agent.gender || "",
+          managerId: agent.managerId || "",
           password: agent.password || "",
         });
       })
@@ -140,22 +140,22 @@ const ViewEditAgent = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Education</label>
+            <label className="w-40 font-medium text-sm">Gender</label>
             <input
               type="text"
-              name="education"
-              value={formData.education}
+              name="gender"
+              value={formData.gender}
               onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
             />
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Alternate No.</label>
+            <label className="w-40 font-medium text-sm">ManagerId</label>
             <input
               type="text"
-              name="alternateNumber"
-              value={formData.alternateNumber}
+              name="managerId"
+              value={formData.managerId}
               onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
             />

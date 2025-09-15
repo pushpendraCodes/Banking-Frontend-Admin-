@@ -141,13 +141,14 @@ export default function ManagerList() {
                         to={`/managers/view/${cust._id}`}
                         className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
                       >
-                        <FaPen size={14} />
+                        <FaEye size={14} />
+                      
                       </Link>
                        <Link
                         to={`/managers/view-edit/${cust._id}`}
                         className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
                       >
-                        <FaEye size={14} />
+                         <FaPen size={14} />
                       </Link>
                         <button
                               onClick={() => {

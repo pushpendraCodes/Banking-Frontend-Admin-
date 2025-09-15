@@ -11,7 +11,7 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const navItems = [
   { name: "Customer", icon: <FaUser />, path: "/coustomers" },
@@ -22,11 +22,19 @@ const navItems = [
   { name: "Website Gallery", icon: <FaImages />, path: "/gallary" },
   { name: "Website Banner", icon: <FaImages />, path: "/banners" },
   { name: "Website Settings", icon: <FaCog />, path: "/settings" },
-  { name: "Logout", icon: <FaSignOutAlt />, path: "/" },
+  { name: "Logout", icon: <FaSignOutAlt />, path: "/logout" }, // logout handle karenge
 ];
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  // 🔴 Logout Function
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login"); // logout ke baad login page par bhejenge
+  };
 
   return (
     <>
@@ -45,23 +53,34 @@ const Sidebar = () => {
         } lg:translate-x-0 lg:static lg:block`}
       >
         <nav className="flex flex-col space-y-3 mt-12 lg:mt-0">
-          {navItems.map((item, i) => (
-            <NavLink
-              key={i}
-              to={item.path}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-2 text-sm font-semibold border rounded-md transition ${
-                  isActive
-                    ? "bg-red-600 text-white"
-                    : "text-red-600 border-red-300 hover:bg-red-50"
-                }`
-              }
-              onClick={() => setIsOpen(false)} // close on mobile after click
-            >
-              {item.icon}
-              {item.name}
-            </NavLink>
-          ))}
+          {navItems.map((item, i) =>
+            item.name === "Logout" ? (
+              <button
+                key={i}
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-4 py-2 text-sm font-semibold border rounded-md text-red-600 border-red-300 hover:bg-red-50"
+              >
+                {item.icon}
+                {item.name}
+              </button>
+            ) : (
+              <NavLink
+                key={i}
+                to={item.path}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-2 text-sm font-semibold border rounded-md transition ${
+                    isActive
+                      ? "bg-red-600 text-white"
+                      : "text-red-600 border-red-300 hover:bg-red-50"
+                  }`
+                }
+                onClick={() => setIsOpen(false)} // close on mobile after click
+              >
+                {item.icon}
+                {item.name}
+              </NavLink>
+            )
+          )}
         </nav>
       </aside>
     </>
