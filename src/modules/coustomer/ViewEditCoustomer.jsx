@@ -36,7 +36,7 @@ const ViewEditCustomer = () => {
           address: customer.address || "",
           agentId: customer.agentId._id,
           gender: customer.gender || "",
-          // password: customer.password || "",
+          password:  "",
         });
       } catch (err) {
         console.error("Error fetching customer:", err);

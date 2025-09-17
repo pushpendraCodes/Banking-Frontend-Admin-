@@ -9,16 +9,18 @@ export default function ManagerList() {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState(""); // ✅ search state
+  const [search, setSearch] = useState(""); 
+  const [page, setPage] = useState(1); // ✅ current page
+  const [limit] = useState(10); // ✅ rows per page
 
-    // ✅ Delete popup ke liye state
-   const [showDeleteModal, setShowDeleteModal] = useState(false);
-   const [deleteId, setDeleteId] = useState(null);
-  // ✅ Fetch managers
-  const fetchManagers = async (query = "") => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  // ✅ Fetch managers with search + pagination
+  const fetchManagers = async (query = "", pageNum = 1) => {
     try {
       const response = await axios.get(
-        `${apiManagerUrl}${query ? `?search=${query}` : ""}`
+        `${apiManagerUrl}?search=${query}&page=${pageNum}&limit=${limit}`
       );
       setData(response.data);
     } catch (err) {
@@ -30,28 +32,26 @@ export default function ManagerList() {
   };
 
   useEffect(() => {
-    fetchManagers();
-  }, []);
+    fetchManagers(search, page);
+  }, [page ,search ,limit]); // when page changes, fetch again
 
-  // ✅ Delete manager by ID
   const handleDelete = async () => {
-  try {
-    await axios.delete(`${apiManagerUrl}/${deleteId}`);
-    alert("Manager deleted successfully ✅");
-    fetchManagers(search); // refresh after delete
-    setShowDeleteModal(false);
-    setDeleteId(null);
-  } catch (err) {
-    console.error("Delete Error:", err);
-    alert("Failed to delete manager ❌");
-  }
-};
+    try {
+      await axios.delete(`${apiManagerUrl}/${deleteId}`);
+      alert("Manager deleted successfully ✅");
+      fetchManagers(search, page);
+      setShowDeleteModal(false);
+      setDeleteId(null);
+    } catch (err) {
+      console.error("Delete Error:", err);
+      alert("Failed to delete manager ❌");
+    }
+  };
 
-
-  // ✅ Handle search submit
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchManagers(search);
+    setPage(1); // reset to page 1 on search
+    fetchManagers(search, 1);
   };
 
   if (loading) {
@@ -79,33 +79,15 @@ export default function ManagerList() {
       </div>
 
       {/* 🔍 Search */}
-      <form
-        onSubmit={handleSearch}
-        className="flex justify-between gap-1 items-center mb-4"
-      >
-        <label className="text-sm font-medium mr-2">Search:</label>
+      <form onSubmit={handleSearch} className="flex items-center mb-4 gap-2">
+        <label className="text-sm font-medium">Search:</label>
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Manager name"
-          className="border border-gray-400 px-3 py-1 rounded w-64 mr-auto"
+          className="border border-gray-400 px-3 py-1 rounded w-64"
         />
-        {/* <button
-          type="submit"
-          className=" ml-auto flex items-center gap-1 text-sm border border-yellow-400 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-100"
-        >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path d="M4 6h16M4 12h16M4 18h7" />
-          </svg>
-          <span className="hidden md:block">Search</span>
-        </button> */}
       </form>
 
       {/* 📋 Table */}
@@ -113,7 +95,7 @@ export default function ManagerList() {
         <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100 text-gray-700">
             <tr>
-              <th className="px-4 py-2 border">Manager ID.</th>
+              <th className="px-4 py-2 border">Sr.</th>
               <th className="px-4 py-2 border">Manager Name</th>
               <th className="px-4 py-2 border">Email Address</th>
               <th className="px-4 py-2 border">Contact No.</th>
@@ -122,14 +104,11 @@ export default function ManagerList() {
             </tr>
           </thead>
           <tbody>
-            {data.data.length > 0 ? (
+            {data?.data?.length > 0 ? (
               data.data.map((cust, idx) => (
-                <tr
-                  key={cust._id}
-                  className="odd:bg-white even:bg-yellow-50"
-                >
+                <tr key={cust._id} className="odd:bg-white even:bg-yellow-50">
                   <td className="px-4 py-2 border">
-                    {String(idx + 1).padStart(2, "0")}
+                    {(page - 1) * limit + idx + 1}
                   </td>
                   <td className="px-4 py-2 border">{cust.name}</td>
                   <td className="px-4 py-2 border">{cust.email}</td>
@@ -142,33 +121,29 @@ export default function ManagerList() {
                         className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
                       >
                         <FaEye size={14} />
-                      
                       </Link>
-                       <Link
+                      <Link
                         to={`/managers/view-edit/${cust._id}`}
                         className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
                       >
-                         <FaPen size={14} />
+                        <FaPen size={14} />
                       </Link>
-                        <button
-                              onClick={() => {
-                                setDeleteId(cust._id);
-                                setShowDeleteModal(true);
-                              }}
-                              className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
-                            >
-                              <FaTrash size={14} />
-                            </button>
+                      <button
+                        onClick={() => {
+                          setDeleteId(cust._id);
+                          setShowDeleteModal(true);
+                        }}
+                        className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
+                      >
+                        <FaTrash size={14} />
+                      </button>
                     </div>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td
-                  colSpan="6"
-                  className="text-center text-gray-500 py-4"
-                >
+                <td colSpan="6" className="text-center text-gray-500 py-4">
                   No results found
                 </td>
               </tr>
@@ -176,13 +151,34 @@ export default function ManagerList() {
           </tbody>
         </table>
       </div>
-        {/* ✅ Delete Popup */}
-       <DeletePopup
+
+      {/* 📄 Pagination */}
+      <div className="flex justify-center items-center gap-4 mt-4">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((p) => Math.max(p - 1, 1))}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Prev
+        </button>
+        <span>
+          Page {page} of {data?.pagination?.totalPages || 1}
+        </span>
+        <button
+          disabled={page >= (data?.pagination?.totalPages || 1)}
+          onClick={() => setPage((p) => p + 1)}
+          className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+
+      {/* ✅ Delete Popup */}
+      <DeletePopup
         show={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         onDelete={handleDelete}
       />
-      
     </div>
   );
 }

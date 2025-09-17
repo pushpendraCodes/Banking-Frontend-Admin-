@@ -1,41 +1,65 @@
 import { useEffect, useState } from "react";
-import { FaEye, FaTrash, FaPen } from "react-icons/fa";
+import { FaTrash, FaPen } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
-export default function Banners() {
-  const [banners, setBanners] = useState([]);
-  const [adminId, setAdminId] = useState(null);
+export default function BannerList() {
+  const [admin, setAdmin] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  const adminId = JSON.parse(localStorage.getItem("user"))?._id;
+
+  // ✅ Fetch admin + banners
   useEffect(() => {
-    // localStorage से user data और token लेना
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      const parsedUser = JSON.parse(savedUser);
-
-      // अगर array है तो पहला element लो
-      if (Array.isArray(parsedUser)) {
-        setBanners(parsedUser[0]?.banners || []);
-        setAdminId(parsedUser[0]?._id || null); // ✅ admin id ले रहे हैं
-      } else {
-        setBanners(parsedUser.banners || []);
-        setAdminId(parsedUser?._id || null); // ✅ admin id ले रहे हैं
+    const fetchAdmin = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}admin/get`);
+        setAdmin(res.data.data);
+      } catch (err) {
+        console.error("Error fetching admin:", err);
+        setError("Failed to load banners");
+      } finally {
+        setLoading(false);
       }
-
-      console.log("User Data:", parsedUser);
-      console.log("Banners:", parsedUser.banners);
-    }
-
-    const token = localStorage.getItem("token");
-    console.log("Token:", token);
+    };
+    fetchAdmin();
   }, []);
 
-  console.log(banners, "aaa");
-  console.log("Admin ID:", adminId);
+  // ✅ Delete banner
+  const deleteBanner = async (bannerId) => {
+    if (!window.confirm("Are you sure you want to delete this banner?")) return;
+
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}admin/banner/delete/${bannerId}/${adminId}`
+      );
+
+      // Remove banner locally after deletion
+      setAdmin((prev) => ({
+        ...prev,
+        banners: prev.banners.filter((b) => b._id !== bannerId),
+      }));
+
+      alert("Banner deleted successfully ✅");
+    } catch (err) {
+      console.error("Error deleting banner:", err);
+      alert("Failed to delete banner ❌");
+    }
+  };
+
+  if (loading) return <p className="text-center py-4">Loading banners...</p>;
+  if (error) return <p className="text-center py-4 text-red-500">{error}</p>;
+
+  const banners = admin?.banners || [];
 
   return (
-    <div className="">
+    <div>
+      {/* Header */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Website Banner</h2>
+        <h2 className="text-xl font-bold">Website Banners</h2>
         <Link
           to="/banner/add"
           className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded"
@@ -44,6 +68,7 @@ export default function Banners() {
         </Link>
       </div>
 
+      {/* Table */}
       <div className="bg-white rounded shadow-sm overflow-x-auto">
         <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100 text-gray-700">
@@ -57,30 +82,28 @@ export default function Banners() {
           <tbody>
             {banners.length > 0 ? (
               banners.map((banner, idx) => (
-                <tr key={idx} className="odd:bg-white even:bg-yellow-50">
-                  <td className="px-4 py-2 border">
-                    {String(idx + 1).padStart(2, "0")}
-                  </td>
+                <tr key={banner._id} className="odd:bg-white even:bg-yellow-50">
+                  <td className="px-4 py-2 border">{String(idx + 1).padStart(2, "0")}</td>
                   <td className="px-4 py-2 border">
                     <img
-                      src={banner.imageUrl || banner.image || "/placeholder.jpg"}
+                      src={banner.imageUrl || "/placeholder.jpg"}
                       alt="banner"
                       className="w-32 h-16 object-cover rounded"
                     />
                   </td>
-                   <td className="px-4 py-2 border">
-                    {banner.type || "N/A"}
-                  </td>
+                  <td className="px-4 py-2 border">{banner.type || "N/A"}</td>
                   <td className="px-4 py-2 border">
                     <div className="flex gap-2">
                       <Link
-                        // ✅ अब adminId और bannerId दोनों URL में जाएंगे
-                        to={`/banner/update/${adminId || idx}`}
+                        to={`/banner/update/${adminId}/${banner._id}`}
                         className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
                       >
                         <FaPen size={14} />
                       </Link>
-                      <button className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded">
+                      <button
+                        onClick={() => deleteBanner(banner._id)}
+                        className="bg-red-500 hover:bg-red-600 text-white p-2 rounded"
+                      >
                         <FaTrash size={14} />
                       </button>
                     </div>
@@ -90,27 +113,12 @@ export default function Banners() {
             ) : (
               <tr>
                 <td colSpan="4" className="text-center py-4 text-gray-500">
-                  No Banners Found
+                  No banners found
                 </td>
               </tr>
             )}
           </tbody>
         </table>
-      </div>
-
-      <div className="flex justify-between items-center mt-4 text-sm text-gray-600">
-        <div>
-          Showing 1 to {banners.length} of {banners.length} Entries
-        </div>
-        <div className="flex gap-2">
-          <button className="border border-red-400 text-red-500 px-3 py-1 rounded hover:bg-red-50">
-            Previous
-          </button>
-          <button className="bg-red-500 text-white px-3 py-1 rounded">1</button>
-          <button className="border border-red-400 text-red-500 px-3 py-1 rounded hover:bg-red-50">
-            Next
-          </button>
-        </div>
       </div>
     </div>
   );

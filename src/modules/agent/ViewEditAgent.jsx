@@ -1,4 +1,4 @@
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -20,6 +20,7 @@ const ViewEditAgent = () => {
 
   const [loading, setLoading] = useState(true);
   const [managers, setManagers] = useState([]); // ✅ manager list
+  const [showPassword, setShowPassword] = useState(false); // ✅ toggle state
 
   // 🔹 Fetch agent data
   useEffect(() => {
@@ -33,8 +34,8 @@ const ViewEditAgent = () => {
           contact: agent.contact || "",
           address: agent.address || "",
           gender: agent.gender || "",
-          managerId: agent.managerId || "",
-          password: agent.password || "",
+          managerId: agent.managerId?._id || "",
+          password: "",
         });
       })
       .catch((err) => {
@@ -74,9 +75,12 @@ const ViewEditAgent = () => {
         contact: formData.contact,
         address: formData.address,
         gender: formData.gender,
-        password: formData.password,
         managerId: formData.managerId,
       };
+
+      if (formData.password !== "") {
+        payload.password = formData.password;
+      }
 
       console.log("Sending payload:", payload);
 
@@ -163,16 +167,20 @@ const ViewEditAgent = () => {
             />
           </div>
 
-          {/* Gender */}
+          {/* ✅ Gender Dropdown */}
           <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Gender</label>
-            <input
-              type="text"
+            <select
               name="gender"
               value={formData.gender}
               onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
-            />
+            >
+              <option value="">-- Select Gender --</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
 
           {/* ✅ Manager Dropdown */}
@@ -193,16 +201,23 @@ const ViewEditAgent = () => {
             </select>
           </div>
 
-          {/* Password */}
-          <div className="flex items-center">
+          {/* ✅ Password with eye toggle */}
+          <div className="flex items-center relative">
             <label className="w-40 font-medium text-sm">Password</label>
             <input
-              type="text"
+              type={showPassword ? "text" : "password"}
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
+              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100 pr-10"
+              placeholder="Enter new password"
             />
+            <span
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 cursor-pointer text-gray-500"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
           </div>
         </form>
       </div>

@@ -1,6 +1,6 @@
 import React from "react";
 
-function DeletePopup({ show, onClose, onDelete }) {
+function DeletePopup({ show, onClose, onDelete ,user= "coustomer" }) {
   if (!show) return null;
 
   return (
@@ -12,7 +12,7 @@ function DeletePopup({ show, onClose, onDelete }) {
         <div className="absolute -top-1 right-0.5 w-9 h-9 bg-[#fffaf4] rounded-tr-2xl rotate-45"></div>
 
         {/* Heading */}
-        <h3 className="text-2xl font-semibold mb-8">Delete this Customer ?</h3>
+        <h3 className="text-2xl font-semibold mb-8">Delete this {user}</h3>
 
         {/* Buttons */}
         <div className="flex justify-center gap-6">

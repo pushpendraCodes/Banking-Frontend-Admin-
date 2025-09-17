@@ -39,102 +39,107 @@ function App() {
     <Router>
       <Routes>
         {/* Wrap all admin pages inside Layout */}
-         <Route path="/login" element={<Layout>
-              <LoginPage />
-            </Layout>} />
-          <Route path="/" element={<Layout>
-              <CoustomerList />
-            </Layout>} />
-          <Route path="/coustomers" element={<Layout>
-              <CoustomerList />
-            </Layout>} />
-          <Route path="/managers" element={<Layout>
-              <ManagerList />
-            </Layout>} />
-          <Route path="/payments-history" element={<Layout>
-              <PaymentHistory />
-            </Layout>} />
-          <Route path="/withdrawalhistory" element={<Layout>
-              <WithdrawalHistory />
-            </Layout>} />
-          <Route path="/payments-history/:id" element={<Layout>
-              <ViewPayment />
-            </Layout>} />
-          <Route path="/managers/add" element={<Layout>
-              <AddManager />
-            </Layout>} />
-          <Route path="/managers/view-edit/:id" element={<Layout>
-              <ViewEditManager />
-            </Layout>} />
-            <Route path="/managers/view/:id" element={<Layout>
-              <ViewManager />
-            </Layout>} />
-          <Route path="/coustomers/add" element={<Layout>
-              <AddCustomer />
-            </Layout>} />
-          <Route path="/coustomers/View-Edit/:id" element={<Layout>
-              <ViewEditCoustomer />
-            </Layout>} />
-             <Route path="/coustomers/viewdetails/:id" element={<Layout>
-              <ViewDetails />
-            </Layout>} />
-             <Route path="/coustomers/paymentdetails/:id" element={<Layout>
-              <PaymentDetails />
-            </Layout>} />
-          <Route path="/agent" element={<Layout>
-              <AgentList />
-            </Layout>} />
-          <Route path="/gallary" element={<Layout>
-              <GalleryList />
-            </Layout>} />
-          <Route path="/banners" element={<Layout>
-              <Banners />
-            </Layout>} />
-          <Route path="/banner/add" element={<Layout>
-              <AddBanner />
-            </Layout>} />
-          <Route path="/banner/update/:id" element={<Layout>
-              <UpdateBanner />
-            </Layout>} />
-          <Route path="/gallary/add" element={<Layout>
-              <AddGallery />
-            </Layout>} />
-          <Route path="/gallary/update/:id" element={<Layout>
-              <UpdateGallery />
-            </Layout>} />
-          <Route path="/agent/add" element={<Layout>
-              <AddAgent />
-            </Layout>} />
-          <Route path="/agent/View-Edit/:id" element={<Layout>
-              <ViewEditAgent />
-            </Layout>} />
-            <Route path="/agent/view/:id" element={<Layout>
-              <ViewAgent />
-            </Layout>} />
-          <Route path="/settings" element={<Layout>
-              <Settings />
-            </Layout>} />
-          <Route path="/settings/forms/:type" element={<Layout>
-              <ApplicationsList />
-            </Layout>} />
-          <Route path="/settings/forms/add/:type" element={<Layout>
-              <AddApplicationForm />
-            </Layout>} />
-          <Route path="/settings/add-career" element={<Layout>
-              <AddCareer />
-            </Layout>} />
-          <Route path="/settings/recruitment" element={<Layout>
-              <CareerList />
-            </Layout>} />
-              <Route path="/settings/forms/legal" element={<Layout>
-              <LegalDocuments />
-            </Layout>} />
-              <Route path="/settings/forms/legal/add" element={<Layout>
-              <LegalDocumentsAdd />
-            </Layout>} />
-             <Route path="/settings/profilepage" element={<Layout>
-              <ProfilePage />
-            </Layout>} />
+        <Route path="/login" element={<Layout>
+          <LoginPage />
+        </Layout>} />
+        <Route path="/" element={<Layout>
+          <CoustomerList />
+        </Layout>} />
+        <Route path="/coustomers" element={<Layout>
+          <CoustomerList />
+        </Layout>} />
+        <Route path="/managers" element={<Layout>
+          <ManagerList />
+        </Layout>} />
+        <Route path="/payments-history" element={<Layout>
+          <PaymentHistory />
+        </Layout>} />
+        <Route path="/withdrawalhistory" element={<Layout>
+          <WithdrawalHistory />
+        </Layout>} />
+        <Route path="/payments-history/:id" element={<Layout>
+          <ViewPayment />
+        </Layout>} />
+        <Route path="/managers/add" element={<Layout>
+          <AddManager />
+        </Layout>} />
+        <Route path="/managers/view-edit/:id" element={<Layout>
+          <ViewEditManager />
+        </Layout>} />
+        <Route path="/managers/view/:id" element={<Layout>
+          <ViewManager />
+        </Layout>} />
+        <Route path="/coustomers/add" element={<Layout>
+          <AddCustomer />
+        </Layout>} />
+        <Route path="/coustomers/View-Edit/:id" element={<Layout>
+          <ViewEditCoustomer />
+        </Layout>} />
+        <Route path="/coustomers/viewdetails/:id" element={<Layout>
+          <ViewDetails />
+        </Layout>} />
+        <Route path="/coustomers/paymentdetails/:customerId/:schemeType" element={<Layout>
+          <PaymentDetails />
+        </Layout>} />
+        <Route path="/agent" element={<Layout>
+          <AgentList />
+        </Layout>} />
+        <Route path="/gallary" element={<Layout>
+          <GalleryList />
+        </Layout>} />
+        <Route path="/banners" element={<Layout>
+          <Banners />
+        </Layout>} />
+        <Route path="/banner/add" element={<Layout>
+          <AddBanner />
+        </Layout>} />
+        <Route path="/banner/update/:id/:itemId" element={<Layout>
+          <UpdateBanner />
+        </Layout>} />
+        <Route path="/gallary/add" element={<Layout>
+          <AddGallery />
+        </Layout>} />
+        <Route path="/gallary/update/:id/:itemId" element={<Layout>
+          <UpdateGallery />
+        </Layout>} />
+        <Route path="/agent/add" element={<Layout>
+          <AddAgent />
+        </Layout>} />
+        <Route path="/agent/View-Edit/:id" element={<Layout>
+          <ViewEditAgent />
+        </Layout>} />
+        <Route path="/agent/view/:id" element={<Layout>
+          <ViewAgent />
+        </Layout>} />
+        <Route path="/settings" element={<Layout>
+          <Settings />
+        </Layout>} />
+        <Route path="/settings/forms/:type" element={<Layout>
+          <ApplicationsList />
+        </Layout>} />
+        <Route path="/settings/forms/add/:type" element={<Layout>
+          <AddApplicationForm />
+        </Layout>} />
+        <Route path="/settings/add-career" element={<Layout>
+          <AddCareer />
+        </Layout>} />
+
+   <Route path="/settings/add-career/:itemId" element={<Layout>
+          <AddCareer />
+        </Layout>} />
+
+        <Route path="/settings/recruitment" element={<Layout>
+          <CareerList />
+        </Layout>} />
+        <Route path="/settings/forms/legal" element={<Layout>
+          <LegalDocuments />
+        </Layout>} />
+        <Route path="/settings/forms/legal/add" element={<Layout>
+          <LegalDocumentsAdd />
+        </Layout>} />
+        <Route path="/settings/profilepage" element={<Layout>
+          <ProfilePage />
+        </Layout>} />
 
         {/* Add other public routes here if needed */}
       </Routes>

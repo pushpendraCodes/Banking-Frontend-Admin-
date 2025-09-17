@@ -1,132 +1,130 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useParams } from "react-router-dom";
-import { apiAdminBannerUrl } from "../../api/apiRoutes";
 import { FaArrowLeft } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { apiAdminBannerUrl } from "../../api/apiRoutes";
+
 const UpdateBanner = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // yaha id = bannerId (na ki adminId)
-  const { register, handleSubmit, reset } = useForm();
+  const { id, itemId } = useParams(); // id = adminId, itemId = bannerId
+
+  const [type, setType] = useState("");
+  const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const [updatedData, setUpdatedData] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (data) => {
+  // Fetch banner data
+  useEffect(() => {
+    const fetchBanner = async () => {
+      try {
+        const res = await axios.get(`${apiAdminBannerUrl}/get/${itemId}`);
+        if (res.data) {
+          setType(res.data.data.type || "");
+          setImagePreview(res.data.data.imageUrl || null);
+        }
+      } catch (err) {
+        console.error("Error fetching banner:", err);
+        alert("Failed to load banner data");
+      }
+    };
+    fetchBanner();
+  }, [itemId]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!type) {
+      alert("Please enter banner type");
+      return;
+    }
+
     try {
       setLoading(true);
-      let imageUrl = "";
-
-      // CASE 1: direct URL
-      if (data.imageUrl && data.imageUrl.trim() !== "") {
-        imageUrl = data.imageUrl.trim();
-      }
-      // CASE 2: file upload
-      else if (data.image && data.image.length > 0) {
-        const file = data.image[0];
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "your-upload-preset"); 
-        formData.append("cloud_name", "your-cloud-name");
-
-        const uploadRes = await axios.post(
-          // "https://api.cloudinary.com/v1_1/your-cloud-name/image/upload",
-          `${apiAdminBannerUrl}/${id}`,
-          formData
-        );
-
-        imageUrl = uploadRes.data.secure_url;
-      } else {
-        alert("Please provide either an image file or an image URL!");
-        return;
+      const formData = new FormData();
+      formData.append("type", type);
+      if (imageFile) {
+        formData.append("bannerImage", imageFile); // normal file upload
       }
 
-      // STEP 2: call backend
-      const token = localStorage.getItem("token");
-      const res = await axios.post(
-        `${apiAdminBannerUrl}/${id}`,  // 🔥 banner ki ID use karo
+      await axios.put(
+        `${apiAdminBannerUrl}/update/${itemId}/${id}`,
+        formData,
         {
-          imageUrl: imageUrl,
-          isActive: true,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
 
-      setUpdatedData(res.data);
       alert("Banner updated successfully!");
-      reset();
-      setImagePreview(null);
-    } catch (error) {
-      console.error("Error updating banner:", error.response?.data || error);
-      alert("Something went wrong! Check console.");
+      navigate("/banners");
+    } catch (err) {
+      console.error("Error updating banner:", err.response?.data || err);
+      alert("Failed to update banner");
     } finally {
       setLoading(false);
     }
   };
 
-  return (<>
-<div className="bg-[#fef7ef] flex items-center gap-2 mb-4 p-2 rounded">
-                      <button onClick={() => navigate(-1)} className="text-black p-1 border-2 rounded-4xl">
-                        <FaArrowLeft />
-                      </button>
-                      <h2 className="text-2xl font-bold ">Website Banner</h2>
-       </div>
+  return (
+    <div className="max-w-5xl mx-auto mt-10 p-6 bg-white rounded shadow">
+      <div className="bg-[#fef7ef] flex items-center gap-2 mb-4 p-2 rounded">
+        <button
+          onClick={() => navigate(-1)}
+          className="text-black p-1 border-2 rounded-4xl"
+        >
+          <FaArrowLeft />
+        </button>
+        <h2 className="text-2xl font-bold">Update Website Banner</h2>
+      </div>
 
-{/* .......... */}
-    <div className="max-w-5xl mx-auto mt-10 p-6 " >
-      
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <label>Select Banner Type:</label>
-        <input
-          type="file"
-          accept="image/*"
-          {...register("image")}
-          onChange={(e) =>
-            setImagePreview(URL.createObjectURL(e.target.files[0]))
-          }
-           placeholder="Select"
-          className="block border px-1 py-2 mt-3 mb-5 rounded border-gray-200"
-        />
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="block text-sm font-medium">Banner Type</label>
+          <input
+            type="text"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            className="mt-1 border px-3 py-2 rounded w-full"
+            placeholder="Enter banner type"
+            disabled={loading}
+          />
+        </div>
 
-        <label>Bammer Image:</label>
-        <input
-          type="text"
-          placeholder="Choose file"
-          {...register("imageUrl")}
-         className="block mt-1 border px-1 py-2 mb-5 rounded"
-        />
+        <div className="mb-4">
+          <label className="block text-sm font-medium">Upload New Image</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            disabled={loading}
+            className="mt-1 border px-3 py-2 rounded w-full"
+          />
+        </div>
 
         {imagePreview && (
           <img
             src={imagePreview}
             alt="Preview"
-            width="200"
-            height="100"
-            style={{ marginBottom: "10px", objectFit: "cover" }}
+            className="mt-2 h-40 w-full object-cover rounded border"
           />
         )}
 
         <button
-         className="bg-yellow-400 py-1 px-9 rounded text-white hover:bg-yellow-500"
-         type="submit" 
-         disabled={loading}>
-          {loading ? "Uploading..." : "Upload"}
+          type="submit"
+          disabled={loading}
+          className={`bg-yellow-400 text-white px-9 py-2 rounded hover:bg-yellow-500 ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          {loading ? "Updating..." : "Update Banner"}
         </button>
       </form>
-
-      {updatedData && (
-        <div style={{ marginTop: "20px" }}>
-          <h3>Updated Banner Response:</h3>
-          <pre>{JSON.stringify(updatedData, null, 2)}</pre>
-        </div>
-      )}
     </div>
-  </>
   );
 };
 

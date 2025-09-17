@@ -68,24 +68,26 @@ function ViewManager() {
                 {manager.contact}
               </span>
             </div>
+              <div className="flex justify-between items-center mb-4">
+              <span className="font-medium">Alternate No. :</span>
+              <span className="bg-gray-100 p-1 rounded-sm w-60 block">
+                {manager.alternateNumber}
+              </span>
+            </div>
+             <div className="flex justify-between items-center mb-4">
+              <span className="font-medium">Education :</span>
+              <span className="bg-gray-100 p-1 rounded-sm w-60 block">
+                {manager.education}
+              </span>
+            </div>
             <div className="flex justify-between items-center mb-4">
               <span className="font-medium">Address :</span>
               <span className="bg-gray-100 p-1 rounded-sm w-60 block">
                 {manager.address}
               </span>
             </div>
-            <div className="flex justify-between items-center mb-4">
-              <span className="font-medium">Agent :</span>
-              <span className="bg-gray-100 p-1 rounded-sm w-60 block">
-                {manager.agent_name || "-"}
-              </span>
-            </div>
-            <div className="flex justify-between items-center mb-4">
-              <span className="font-medium">Manager :</span>
-              <span className="bg-gray-100 p-1 rounded-sm w-60 block">
-                {manager.manager_name || "-"}
-              </span>
-            </div>
+          
+           
           </div>
         </div>
       </div>

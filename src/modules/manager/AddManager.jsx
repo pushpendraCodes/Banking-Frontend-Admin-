@@ -17,8 +17,8 @@ const AddManager = () => {
     alternateNumber: "",
     password: "",
     gender: "Male",
-    branch: "689b122d06150f8387e11c14", // aap API me jo branch dena ho
-    bank: "Maa Anusaya Urban", // fix ya select option se
+    // branch: "689b122d06150f8387e11c14", // aap API me jo branch dena ho
+    // bank: "Maa Anusaya Urban", // fix ya select option se
   });
 
   // handle input change
@@ -64,10 +64,11 @@ const AddManager = () => {
       <div className="bg-yellow-50 p-6 mt-6 rounded shadow-sm max-w-3xl">
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Manager Name</label>
+            <label className="w-40 font-medium text-sm">Manager Name *</label>
             <input
               type="text"
               name="name"
+              required
               value={formData.name}
               onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
@@ -75,10 +76,11 @@ const AddManager = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Email Address</label>
+            <label className="w-40 font-medium text-sm">Email Address *</label>
             <input
               type="email"
               name="email"
+              required
               value={formData.email}
               onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
@@ -86,9 +88,10 @@ const AddManager = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Contact No.</label>
+            <label className="w-40 font-medium text-sm">Contact No. *</label>
             <input
               type="text"
+              required
               name="contact"
               value={formData.contact}
               onChange={handleChange}
@@ -97,10 +100,11 @@ const AddManager = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Address</label>
+            <label className="w-40 font-medium text-sm">Address *</label>
             <input
               type="text"
               name="address"
+              required
               value={formData.address}
               onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
@@ -108,10 +112,11 @@ const AddManager = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Education</label>
+            <label className="w-40 font-medium text-sm">Education *</label>
             <input
               type="text"
               name="education"
+              required
               value={formData.education}
               onChange={handleChange}
               className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
@@ -119,7 +124,7 @@ const AddManager = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Alternate No.</label>
+            <label className="w-40 font-medium text-sm">Alternate No. </label>
             <input
               type="text"
               name="alternateNumber"
@@ -130,9 +135,10 @@ const AddManager = () => {
           </div>
 
           <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Password</label>
+            <label className="w-40 font-medium text-sm">Password *</label>
             <input
               type="password"
+              required
               name="password"
               value={formData.password}
               onChange={handleChange}

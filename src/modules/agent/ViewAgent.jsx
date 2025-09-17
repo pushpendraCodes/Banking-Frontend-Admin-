@@ -76,7 +76,7 @@ function ViewAgent() {
             <div className="flex justify-between items-center mb-4 ">
               <span className="font-medium">Manager :</span>
               <span className="bg-gray-100 p-1 rounded-sm w-60 block">
-                {agent.managerName || "N/A"}
+                {agent.managerId?.name || "N/A"}
               </span>
             </div>
           </div>

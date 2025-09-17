@@ -130,17 +130,38 @@ function ViewDetails() {
                   <p className="text-gray-800 font-semibold">{customer?.agentId?.name || "Not Assigned"}</p>
                 </div>
               </div>
+              <div className="flex items-center p-4 bg-gray-50 rounded-lg">
+                <FaUserTie className="text-orange-500 mr-3" />
+                <div className="flex-1">
+                  <span className="text-sm font-medium text-gray-600">Saving Account Number</span>
+                  <p className="text-gray-800 font-semibold">{customer?.savingAccountNumber|| "Not Assigned"}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* FD Schemes Section */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-          <div className="flex items-center mb-6">
-            <div className="bg-green-100 p-3 rounded-full mr-4">
+          <div className="flex items-center justify-between mb-6">
+            <div className="bg-green-100 p-3 flex items-center gap-2 rounded-full mr-4">
               <FaPiggyBank className="text-green-600 text-2xl" />
+              <h3 className="text-2xl font-bold text-gray-800">Fixed Deposit Schemes</h3>
             </div>
-            <h3 className="text-2xl font-bold text-gray-800">Fixed Deposit Schemes</h3>
+
+
+
+          {customer?.fdSchemes?.length > 0 &&
+              <div>
+              <Link
+                to={`/coustomers/paymentdetails/${id}/FD`}
+                className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition duration-200"
+              >
+                Payment Details
+              </Link>
+
+            </div>
+          }
           </div>
 
           {customer?.fdSchemes?.length > 0 ? (
@@ -193,13 +214,12 @@ function ViewDetails() {
                       </div>
                       <div>
                         <span className="text-sm font-medium text-gray-600">Status</span>
-                        <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${
-                          fd.fdAccountStatus === 'Active'
+                        <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${fd.fdAccountStatus === 'Active'
                             ? 'bg-green-200 text-green-800'
                             : fd.fdAccountStatus === 'Matured'
-                            ? 'bg-blue-200 text-blue-800'
-                            : 'bg-red-200 text-red-800'
-                        }`}>
+                              ? 'bg-blue-200 text-blue-800'
+                              : 'bg-red-200 text-red-800'
+                          }`}>
                           {fd.fdAccountStatus}
                         </span>
                       </div>
@@ -219,11 +239,23 @@ function ViewDetails() {
 
         {/* RD Schemes Section */}
         <div className="bg-white rounded-2xl shadow-lg p-8">
-          <div className="flex items-center mb-6">
-            <div className="bg-purple-100 p-3 rounded-full mr-4">
+          <div className="flex items-center justify-between mb-6">
+            <div className="bg-purple-100 p-3 flex gap-3 items-center rounded-full mr-4">
               <FaChartLine className="text-purple-600 text-2xl" />
+              <h3 className="text-2xl font-bold text-gray-800">Recurring Deposit Schemes</h3>
             </div>
-            <h3 className="text-2xl font-bold text-gray-800">Recurring Deposit Schemes</h3>
+
+            {customer?.rdSchemes?.length > 0 &&
+              <div>
+              <Link
+                to={`/coustomers/paymentdetails/${id}/RD`}
+                className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition duration-200"
+              >
+                Payment Details
+              </Link>
+
+            </div>
+            }
           </div>
 
           {customer?.rdSchemes?.length > 0 ? (
@@ -278,7 +310,7 @@ function ViewDetails() {
                       <div>
                         <span className="text-sm font-medium text-gray-600">RD Tenure Type</span>
                         <p className="text-lg font-semibold text-gray-800">
-                          {rd.rdTenureType|| "N/A"}
+                          {rd.rdTenureType || "N/A"}
                         </p>
                       </div>
                     </div>
@@ -290,13 +322,12 @@ function ViewDetails() {
                       </div>
                       <div>
                         <span className="text-sm font-medium text-gray-600">Status</span>
-                        <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${
-                          rd.rdAccountStatus === 'Active'
+                        <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${rd.rdAccountStatus === 'Active'
                             ? 'bg-green-200 text-green-800'
                             : rd.rdAccountStatus === 'Matured'
-                            ? 'bg-blue-200 text-blue-800'
-                            : 'bg-red-200 text-red-800'
-                        }`}>
+                              ? 'bg-blue-200 text-blue-800'
+                              : 'bg-red-200 text-red-800'
+                          }`}>
                           {rd.rdAccountStatus}
                         </span>
                       </div>

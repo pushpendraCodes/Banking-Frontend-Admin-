@@ -1,4 +1,4 @@
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -8,6 +8,8 @@ const AddAgent = () => {
   const navigate = useNavigate();
 
   const [managers, setManagers] = useState([]);
+  const [showPassword, setShowPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,8 +18,6 @@ const AddAgent = () => {
     password: "",
     gender: "",
     managerId: "",
-    // education: "",
-    // alternateNumber: "",
   });
 
   // ✅ Managers list fetch
@@ -56,7 +56,10 @@ const AddAgent = () => {
       {/* Header */}
       <div className="flex items-center justify-between bg-[#fefaf5] p-4 rounded">
         <div className="flex items-center gap-2">
-          <button onClick={() => navigate(-1)} className="text-black p-1 border-2 rounded-4xl">
+          <button
+            onClick={() => navigate(-1)}
+            className="text-black p-1 border-2 rounded-4xl"
+          >
             <FaArrowLeft />
           </button>
           <h2 className="text-lg font-semibold">Add Agent</h2>
@@ -72,6 +75,7 @@ const AddAgent = () => {
       {/* Form */}
       <div className="flex justify-center bg-yellow-50 p-6 mt-6 rounded shadow-sm max-w-3xl">
         <form className="space-y-4 w-100" onSubmit={handleSubmit}>
+          {/* Name */}
           <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Agent Name</label>
             <input
@@ -83,6 +87,7 @@ const AddAgent = () => {
             />
           </div>
 
+          {/* Email */}
           <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Email Address</label>
             <input
@@ -94,6 +99,7 @@ const AddAgent = () => {
             />
           </div>
 
+          {/* Contact */}
           <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Contact No.</label>
             <input
@@ -105,6 +111,7 @@ const AddAgent = () => {
             />
           </div>
 
+          {/* Address */}
           <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Address</label>
             <input
@@ -116,41 +123,26 @@ const AddAgent = () => {
             />
           </div>
 
-          {/* <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Education</label>
-            <input
-              type="text"
-              name="education"
-              value={formData.education}
-              onChange={handleChange}
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-white"
-            />
-          </div> */}
-
-          {/* <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Alternate No</label>
-            <input
-              type="text"
-              name="alternateNumber"
-              value={formData.alternateNumber}
-              onChange={handleChange}
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-white"
-            />
-          </div> */}
-
-          <div className="flex items-center">
+          {/* Password with toggle */}
+          <div className="flex items-center relative">
             <label className="w-40 font-medium text-sm">Password</label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-white"
+              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-white pr-10"
             />
+            <span
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 cursor-pointer text-gray-500"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
           </div>
 
-          {/* ✅ Gender Dropdown */}
-          {/* <div className="flex items-center">
+          {/* Gender */}
+          <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Gender</label>
             <select
               name="gender"
@@ -161,10 +153,11 @@ const AddAgent = () => {
               <option value="">Select Gender</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
+              <option value="Other">Other</option>
             </select>
-          </div> */}
+          </div>
 
-          {/* ✅ Manager Dropdown */}
+          {/* Manager */}
           <div className="flex items-center">
             <label className="w-40 font-medium text-sm">Manager</label>
             <select

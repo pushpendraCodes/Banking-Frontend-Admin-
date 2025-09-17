@@ -4,29 +4,37 @@ import { FaEye, FaPen, FaTrash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { apiAgentUrl } from "../../api/apiRoutes";
 import DeletePopup from "../../component/DeletePopup";
-// import DeletePopup from "../../components/DeletePopup"; // ✅ path adjust karna hoga
 
 export default function AgentList() {
-  const [data, setData] = useState([]); 
+  const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
 
-  // ✅ Delete popup ke liye state
+  // search + pagination
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+
+  // delete modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
-  // 🔹 Fetch Data Function
-  const fetchData = async (query = "") => {
+  // fetch data
+  const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        `${apiAgentUrl}${query ? `?name=${query}` : ""}`
-      );
+      const response = await axios.get(apiAgentUrl, {
+        params: { search, page, limit },
+      });
+
       if (response.data?.data) {
         setData(response.data.data);
+        setTotalPages(response.data.pagination?.totalPages || 1);
+        setTotalItems(response.data.pagination?.totalItems || 0);
       } else {
-        setData(response.data);
+        setData([]);
       }
     } catch (err) {
       console.error("API Error:", err);
@@ -38,9 +46,9 @@ export default function AgentList() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [search, page, limit]);
 
-  // 🔹 Delete Function
+  // delete
   const handleDelete = async () => {
     try {
       await axios.delete(`${apiAgentUrl}/${deleteId}`);
@@ -55,19 +63,7 @@ export default function AgentList() {
     }
   };
 
-  // 🔹 Search Submit
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (search.trim() === "") {
-      fetchData();
-    } else {
-      fetchData(search);
-    }
-  };
 
-  if (loading) {
-    return <p className="text-center text-gray-500">Loading data...</p>;
-  }
 
   if (error) {
     return (
@@ -78,7 +74,7 @@ export default function AgentList() {
   }
 
   return (
-    <div className="">
+    <div>
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Agent Management</h2>
@@ -91,32 +87,25 @@ export default function AgentList() {
       </div>
 
       {/* Search */}
-      <form
-        onSubmit={handleSearch}
-        className="flex justify-between gap-1 items-center mb-4"
-      >
-        <label className="text-sm font-medium mr-2">Select Manager:</label>
+      <div className="flex justify-between items-center mb-4">
         <input
           type="text"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Agent name"
-          className="border border-gray-400 px-3 py-1 rounded w-64 mr-auto"
+          onChange={(e) => {
+            setPage(1); // reset page on new search
+            setSearch(e.target.value);
+          }}
+          placeholder="Search agent (name/contact)"
+          className="border border-gray-400 px-3 py-1 rounded w-64"
         />
-        {/* <button
-          type="submit"
-          className="ml-auto flex items-center gap-1 text-sm border border-yellow-400 text-yellow-600 px-3 py-1 rounded hover:bg-yellow-100"
-        >
-          <span className="hidden md:block">Search</span>
-        </button> */}
-      </form>
+      </div>
 
       {/* Table */}
       <div className="bg-white rounded shadow-sm overflow-x-auto">
         <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100 text-gray-700">
             <tr>
-              <th className="px-4 py-2 border">Agent ID</th>
+              <th className="px-4 py-2 border">Sr.</th>
               <th className="px-4 py-2 border">Agent Name</th>
               <th className="px-4 py-2 border">Email Address</th>
               <th className="px-4 py-2 border">Contact No.</th>
@@ -129,7 +118,7 @@ export default function AgentList() {
               data.map((cust, idx) => (
                 <tr key={cust._id} className="odd:bg-white even:bg-yellow-50">
                   <td className="px-4 py-2 border">
-                    A{String(idx + 1).padStart(1, "0")}
+                    {String((page - 1) * limit + idx + 1)}
                   </td>
                   <td className="px-4 py-2 border">{cust.name}</td>
                   <td className="px-4 py-2 border">{cust.email}</td>
@@ -143,7 +132,7 @@ export default function AgentList() {
                       >
                         <FaEye size={14} />
                       </Link>
-                       <Link
+                      <Link
                         to={`/agent/View-Edit/${cust._id}`}
                         className="bg-yellow-400 hover:bg-yellow-500 text-white p-2 rounded"
                       >
@@ -169,15 +158,42 @@ export default function AgentList() {
                 </td>
               </tr>
             )}
+{loading && <p className="text-center text-gray-500">Loading data...</p>}
           </tbody>
         </table>
       </div>
 
-      {/* ✅ Delete Popup */}
+      {/* Pagination */}
+      <div className="flex justify-between items-center mt-4">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((p) => p - 1)}
+          className={`px-3 py-1 border rounded ${
+            page === 1 ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          Prev
+        </button>
+        <span>
+          Page {page} of {totalPages} ({totalItems} agents)
+        </span>
+        <button
+          disabled={page === totalPages}
+          onClick={() => setPage((p) => p + 1)}
+          className={`px-3 py-1 border rounded ${
+            page === totalPages ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          Next
+        </button>
+      </div>
+
+      {/* Delete Popup */}
       <DeletePopup
         show={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
         onDelete={handleDelete}
+        user="Agent"
       />
     </div>
   );
