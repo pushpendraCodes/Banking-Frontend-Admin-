@@ -49,9 +49,22 @@ const navigate = useNavigate()
     <div className="sm:p-6 lg:p-8">
       {/* Header and Add Button */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h2 className="text-xl sm:text-2xl font-bold">
+
+        <div className="flex gap-2 items-center">
+           <button
+            onClick={()=>navigate(-1)}
+            className="flex items-center text-red-600 hover:text-red-700 mr-4"
+          >
+            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back
+          </button>
+           <h2 className="text-xl sm:text-2xl font-bold">
           Official Notification / Recruitment
         </h2>
+        </div>
+       
         <Link
           to="/settings/add-career"
           className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded text-sm sm:text-base"

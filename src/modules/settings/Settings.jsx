@@ -5,7 +5,9 @@ import { Link } from "react-router-dom";
 const settingsList = [
  { name:"Career" ,path:"/settings/recruitment"},
 {  name:"Loan Applications" ,path:"/settings/forms/loan" },
-{ name: "Legal Documents",path:"/settings/forms/legal" }
+{ name: "Legal Documents",path:"/settings/forms/legal" },
+{ name: "Schemes Documents",path:"/settings/forms/schemes" },
+{ name: "About us ",path:"/settings/aboutUs" },
 ];
 
 const Settings = () => {

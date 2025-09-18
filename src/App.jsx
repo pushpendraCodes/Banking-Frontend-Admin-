@@ -38,6 +38,10 @@ import ForgotOtpSend from "./modules/login/ForgotOtpSend";
 import VerifyOtp from "./modules/login/VerifyOtp";
 
 import ProtectedRoute from "./modules/login/ProtectedRoute"; // ✅
+import Schems from "./modules/settings/Schems";
+import AddScheme from "./modules/settings/AddScheme";
+import EditScheme from "./modules/settings/EditScheme";
+import AboutUsUpdateForm from "./modules/settings/AboutUsUpdateForm";
 
 function App() {
   return (
@@ -359,6 +363,46 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <LegalDocuments />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings/forms/schemes"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Schems />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings/forms/schemes/add"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <AddScheme />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings/forms/schemes/update/:id"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <EditScheme />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings/aboutUs"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <AboutUsUpdateForm />
               </Layout>
             </ProtectedRoute>
           }
