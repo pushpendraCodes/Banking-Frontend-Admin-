@@ -8,6 +8,7 @@ const settingsList = [
 { name: "Legal Documents",path:"/settings/forms/legal" },
 { name: "Schemes Documents",path:"/settings/forms/schemes" },
 { name: "About us ",path:"/settings/aboutUs" },
+{ name: "FAQ ",path:"/settings/faq" },
 ];
 
 const Settings = () => {

@@ -42,6 +42,7 @@ import Schems from "./modules/settings/Schems";
 import AddScheme from "./modules/settings/AddScheme";
 import EditScheme from "./modules/settings/EditScheme";
 import AboutUsUpdateForm from "./modules/settings/AboutUsUpdateForm";
+import Faq from "./modules/settings/Faq";
 
 function App() {
   return (
@@ -403,6 +404,16 @@ function App() {
             <ProtectedRoute>
               <Layout>
                 <AboutUsUpdateForm />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings/faq"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Faq />
               </Layout>
             </ProtectedRoute>
           }
