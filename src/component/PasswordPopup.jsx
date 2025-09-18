@@ -1,20 +1,40 @@
+import axios from "axios";
 import { useState } from "react";
 import { FaCheck } from "react-icons/fa";
 
-export default function PasswordPopup({ show, onClose, onSubmit }) {
+export default function PasswordPopup({ show, onClose }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+const admin = JSON.parse(localStorage.getItem("user"))
   if (!show) return null;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      alert("Passwords do not match ❌");
-      return;
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+ 
+
+  try {
+    let res = await axios.post(
+      `${import.meta.env.VITE_API_URL}admin/passwordChange`,
+      {
+        adminId:admin._id,   
+        oldPassword:  password    ,   // assuming you're passing email from params or props
+        newPassword: confirmPassword,
+      }
+    );
+
+    if (res.data.success) {
+      alert("✅ Password changed successfully!");
+onClose()
+      // navigate("/login");
+    } else {
+      alert(res.data.message || "❌ Failed to change password");
     }
-    onSubmit(password);
-  };
+  } catch (error) {
+    console.error("Error changing password:", error);
+    alert(error.response.data.message );
+  }
+};
 
   return (
     <div className="fixed inset-0 bg-[#0000007a] bg-opacity-40 flex items-center justify-center z-50">
@@ -31,7 +51,7 @@ export default function PasswordPopup({ show, onClose, onSubmit }) {
         {/* Form */}
         <form onSubmit={handleSubmit} className="mt-8">
           <div className="mb-4 text-left">
-            <label className="block font-medium mb-1">Create New Password</label>
+            <label className="block font-medium mb-1">Old Password</label>
             <input
               type="password"
               value={password}
@@ -43,7 +63,7 @@ export default function PasswordPopup({ show, onClose, onSubmit }) {
           </div>
 
           <div className="mb-6 text-left">
-            <label className="block font-medium mb-1">Confirm New Password</label>
+            <label className="block font-medium mb-1"> New Password</label>
             <input
               type="password"
               value={confirmPassword}
@@ -58,7 +78,7 @@ export default function PasswordPopup({ show, onClose, onSubmit }) {
             type="submit"
             className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-semibold py-2 rounded"
           >
-            Create
+            Update
           </button>
         </form>
 

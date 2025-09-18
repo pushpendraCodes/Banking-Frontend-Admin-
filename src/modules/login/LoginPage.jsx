@@ -72,7 +72,7 @@ function Login() {
           {/* Forgot Password */}
           <div className="text-right">
             <Link
-              to="/forgot-password"
+              to="/send-otp"
               className="text-red-500 text-sm hover:underline"
             >
               Forgot Password?

@@ -6,18 +6,14 @@ import PasswordPopup from "../../component/PasswordPopup";
 function ProfilePage() {
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
 
-  // ✅ Handle Password Submit
-  const handlePasswordSubmit = (newPassword) => {
-    console.log("New Password:", newPassword);
-    alert("Password updated successfully ✅");
-    setShowPasswordPopup(false);
-  };
+
+  const admin = JSON.parse(localStorage.getItem("user"))
 
   return (
     <>
       <div>
         <h2 className="bg-[#fff7f4] px-3 text-lg font-bold">
-          Official Notification / Recruitment
+       Profile Page
         </h2>
       </div>
 
@@ -36,15 +32,15 @@ function ProfilePage() {
             <div className="space-y-4 text-sm">
               <div className="flex gap-4">
                 <p className="font-semibold w-40">Full Name:</p>
-                <p>Daniel Abcar</p>
+                <p>Admin</p>
               </div>
-              <div className="flex gap-4">
+              {/* <div className="flex gap-4">
                 <p className="font-semibold w-40">Phone Number:</p>
                 <p>+91-9876543210</p>
-              </div>
+              </div> */}
               <div className="flex gap-4">
                 <p className="font-semibold w-40">Email ID:</p>
-                <p>example@company.com</p>
+                <p>{admin.email}</p>
               </div>
               <div className="flex gap-4 items-center">
                 <p className="font-semibold w-40">Password:</p>
@@ -60,11 +56,11 @@ function ProfilePage() {
             </div>
 
             {/* Update Profile Button */}
-            <div className="mt-6">
+            {/* <div className="mt-6">
               <button className="bg-yellow-300 text-white px-6 py-2 rounded hover:bg-yellow-600">
                 Update Profile
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -73,7 +69,7 @@ function ProfilePage() {
       <PasswordPopup
         show={showPasswordPopup}
         onClose={() => setShowPasswordPopup(false)}
-        onSubmit={handlePasswordSubmit}
+        // onSubmit={handlePasswordSubmit}
       />
     </>
   );
