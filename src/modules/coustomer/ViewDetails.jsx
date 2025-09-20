@@ -299,7 +299,7 @@ function ViewDetails() {
                     <div className="space-y-3">
                       <div>
                         <span className="text-sm font-medium text-gray-600">RD Total DepositedtAmount</span>
-                        <p className="text-lg font-bold text-blue-600">{rd.rdTotalDepositedtAmount}% p.a.</p>
+                        <p className="text-lg font-bold text-blue-600">{rd.rdTotalDepositedtAmount}</p>
                       </div>
                       <div>
                         <span className="text-sm font-medium text-gray-600">RD Total DepositedInstallment</span>
@@ -344,6 +344,247 @@ function ViewDetails() {
             </div>
           )}
         </div>
+
+
+                {/* Loan details if  */}
+
+                <div className="bg-white rounded-2xl shadow-lg p-8">
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="bg-purple-100 p-3 flex gap-3 items-center rounded-full mr-4">
+                            <FaChartLine className="text-purple-600 text-2xl" />
+                            <h3 className="text-2xl font-bold text-gray-800">Loan </h3>
+                        </div>
+
+                        {customer?.loans?.length > 0 &&
+                            <div>
+                                <Link
+                                    to={`/coustomers/paymentdetails/${id}/LOAN`}
+                                    className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition duration-200"
+                                >
+                                    Payment Details
+                                </Link>
+
+                            </div>
+                        }
+                    </div>
+
+                    {customer?.loans?.length > 0 ? (
+                        <div className="grid gap-6">
+                            {customer.loans.map((loan, i) => (
+                                <div key={i} className="border-2 border-purple-200 rounded-xl p-6 bg-purple-50 hover:shadow-lg transition-shadow">
+                                    <div className="grid md:grid-cols-3 gap-4">
+                                        <div className="space-y-3">
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Loan Type</span>
+                                                <p className="text-lg font-bold text-gray-800">{loan.loanType}</p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Loan Account No</span>
+                                                <p className="text-lg font-bold text-gray-800">{loan.loanAccountNumber}</p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Loan PrincipalAmount Amount</span>
+                                                <p className="text-xl font-bold text-purple-600">₹{loan.loanPrincipalAmount?.toLocaleString()}</p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Loan Emi Amount</span>
+                                                <p className="text-lg font-semibold text-gray-800">₹{loan.loanEMIAmount}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Interest Rate</span>
+                                                <p className="text-lg font-bold text-blue-600">{loan.loanInterestRate}% p.a.</p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Opening Date</span>
+                                                <p className="text-lg font-semibold text-gray-800">
+                                                    {loan.loanOpeningDate ? new Date(loan.loanOpeningDate).toLocaleDateString() : "N/A"}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Outstanding Emis</span>
+                                                <p className="text-lg font-semibold text-gray-800">
+                                                    ₹{loan.loanOutstandingAmount || "N/A"}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Loan Time period</span>
+                                                <p className="text-xl font-bold text-purple-600">{loan.loanTenure}-{loan.loanTenureType}</p>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600"> Total Emi Paid</span>
+                                                <p className="text-lg font-bold text-blue-600">₹{loan.loanTotalEmiDeposited}</p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600"> Total No. Emi Deposited</span>
+                                                <p className="text-lg font-semibold text-gray-800">
+                                                    {loan.loanTotalNumberOfEmiDeposited || "N/A"}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Total Emi Left </span>
+                                                <p className="text-lg font-semibold text-gray-800">
+                                                    {loan.loanRemainingEmis || "N/A"}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Next Emi Date</span>
+                                                <p className="text-xl font-bold text-purple-600">{new Date(loan.loanNextEmiDate).toDateString()}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3">
+
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Status</span>
+                                                <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${loan.loanStatus === 'active'
+                                                    ? 'bg-green-200 text-green-800'
+                                                    : loan.loanStatus === 'closed'
+                                                        ? 'bg-blue-200 text-blue-800'
+                                                        : 'bg-red-200 text-red-800'
+                                                    }`}>
+                                                    {loan.loanStatus}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-12">
+                            <div className="text-gray-400 text-6xl mb-4">📈</div>
+                            <h4 className="text-xl font-semibold text-gray-600 mb-2">No Loan Found</h4>
+                            <p className="text-gray-500">This customer doesn't have any RD schemes yet.</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* pifmy if */}
+
+                <div className="bg-white rounded-2xl shadow-lg p-8">
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="bg-purple-100 p-3 flex gap-3 items-center rounded-full mr-4">
+                            <FaChartLine className="text-purple-600 text-2xl" />
+                            <h3 className="text-2xl font-bold text-gray-800">Pigmy Account </h3>
+                        </div>
+
+                        {customer?.pigmy?.length > 0 &&
+                            <div>
+                                <Link
+                                    to={`/coustomers/paymentdetails/${id}/PIGMY`}
+                                    className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition duration-200"
+                                >
+                                    Payment Details
+                                </Link>
+
+                            </div>
+                        }
+                    </div>
+
+                    {customer?.pigmy?.length > 0 ? (
+                        <div className="grid gap-6">
+                            {customer.pigmy.map((pigmy, i) => (
+                                <div key={i} className="border-2 border-purple-200 rounded-xl p-6 bg-purple-50 hover:shadow-lg transition-shadow">
+                                    <div className="grid md:grid-cols-3 gap-4">
+                                        <div className="space-y-3">
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Pigmy Type</span>
+                                                <p className="text-lg font-bold text-gray-800">{pigmy.type}</p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Pigmy Account No</span>
+                                                <p className="text-lg font-bold text-gray-800">{pigmy.pigMyAccountNumber}</p>
+                                            </div>
+                                         
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Pigmy Daily Deposit</span>
+                                                <p className="text-lg font-semibold text-gray-800">₹{pigmy.pigmyDailyDeposit}</p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Maturity Amount</span>
+                                                <p className="text-lg font-semibold text-gray-800">
+                                                    ₹{pigmy.pigMyMaturityAmount || "N/A"}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Interest Rate</span>
+                                                <p className="text-lg font-bold text-blue-600">{pigmy.pigMyInterestRate}% p.a.</p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Opening Date</span>
+                                                <p className="text-lg font-semibold text-gray-800">
+                                                    {pigmy.pigMyOpeningDate ? new Date(pigmy.pigMyOpeningDate).toLocaleDateString() : "N/A"}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Maturity Date</span>
+                                                <p className="text-lg font-semibold text-gray-800">
+                                                    {pigmy.pigMyMaturityDate ? new Date(pigmy.pigMyMaturityDate).toLocaleDateString() : "N/A"}
+                                                </p>
+                                            </div>
+                                            
+                                         
+                                        </div>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600"> Total Installment Paid</span>
+                                                <p className="text-lg font-bold text-blue-600">₹{pigmy.pigMyTotalDepositedAmount}</p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600"> Total No. InstallMent Deposited</span>
+                                                <p className="text-lg font-semibold text-gray-800">
+                                                    {pigmy.pigMyTotalInstallmentDeposited || "N/A"}
+                                                </p>
+                                            </div>
+                                            {/* <div>
+                                                <span className="text-sm font-medium text-gray-600">Total Emi Left </span>
+                                                <p className="text-lg font-semibold text-gray-800">
+                                                    {loan.loanRemainingEmis || "N/A"}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-gray-600">Next Emi Date</span>
+                                                <p className="text-xl font-bold text-purple-600">{new Date(loan.loanNextEmiDate).toDateString()}</p>
+                                            </div> */}
+<div>
+                                                <span className="text-sm font-medium text-gray-600">Status</span>
+                                                <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${pigmy.pigMyAccountStatus === 'active'
+                                                    ? 'bg-green-200 text-green-800'
+                                                    : pigmy.pigMyAccountStatus === 'matured'
+                                                        ? 'bg-blue-200 text-blue-800'
+                                                        : 'bg-red-200 text-red-800'
+                                                    }`}>
+                                                    {pigmy.pigMyAccountStatus}
+                                                </span>
+                                            </div>
+
+                                        </div>
+
+                                        <div className="space-y-3">
+
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-12">
+                            <div className="text-gray-400 text-6xl mb-4">📈</div>
+                            <h4 className="text-xl font-semibold text-gray-600 mb-2">No PIGMY Deposit Schemes Found</h4>
+                            <p className="text-gray-500">This customer doesn't have any RD schemes yet.</p>
+                        </div>
+                    )}
+                </div>
+
       </div>
     </div>
   );

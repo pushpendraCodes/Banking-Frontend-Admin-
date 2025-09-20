@@ -52,9 +52,9 @@ function App() {
         <Route
           path="/login"
           element={
-            <Layout>
+           
               <LoginPage />
-            </Layout>
+           
           }
         />
         <Route path="/reset-password/:email" element={<ResetPassword />} />

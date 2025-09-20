@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaEye, FaPen, FaTrash } from "react-icons/fa";
+import { FaBan, FaEye, FaPen, FaTrash, FaUnlock } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { apiAgentUrl } from "../../api/apiRoutes";
 import DeletePopup from "../../component/DeletePopup";
@@ -62,6 +62,52 @@ export default function AgentList() {
       alert("Failed to delete agent ❌");
     }
   };
+
+
+
+  const handelBlock = async (agentId) => {
+  try {
+    const confirmBlock = window.confirm("Are you sure you want to block this agent?");
+    if (!confirmBlock) return; // stop if cancelled
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}manager/agent/block/${agentId}`
+    );
+
+    if (res.data.success) {
+      fetchData()
+      alert("Agent blocked successfully");
+      // 🔄 optionally refetch agents list here
+    } else {
+      alert(res.data.message || "Failed to block agent");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Something went wrong while blocking agent");
+  }
+};
+
+const handelUnBlock = async (agentId) => {
+  try {
+    const confirmUnblock = window.confirm("Are you sure you want to unblock this agent?");
+    if (!confirmUnblock) return; // stop if cancelled
+
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}manager/agent/unblock/${agentId}`
+    );
+
+    if (res.data.success) {
+      fetchData()
+      alert("Agent unblocked successfully");
+      // 🔄 optionally refetch agents list here
+    } else {
+      alert(res.data.message || "Failed to unblock agent");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Something went wrong while unblocking agent");
+  }
+};
 
 
 
@@ -147,6 +193,25 @@ export default function AgentList() {
                       >
                         <FaTrash size={14} />
                       </button>
+
+
+                      {cust.isActive ? (
+  <button
+    onClick={() => handelBlock(cust._id)}
+    className="bg-red-500 hover:bg-red-600 text-white p-2 rounded"
+    title="Block Agent"
+  >
+    <FaBan size={16} />
+  </button>
+) : (
+  <button
+    onClick={() => handelUnBlock(cust._id)}
+    className="bg-green-500 hover:bg-green-600 text-white p-2 rounded"
+    title="Unblock Agent"
+  >
+    <FaUnlock size={16} />
+  </button>
+)}
                     </div>
                   </td>
                 </tr>

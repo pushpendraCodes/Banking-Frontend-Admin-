@@ -56,6 +56,12 @@ function ViewAgent() {
               </span>
             </div>
             <div className="flex justify-between items-center mb-4 ">
+              <span className="font-medium">Gender :</span>
+              <span className="bg-gray-100 p-1 rounded-sm w-60 block">
+                {agent.gender}
+              </span>
+            </div>
+            <div className="flex justify-between items-center mb-4 ">
               <span className="font-medium">Email Address :</span>
               <span className="bg-gray-100 p-1 rounded-sm w-60 block">
                 {agent.email}

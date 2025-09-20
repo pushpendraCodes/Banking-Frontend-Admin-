@@ -3,26 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { apiCustomerUrl, apiAgentUrl } from "../../api/apiRoutes";
+import { useForm, Controller } from "react-hook-form";
 
 const AddCustomer = () => {
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    contact: "",
-    password: "",
-    address: "",
-    gender: "",
-    password: "",
-    agentId: "", // ✅ correct key
-  });
-
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm();
   const [agents, setAgents] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // 👁 toggle state
+  const [showPassword, setShowPassword] = useState(false);
 
-  // Fetch agents from API
   useEffect(() => {
     const fetchAgents = async () => {
       try {
@@ -35,19 +28,9 @@ const AddCustomer = () => {
     fetchAgents();
   }, []);
 
-  // Input change handler
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Save (POST API call)
-  const handleSave = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
+  const onSubmit = async (data) => {
     try {
-      const res = await axios.post(apiCustomerUrl, formData);
+      const res = await axios.post(apiCustomerUrl, data);
       if (res.status === 201 || res.status === 200) {
         alert("Customer added successfully!");
         navigate(-1);
@@ -55,144 +38,210 @@ const AddCustomer = () => {
     } catch (err) {
       console.error("Error adding customer:", err.response?.data || err.message);
       alert("Failed to add customer");
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <div>
-      {/* Header */}
-      <div className="flex items-center justify-between bg-[#fff9f1] p-4 rounded">
-        <div className="flex items-center gap-2">
+    <div className="min-h-screen bg-gradient-to-r from-yellow-50 to-white py-10 px-4 flex justify-center items-center">
+      <div className="w-full max-w-xl shadow-lg rounded-xl bg-white">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b px-6 py-4 rounded-t-xl bg-gradient-to-r from-yellow-100 via-yellow-50 to-white">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate(-1)}
+              className="text-gray-600 hover:text-yellow-500 p-2 rounded-full border transition-colors"
+              title="Back"
+            >
+              <FaArrowLeft />
+            </button>
+            <h2 className="text-xl font-semibold tracking-wide text-gray-900">
+              Add Customer
+            </h2>
+          </div>
           <button
-            onClick={() => navigate(-1)}
-            className="text-black p-1 border-2 rounded-4xl"
-          >
-            <FaArrowLeft />
-          </button>
-          <h2 className="text-lg font-semibold">Add Customer</h2>
-        </div>
-        <div className="flex justify-end">
-          <button
-            type="submit"
             form="customerForm"
-            disabled={loading}
-            className="bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 text-white font-semibold px-5 py-2 rounded"
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-yellow-400 hover:bg-yellow-500 disabled:opacity-50 text-white font-semibold px-6 py-2 rounded-lg shadow-sm active:scale-95 transition-all"
           >
-            {loading ? "Saving..." : "Save"}
+            {isSubmitting ? "Saving..." : "Save"}
           </button>
         </div>
-      </div>
-
-      {/* Form */}
-      <div className="flex justify-center bg-[#fff9f1] p-6 mt-6 rounded">
-        <form id="customerForm" className="space-y-4 w-100" onSubmit={handleSave}>
-          {/* Name */}
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Name</label>
+        <form
+          id="customerForm"
+          onSubmit={handleSubmit(onSubmit)}
+          className="p-8 flex flex-col gap-6"
+        >
+          {/* NAME */}
+          <div>
+            <label className="block font-semibold text-sm mb-1 text-gray-700">
+              Name
+            </label>
             <input
               type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
+              {...register("name", {
+                required: "Name is required",
+                minLength: { value: 2, message: "Name must be 2+ chars" },
+              })}
               placeholder="Enter Name"
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
+              className={`w-full p-3 border ${
+                errors.name
+                  ? "border-red-400"
+                  : "border-gray-200 focus:border-yellow-400"
+              } rounded-lg bg-gray-50 outline-none duration-200`}
             />
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
+            )}
           </div>
-
-          {/* Email */}
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Email</label>
+          {/* EMAIL */}
+          <div>
+            <label className="block font-semibold text-sm mb-1 text-gray-700">
+              Email
+            </label>
             <input
               type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+                  message: "Invalid email format",
+                },
+              })}
               placeholder="Enter Email"
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
+              className={`w-full p-3 border ${
+                errors.email
+                  ? "border-red-400"
+                  : "border-gray-200 focus:border-yellow-400"
+              } rounded-lg bg-gray-50 outline-none duration-200`}
             />
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+            )}
           </div>
-
-          {/* Contact */}
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Contact</label>
+          {/* CONTACT */}
+          <div>
+            <label className="block font-semibold text-sm mb-1 text-gray-700">
+              Contact
+            </label>
             <input
               type="text"
-              name="contact"
-              value={formData.contact}
-              onChange={handleChange}
-              required
+              maxLength={10}
+              {...register("contact", {
+                required: "Contact is required",
+                pattern: {
+                  value: /^[0-9]{10}$/,
+                  message: "Contact must be 10 digits",
+                },
+              })}
               placeholder="Enter Contact"
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
+              className={`w-full p-3 border ${
+                errors.contact
+                  ? "border-red-400"
+                  : "border-gray-200 focus:border-yellow-400"
+              } rounded-lg bg-gray-50 outline-none duration-200`}
             />
+            {errors.contact && (
+              <p className="text-red-500 text-xs mt-1">{errors.contact.message}</p>
+            )}
           </div>
-
-          {/* Address */}
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Address</label>
+          {/* ADDRESS */}
+          <div>
+            <label className="block font-semibold text-sm mb-1 text-gray-700">
+              Address
+            </label>
             <input
               type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
+              {...register("address", { required: "Address is required" })}
               placeholder="Enter Address"
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
+              className={`w-full p-3 border ${
+                errors.address
+                  ? "border-red-400"
+                  : "border-gray-200 focus:border-yellow-400"
+              } rounded-lg bg-gray-50 outline-none duration-200`}
             />
+            {errors.address && (
+              <p className="text-red-500 text-xs mt-1">{errors.address.message}</p>
+            )}
           </div>
-
-          {/* Gender */}
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Gender</label>
+          {/* GENDER */}
+          <div>
+            <label className="block font-semibold text-sm mb-1 text-gray-700">
+              Gender
+            </label>
             <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              required
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
+              {...register("gender", { required: "Gender is required" })}
+              className={`w-full p-3 border ${
+                errors.gender
+                  ? "border-red-400"
+                  : "border-gray-200 focus:border-yellow-400"
+              } rounded-lg bg-gray-50 outline-none duration-200`}
             >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
               <option value="other">Other</option>
             </select>
+            {errors.gender && (
+              <p className="text-red-500 text-xs mt-1">{errors.gender.message}</p>
+            )}
           </div>
-
-          {/* Password with Eye */}
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Password</label>
-            <div className="flex-1 relative">
-              <input
-                type={showPassword ? "text" : "password"}
+          {/* PASSWORD */}
+          <div>
+            <label className="block font-semibold text-sm mb-1 text-gray-700">
+              Password
+            </label>
+            <div className="relative">
+              <Controller
+                control={control}
                 name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                placeholder="Enter Password"
-                className="w-full border border-gray-300 px-3 py-2 rounded bg-gray-100 pr-10"
+                rules={{
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be ≥6 chars",
+                  },
+                }}
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter Password"
+                    className={`w-full p-3 border ${
+                      errors.password
+                        ? "border-red-400"
+                        : "border-gray-200 focus:border-yellow-400"
+                    } rounded-lg bg-gray-50 pr-10 outline-none duration-200`}
+                  />
+                )}
               />
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600"
+                onClick={() => setShowPassword((p) => !p)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-yellow-500"
+                tabIndex={-1}
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.password.message}
+              </p>
+            )}
           </div>
-
-          {/* Agent Dropdown */}
-          <div className="flex items-center">
-            <label className="w-40 font-medium text-sm">Agent</label>
+          {/* AGENT */}
+          <div>
+            <label className="block font-semibold text-sm mb-1 text-gray-700">
+              Agent
+            </label>
             <select
-              name="agentId"
-              value={formData.agentId}
-              onChange={handleChange}
-              required
-              className="flex-1 border border-gray-300 px-3 py-2 rounded bg-gray-100"
+              {...register("agentId", { required: "Agent selection required" })}
+              className={`w-full p-3 border ${
+                errors.agentId
+                  ? "border-red-400"
+                  : "border-gray-200 focus:border-yellow-400"
+              } rounded-lg bg-gray-50 outline-none duration-200`}
             >
               <option value="">Select Agent</option>
               {agents.map((agent) => (
@@ -201,6 +250,11 @@ const AddCustomer = () => {
                 </option>
               ))}
             </select>
+            {errors.agentId && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.agentId.message}
+              </p>
+            )}
           </div>
         </form>
       </div>

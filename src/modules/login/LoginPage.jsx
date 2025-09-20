@@ -39,10 +39,10 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-80vh bg-gray-50">
+    <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="bg-white p-8 rounded-2xl shadow-lg w-96">
         <h2 className="text-2xl font-bold text-center text-gray-900">
-          Welcome to Manager Portal
+          Welcome to Admin Portal
         </h2>
         <p className="text-center text-gray-600 text-sm mb-6">
           To Access Your Account
