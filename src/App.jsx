@@ -46,7 +46,7 @@ import Faq from "./modules/settings/Faq";
 import AreaManagerList from "./modules/areaManager/AreaManagerList";
 import AddAreaManager from "./modules/areaManager/AddAreaManager";
 import EditAreaManager from "./modules/areaManager/EditAreaManager";
-import ViewAreaManager from "./modules/areaManager/ViewAreaManager.Jsx";
+import ViewAreaManager from "./modules/areaManager/ViewAreaManager";
 // import ViewAreaManager from "./modules/areaManager/ViewAreaManager.jsx";
 
 function App() {
