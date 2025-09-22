@@ -9,6 +9,7 @@ export default function BannerList() {
   const [error, setError] = useState(null);
 
   const adminId = JSON.parse(localStorage.getItem("user"))?._id;
+  const token = localStorage.getItem("token")
 
   // ✅ Fetch admin + banners
   useEffect(() => {
@@ -16,7 +17,11 @@ export default function BannerList() {
       setLoading(true);
       setError(null);
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}admin/get`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}admin/get`,{
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
         setAdmin(res.data.data);
       } catch (err) {
         console.error("Error fetching admin:", err);
@@ -34,7 +39,11 @@ export default function BannerList() {
 
     try {
       await axios.delete(
-        `${import.meta.env.VITE_API_URL}admin/banner/delete/${bannerId}/${adminId}`
+        `${import.meta.env.VITE_API_URL}admin/banner/delete/${bannerId}/${adminId}`,{
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
       );
 
       // Remove banner locally after deletion

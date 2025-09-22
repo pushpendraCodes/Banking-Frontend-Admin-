@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { FaArrowLeft, FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaUserTie, FaCalendarAlt, FaToggleOn, FaUsers, FaHeart, FaBirthdayCake, FaPiggyBank, FaChartLine, FaIdCard, FaCreditCard, FaPen, FaCheck, FaVenus } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../api/api"; // ✅ apna axios instance import karna (src/api/api.js se)
+import axios from "axios";
 
-function ViewManager() {
+function ViewAreaManager() {
   const navigate = useNavigate();
   const { id } = useParams(); // ✅ URL se id le rahe hai
   const [customer, setManager] = useState(null); // manager ka data yaha aayega
@@ -15,7 +16,7 @@ function ViewManager() {
   useEffect(() => {
     const fetchManager = async () => {
       try {
-        const res = await api.get(`/manager/${id}`,{
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}areaManager/${id}`,{
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -50,7 +51,7 @@ function ViewManager() {
               >
                 <FaArrowLeft size={20} />
               </button>
-              <h1 className="text-2xl font-bold text-gray-800">Manager Details</h1>
+              <h1 className="text-2xl font-bold text-gray-800">Area Manager Details</h1>
             </div>
     
     
@@ -210,4 +211,4 @@ function ViewManager() {
   );
 }
 
-export default ViewManager;
+export default ViewAreaManager;

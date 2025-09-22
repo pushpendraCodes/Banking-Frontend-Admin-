@@ -12,6 +12,7 @@ const AddGallery = () => {
   const [loading, setLoading] = useState(false);
 
 const id = JSON.parse(localStorage.getItem("user"))._id
+const token = localStorage.getItem("token")
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -32,6 +33,7 @@ const id = JSON.parse(localStorage.getItem("user"))._id
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
+           Authorization: `Bearer ${token}`,
         }
       );
 

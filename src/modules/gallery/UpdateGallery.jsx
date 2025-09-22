@@ -12,13 +12,21 @@ const UpdateGallery = () => {
   const [existingImages, setExistingImages] = useState([]);
   const [loading, setLoading] = useState(false); // ✅ loading state
 
+  const token = localStorage.getItem("token")
+
   // ✅ Load existing gallery item
   useEffect(() => {
     const fetchItem = async () => {
       setLoading(true);
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}admin/gallery/get/${itemId}`
+          `${import.meta.env.VITE_API_URL}admin/gallery/get/${itemId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+
         );
         const item = res.data.data;
         setValue("caption", item.caption || "");
@@ -173,9 +181,8 @@ const UpdateGallery = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`${
-              loading ? "bg-gray-400" : "bg-yellow-400 hover:bg-yellow-500"
-            } text-white px-4 py-2 rounded`}
+            className={`${loading ? "bg-gray-400" : "bg-yellow-400 hover:bg-yellow-500"
+              } text-white px-4 py-2 rounded`}
           >
             {loading ? "Updating..." : "Update Gallery"}
           </button>

@@ -17,6 +17,7 @@ const navItems = [
   { name: "Customer", icon: <FaUser />, path: "/coustomers" },
   { name: "Agent", icon: <FaUserTie />, path: "/agent" },
   { name: "Manager", icon: <FaUserTie />, path: "/managers" },
+  { name: "AreaManager", icon: <FaUserTie />, path: "/area-manager" },
   { name: "Payment History", icon: <FaMoneyBillWave />, path: "/payments-history" },
   { name: "Withdrawal History", icon: <FaCreditCard />, path: "/withdrawalhistory" },
   { name: "Website Gallery", icon: <FaImages />, path: "/gallary" },

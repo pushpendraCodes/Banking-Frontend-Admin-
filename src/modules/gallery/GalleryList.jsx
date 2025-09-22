@@ -9,14 +9,18 @@ export default function GalleryList() {
   const [admin, setAdmin] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+const token = localStorage.getItem("token")
   // Fetch admin data
   useEffect(() => {
     const fetchAdmin = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}admin/get`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}admin/get`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setAdmin(res.data.data);
       } catch (err) {
         console.error("Error fetching admin:", err);
@@ -33,7 +37,11 @@ export default function GalleryList() {
     if (!window.confirm("Are you sure you want to delete this gallery item?")) return;
 
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}admin/gallery/${adminId}/${itemId}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}admin/gallery/${adminId}/${itemId}`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       // Remove from local state
       setAdmin((prev) => ({
         ...prev,

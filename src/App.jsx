@@ -43,6 +43,11 @@ import AddScheme from "./modules/settings/AddScheme";
 import EditScheme from "./modules/settings/EditScheme";
 import AboutUsUpdateForm from "./modules/settings/AboutUsUpdateForm";
 import Faq from "./modules/settings/Faq";
+import AreaManagerList from "./modules/areaManager/AreaManagerList";
+import AddAreaManager from "./modules/areaManager/AddAreaManager";
+import EditAreaManager from "./modules/areaManager/EditAreaManager";
+import ViewAreaManager from "./modules/areaManager/ViewAreaManager.Jsx";
+// import ViewAreaManager from "./modules/areaManager/ViewAreaManager.jsx";
 
 function App() {
   return (
@@ -83,7 +88,7 @@ function App() {
           }
         />
         <Route
-          path="/coustomers/add"
+          path="/customers/add"
           element={
             <ProtectedRoute>
               <Layout>
@@ -93,7 +98,7 @@ function App() {
           }
         />
         <Route
-          path="/coustomers/View-Edit/:id"
+          path="/customers/edit/:id"
           element={
             <ProtectedRoute>
               <Layout>
@@ -103,7 +108,7 @@ function App() {
           }
         />
         <Route
-          path="/coustomers/viewdetails/:id"
+          path="/customers/view/:id"
           element={
             <ProtectedRoute>
               <Layout>
@@ -204,6 +209,46 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/area-manager"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <AreaManagerList />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/area-manager/add"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <AddAreaManager />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/area-manager/edit/:id"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <EditAreaManager/>
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/area-manager/view/:id"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <ViewAreaManager />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/payments-history"
@@ -216,7 +261,7 @@ function App() {
           }
         />
         <Route
-          path="/payments-history/:id"
+          path="/payments/view/:id"
           element={
             <ProtectedRoute>
               <Layout>
