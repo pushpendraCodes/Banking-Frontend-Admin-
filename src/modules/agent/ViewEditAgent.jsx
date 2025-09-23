@@ -297,23 +297,26 @@ const ViewEditAgent = () => {
 
               <div>
                 <label className="block font-semibold text-sm mb-1 text-gray-700">
-                  Relation
+                  Relation <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  {...register("NomineeDetails.relation", {
-                    required: "Relation required"
-                  })}
-                  placeholder="Relation"
-                  className={`w-full p-3 border ${errors?.NomineeDetails?.relation
-                    ? "border-red-400"
-                    : "border-gray-200"
-                    } rounded-lg bg-gray-50 outline-none`}
-                />
+                <select
+                  {...register("NomineeDetails.relation", { required: "Relation is required" })}
+                  className={`w-full p-3 border ${
+                    errors?.NomineeDetails?.relation ? "border-red-400" : "border-gray-200 focus:border-yellow-400"
+                  } rounded-lg bg-gray-50 outline-none duration-200`}
+                >
+                  <option value="">Select Relation</option>
+                  <option value="Spouse">Spouse</option>
+                  <option value="Son">Son</option>
+                  <option value="Daughter">Daughter</option>
+                  <option value="Father">Father</option>
+                  <option value="Mother">Mother</option>
+                  <option value="Brother">Brother</option>
+                  <option value="Sister">Sister</option>
+                  <option value="Other">Other</option>
+                </select>
                 {errors?.NomineeDetails?.relation && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.NomineeDetails.relation.message}
-                  </p>
+                  <p className="text-red-500 text-xs mt-1">{errors.NomineeDetails.relation.message}</p>
                 )}
               </div>
 

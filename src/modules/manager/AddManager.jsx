@@ -47,7 +47,7 @@ const AddManager = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-yellow-50 to-white py-10 px-4 flex justify-center items-center">
+    <div className="min-h-screen bg-gradient-to-r from-yellow-50 to-white py-10 px-4 flex justify-center">
       <div className="w-full shadow-lg rounded-xl bg-white">
         {/* Header */}
         <div className="flex items-center justify-between border-b px-6 py-4 rounded-t-xl bg-gradient-to-r from-yellow-100 via-yellow-50 to-white">

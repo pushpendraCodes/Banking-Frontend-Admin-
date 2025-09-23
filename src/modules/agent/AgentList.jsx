@@ -104,9 +104,7 @@ export default function AgentList() {
       if (!confirmBlock) return;
 
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}manager/agent/block/${agentId}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        `${import.meta.env.VITE_API_URL}manager/agent/block/${agentId}`
       );
 
       if (res.data.success) {
@@ -127,9 +125,7 @@ export default function AgentList() {
       if (!confirmUnblock) return;
 
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}manager/agent/unblock/${agentId}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        `${import.meta.env.VITE_API_URL}manager/agent/unblock/${agentId}`
       );
 
       if (res.data.success) {
