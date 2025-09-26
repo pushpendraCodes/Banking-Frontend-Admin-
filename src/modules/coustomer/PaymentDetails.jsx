@@ -14,7 +14,7 @@ function PaymentDetails() {
   const [page, setPage] = useState(1);
   const [limit] = useState(10); // fixed page size, can make dropdown
   const [total, setTotal] = useState(0);
-
+  const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchTransaction = async () => {
       try {
@@ -23,6 +23,9 @@ function PaymentDetails() {
           `${import.meta.env.VITE_API_URL}transactionSchemes/transactions`,
           {
             params: { customerId, schemeType, page, limit },
+
+            headers: { Authorization: `Bearer ${token}` },
+
           }
         );
 
@@ -90,13 +93,12 @@ function PaymentDetails() {
                       <td className="p-2 border">{txn.mode}</td>
                       <td className="p-2 border">{txn.installmentNo || "-"}</td>
                       <td
-                        className={`p-2 border font-semibold ${
-                          txn.status === "approved"
+                        className={`p-2 border font-semibold ${txn.status === "approved"
                             ? "text-green-600"
                             : txn.status === "pending"
-                            ? "text-yellow-600"
-                            : "text-red-600"
-                        }`}
+                              ? "text-yellow-600"
+                              : "text-red-600"
+                          }`}
                       >
                         {txn.status}
                       </td>
@@ -119,9 +121,8 @@ function PaymentDetails() {
               <button
                 disabled={page === 1}
                 onClick={() => setPage((p) => p - 1)}
-                className={`px-3 py-1 border rounded ${
-                  page === 1 ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className={`px-3 py-1 border rounded ${page === 1 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
               >
                 Prev
               </button>
@@ -131,9 +132,8 @@ function PaymentDetails() {
               <button
                 disabled={page === totalPages}
                 onClick={() => setPage((p) => p + 1)}
-                className={`px-3 py-1 border rounded ${
-                  page === totalPages ? "opacity-50 cursor-not-allowed" : ""
-                }`}
+                className={`px-3 py-1 border rounded ${page === totalPages ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
               >
                 Next
               </button>

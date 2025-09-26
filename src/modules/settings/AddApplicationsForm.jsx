@@ -2,15 +2,18 @@ import React, { useState } from "react";
 import { FaArrowLeft, FaCloudUploadAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 export default function AddApplicationForm() {
   const navigate = useNavigate();
   const id = JSON.parse(localStorage.getItem("user"))._id;
 
   const [title, setTitle] = useState("");
+  const [desc, setDesc] = useState(""); // New React Quill state
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
-
+const token = localStorage.getItem("token")
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -27,6 +30,7 @@ export default function AddApplicationForm() {
       setLoading(true);
       const formData = new FormData();
       formData.append("title", title);
+      formData.append("desc", desc); // Append description
       formData.append("docs", file);
 
       const res = await axios.post(
@@ -35,6 +39,7 @@ export default function AddApplicationForm() {
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`
           },
         }
       );
@@ -88,7 +93,7 @@ export default function AddApplicationForm() {
   };
 
   return (
-    <div className=" bg-white min-h-screen">
+    <div className="bg-white min-h-screen p-4">
       {/* Header */}
       <div className="flex items-center justify-between bg-[#fef7ef] p-4 rounded shadow-sm">
         <div className="flex items-center gap-2 text-lg font-semibold">
@@ -113,6 +118,18 @@ export default function AddApplicationForm() {
             onChange={(e) => setTitle(e.target.value)}
             className="w-full bg-gray-100 p-3 rounded outline-none"
             required
+          />
+        </div>
+
+        {/* Description Field */}
+        <div>
+          <label className="block font-semibold mb-1">Description</label>
+          <ReactQuill
+            theme="snow"
+            value={desc}
+            onChange={setDesc}
+            placeholder="Enter description..."
+            className="bg-gray-100 rounded"
           />
         </div>
 

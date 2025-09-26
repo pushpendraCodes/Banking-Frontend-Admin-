@@ -3,7 +3,10 @@ import { FaArrowLeft, FaUser, FaEnvelope, FaPhone, FaTimes ,FaMapMarkerAlt,FaExc
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { apiCustomerUrl } from "../../api/apiRoutes";
-
+import FDDepositModal from "../modal/FDDepositModal";
+import RDEmiPayModal from "../modal/RDEmiPayModal";
+import LoanEmiPayModal from "../modal/LoanEmiPayModal";
+import PigmyEmiPayModal from "../modal/PigmyEmiPayModal";
 function ViewDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -12,13 +15,17 @@ function ViewDetails() {
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const token = localStorage.getItem("token")
   // ✅ Fetch customer details
   useEffect(() => {
     const fetchDetails = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${apiCustomerUrl}/${id}`);
+        const res = await axios.get(`${apiCustomerUrl}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (res.data.success) {
           setCustomer(res.data.data); // customer info
           setAccounts(res.data.data.accounts || []); // accounts list
@@ -84,9 +91,14 @@ function ViewDetails() {
             {/* Customer Information */}
             <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
               <div className="flex items-center mb-6">
-                <div className="bg-orange-100 p-3 rounded-full mr-4">
-                  <FaUser className="text-orange-600 text-2xl" />
-                </div>
+                <div className="bg-orange-100 p-1 rounded-full mr-4 w-20 h-20 flex items-center justify-center overflow-hidden">
+  <img
+    src={customer?.picture}
+    alt="Profile"
+    className="w-full h-full object-cover rounded-full"
+  />
+</div>
+
                 <h2 className="text-2xl font-bold text-gray-800">Customer Information</h2>
               </div>
 
@@ -94,6 +106,7 @@ function ViewDetails() {
                 {/* Personal Details */}
                 <div className="flex items-center p-4 bg-gray-50 rounded-lg">
                   <FaUser className="text-orange-500 mr-3" />
+                
                   <div className="flex-1">
                     <span className="text-sm font-medium text-gray-600">Name</span>
                     <p className="text-gray-800 font-semibold">{customer?.name || "N/A"}</p>
@@ -343,6 +356,7 @@ function ViewDetails() {
           </div>
         </div>
 
+       
         {/* FD Schemes Section */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <div className="flex items-center justify-between mb-6">
@@ -354,93 +368,157 @@ function ViewDetails() {
 
 
             {customer?.fdSchemes?.length > 0 &&
-              <div>
+              <div className="flex gap-2 items-center">
+                {/* FD Deposit Button/Modal */}
+
+
+                {/* Payment Details Link */}
                 <Link
                   to={`/coustomers/paymentdetails/${id}/FD`}
-                  className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition duration-200"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition duration-200"
                 >
                   Payment Details
                 </Link>
-
               </div>
+
             }
           </div>
 
           {customer?.fdSchemes?.length > 0 ? (
-            <div className="grid gap-6">
-              {customer.fdSchemes.map((fd, i) => (
-                <div key={i} className="border-2 border-green-200 rounded-xl p-6 bg-green-50 hover:shadow-lg transition-shadow">
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div className="space-y-3">
-                      <div>
-                        <span className="text-sm font-medium text-gray-600">FD Account No</span>
-                        <p className="text-lg font-bold text-gray-800">{fd.fdAccountNumber}</p>
-                      </div>
-                      <div>
-                        <span className="text-sm font-medium text-gray-600">Principal Amount</span>
-                        <p className="text-xl font-bold text-green-600">₹{fd.fdPrincipalAmount?.toLocaleString()}</p>
-                      </div>
-                      <div>
-                        <span className="text-sm font-medium text-gray-600">Deposit Amount</span>
-                        <p className="text-lg font-semibold text-gray-800">₹{fd.fdDepositAmount?.toLocaleString()}</p>
-                      </div>
-                    </div>
+            <>
 
-                    <div className="space-y-3">
-                      <div>
-                        <span className="text-sm font-medium text-gray-600">Interest Rate</span>
-                        <p className="text-lg font-bold text-blue-600">{fd.fdInterestRate}% p.a.</p>
-                      </div>
-                      <div>
-                        <span className="text-sm font-medium text-gray-600">Tenure</span>
-                        <p className="text-lg font-semibold text-gray-800">{fd.fdTenure} {fd.fdTenureType}</p>
-                      </div>
-                      <div>
-                        <span className="text-sm font-medium text-gray-600">Opening Date</span>
-                        <p className="text-lg font-semibold text-gray-800">
-                          {fd.fdOpeningDate ? new Date(fd.fdOpeningDate).toLocaleDateString() : "N/A"}
-                        </p>
-                      </div>
-                    </div>
+              <div className="grid gap-6">
+  {customer?.fdSchemes?.length > 0 ? (
+    customer.fdSchemes.map((fd, i) => (
+      <div
+        key={i}
+        className="border-2 border-green-200 rounded-xl p-6 bg-green-50 hover:shadow-lg transition-shadow"
+      >
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Column 1 */}
+          <div className="space-y-3">
+            <div>
+              <span className="text-sm font-medium text-gray-600">FD Account No</span>
+              <p className="text-lg font-bold text-gray-800">{fd.fdAccountNumber || "N/A"}</p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-600">Principal Amount</span>
+              <p className="text-xl font-bold text-green-600">
+                ₹{fd.fdPrincipalAmount ? fd.fdPrincipalAmount.toLocaleString() : "0"}
+              </p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-600">Deposit Amount</span>
+              <p className="text-lg font-semibold text-gray-800">
+                ₹{fd.fdDepositAmount ? fd.fdDepositAmount.toLocaleString() : "0"}
+              </p>
+            </div>
+          </div>
 
-                    <div className="space-y-3">
-                      <div>
-                        <span className="text-sm font-medium text-gray-600">Maturity Date</span>
-                        <p className="text-lg font-semibold text-gray-800">
-                          {fd.fdMaturityDate ? new Date(fd.fdMaturityDate).toLocaleDateString() : "N/A"}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="text-sm font-medium text-gray-600">Maturity Amount</span>
-                        <p className="text-xl font-bold text-green-600">₹{fd.fdMaturityAmount?.toLocaleString()}</p>
-                      </div>
-                      <div>
-                        <span className="text-sm font-medium text-gray-600">Status</span>
-                        <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${fd.fdAccountStatus === 'Active'
-                          ? 'bg-green-200 text-green-800'
-                          : fd.fdAccountStatus === 'Matured'
-                            ? 'bg-blue-200 text-blue-800'
-                            : 'bg-red-200 text-red-800'
-                          }`}>
-                          {fd.fdAccountStatus}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+          {/* Column 2 */}
+          <div className="space-y-3">
+            <div>
+              <span className="text-sm font-medium text-gray-600">Interest Rate</span>
+              <p className="text-lg font-bold text-blue-600">{fd.fdInterestRate || 0}% p.a.</p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-600">Tenure</span>
+              <p className="text-lg font-semibold text-gray-800">
+                {fd.fdTenure || "N/A"} {fd.fdTenureType || ""}
+              </p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-600">Opening Date</span>
+              <p className="text-lg font-semibold text-gray-800">
+                {fd.fdOpeningDate ? new Date(fd.fdOpeningDate).toLocaleDateString() : "N/A"}
+              </p>
+            </div>
+          </div>
+
+          {/* Column 3 */}
+          <div className="space-y-3">
+            <div>
+              <span className="text-sm font-medium text-gray-600">Maturity Date</span>
+              <p className="text-lg font-semibold text-gray-800">
+                {fd.fdMaturityDate ? new Date(fd.fdMaturityDate).toLocaleDateString() : "N/A"}
+              </p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-600">Maturity Amount</span>
+              <p className="text-xl font-bold text-green-600">
+                ₹{fd.fdMaturityAmount ? fd.fdMaturityAmount.toLocaleString() : "0"}
+              </p>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-600">Status</span>
+              <span
+                className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${
+                  fd.fdAccountStatus === "Active"
+                    ? "bg-green-200 text-green-800"
+                    : fd.fdAccountStatus === "Matured"
+                    ? "bg-blue-200 text-blue-800"
+                    : "bg-red-200 text-red-800"
+                }`}
+              >
+                {fd.fdAccountStatus || "Unknown"}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        {fd.fdDepositAmount==0 && 
+          <div className="mt-6 flex justify-left text-left">
+          <FDDepositModal fd={fd} customerId={customer._id}  />
+        </div>
+        }
+      </div>
+    ))
+  ) : (
+    <p className="text-gray-500 italic">No FD Schemes found.</p>
+  )}
+</div>
+
+            </>
+          )
+
+
+            : (
+              <div className="text-center py-12">
+                <div className="text-gray-400 text-6xl mb-4">💰</div>
+                <h4 className="text-xl font-semibold text-gray-600 mb-2">No Fixed Deposit Schemes Found</h4>
+                <p className="text-gray-500 mb-6">This customer doesn't have any FD schemes yet.</p>
+
+                {/* Create FD Link/Button */}
+                <div className="mt-6">
+                  <Link
+                    to={`/create-fd/${customer.CustomerId}`}
+                    className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Create New Fixed Deposit
+                  </Link>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <div className="text-gray-400 text-6xl mb-4">💰</div>
-              <h4 className="text-xl font-semibold text-gray-600 mb-2">No Fixed Deposit Schemes Found</h4>
-              <p className="text-gray-500">This customer doesn't have any FD schemes yet.</p>
-            </div>
-          )}
+
+                {/* Alternative: If you prefer a simple text link */}
+                {/* 
+  <div className="mt-6">
+    <a 
+      href="/create-fd" 
+      className="text-blue-600 hover:text-blue-800 font-medium hover:underline"
+    >
+      + Create your first Fixed Deposit
+    </a>
+  </div>
+  */}
+              </div>
+            )}
         </div>
 
         {/* RD Schemes Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
+        <div className="bg-white rounded-2xl mb-8 shadow-lg p-8">
           <div className="flex items-center justify-between mb-6">
             <div className="bg-purple-100 p-3 flex gap-3 items-center rounded-full mr-4">
               <FaChartLine className="text-purple-600 text-2xl" />
@@ -476,7 +554,7 @@ function ViewDetails() {
                       </div>
                       <div>
                         <span className="text-sm font-medium text-gray-600">Total Installments</span>
-                        <p className="text-lg font-semibold text-gray-800">{rd.rdTotalInstallments}</p>
+                        <p className="text-lg font-semibold text-gray-800">{rd.rdTotalInstallments||0}</p>
                       </div>
                     </div>
 
@@ -501,7 +579,7 @@ function ViewDetails() {
                     <div className="space-y-3">
                       <div>
                         <span className="text-sm font-medium text-gray-600">RD Total DepositedtAmount</span>
-                        <p className="text-lg font-bold text-blue-600">{rd.rdTotalDepositedtAmount}</p>
+                        <p className="text-lg font-bold text-blue-600">{rd.rdTotalDepositedtAmount||0}</p>
                       </div>
                       <div>
                         <span className="text-sm font-medium text-gray-600">RD Total DepositedInstallment</span>
@@ -535,7 +613,14 @@ function ViewDetails() {
                       </div>
                     </div>
                   </div>
+
+
+                   <div className="mt-6 flex justify-left text-left">
+          <RDEmiPayModal rd={rd} customerId={customer._id}  />
+        </div>
                 </div>
+
+        
               ))}
             </div>
           ) : (
@@ -543,14 +628,29 @@ function ViewDetails() {
               <div className="text-gray-400 text-6xl mb-4">📈</div>
               <h4 className="text-xl font-semibold text-gray-600 mb-2">No Recurring Deposit Schemes Found</h4>
               <p className="text-gray-500">This customer doesn't have any RD schemes yet.</p>
+
+              <div className="mt-6">
+                <Link
+                  to={`/create-rd/${customer.CustomerId}`}
+                  className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Create New Recurring Deposit
+                </Link>
+              </div>
+
             </div>
+
+
           )}
         </div>
 
 
         {/* Loan details if  */}
 
-        <div className="bg-white rounded-2xl shadow-lg p-8">
+        <div className="bg-white rounded-2xl mb-8 shadow-lg p-8">
           <div className="flex items-center justify-between mb-6">
             <div className="bg-purple-100 p-3 flex gap-3 items-center rounded-full mr-4">
               <FaChartLine className="text-purple-600 text-2xl" />
@@ -654,6 +754,11 @@ function ViewDetails() {
                       </div>
                     </div>
                   </div>
+
+
+                        <div className="mt-6 flex justify-left text-left">
+          <LoanEmiPayModal loan={loan} customerId={customer._id}  />
+        </div>
                 </div>
               ))}
             </div>
@@ -661,14 +766,26 @@ function ViewDetails() {
             <div className="text-center py-12">
               <div className="text-gray-400 text-6xl mb-4">📈</div>
               <h4 className="text-xl font-semibold text-gray-600 mb-2">No Loan Found</h4>
-              <p className="text-gray-500">This customer doesn't have any RD schemes yet.</p>
+              <p className="text-gray-500">This customer doesn't have any LOAN  yet.</p>
+
+              <div className="mt-6">
+                <Link
+                  to={`/create-loan/${customer.CustomerId}`}
+                  className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Create New Loan
+                </Link>
+              </div>
             </div>
           )}
         </div>
 
         {/* pifmy if */}
 
-        <div className="bg-white rounded-2xl shadow-lg p-8">
+        <div className="bg-white rounded-2xl mb-8 shadow-lg p-8">
           <div className="flex items-center justify-between mb-6">
             <div className="bg-purple-100 p-3 flex gap-3 items-center rounded-full mr-4">
               <FaChartLine className="text-purple-600 text-2xl" />
@@ -775,6 +892,10 @@ function ViewDetails() {
 
                     </div>
                   </div>
+
+                             <div className="mt-6 flex justify-left text-left">
+          <PigmyEmiPayModal pigmy={pigmy} customerId={customer._id}  />
+        </div>
                 </div>
               ))}
             </div>
@@ -782,7 +903,17 @@ function ViewDetails() {
             <div className="text-center py-12">
               <div className="text-gray-400 text-6xl mb-4">📈</div>
               <h4 className="text-xl font-semibold text-gray-600 mb-2">No PIGMY Deposit Schemes Found</h4>
-              <p className="text-gray-500">This customer doesn't have any RD schemes yet.</p>
+              <p className="text-gray-500">This customer doesn't have any PIGMY schemes yet.</p>
+
+              <Link
+                to={`/create-pigmy/${customer.CustomerId}`}
+                className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Create New Pigmy
+              </Link>
             </div>
           )}
         </div>

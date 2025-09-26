@@ -17,7 +17,7 @@ export default function AddEditCareer() {
   const [docs, setDocs] = useState(null);
   const [existingDocs, setExistingDocs] = useState(null); // show existing docs
   const [loading, setLoading] = useState(false);
-
+const token = localStorage.getItem("token")
   // Fetch career data if editing
   useEffect(() => {
     const fetchCareer = async () => {
@@ -61,13 +61,13 @@ export default function AddEditCareer() {
       if (itemId) {
         // Edit existing career
         await axios.put(`${import.meta.env.VITE_API_URL}admin/career/${adminId}/${itemId}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: { "Content-Type": "multipart/form-data" ,Authorization: `Bearer ${token}`},
         });
         alert("Career updated successfully!");
       } else {
         // Add new career
         await axios.post(`${import.meta.env.VITE_API_URL}admin/career/${adminId}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
+        headers: { "Content-Type": "multipart/form-data" ,Authorization: `Bearer ${token}`},
         });
         alert("Career added successfully!");
       }

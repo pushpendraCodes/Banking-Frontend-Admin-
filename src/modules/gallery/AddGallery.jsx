@@ -28,14 +28,17 @@ const token = localStorage.getItem("token")
         }
       }
 
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}admin/gallery/add/${id}`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-           Authorization: `Bearer ${token}`,
-        }
-      );
+ await axios.post(
+  `${import.meta.env.VITE_API_URL}admin/gallery/add/${id}`,
+  formData,
+  {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
+
 
       alert("Gallery added successfully ✅");
       reset();

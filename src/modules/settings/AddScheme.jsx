@@ -15,7 +15,7 @@ const AddScheme = () => {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-
+const token = localStorage.getItem("token")
   const Navigate = useNavigate()
 
   const handleInputChange = (e) => {
@@ -145,7 +145,7 @@ const AddScheme = () => {
       // Original axios code (uncomment when using real API):
       const response = await axios.post(`${import.meta.env.VITE_API_URL}admin/schemes/add`, uploadData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}`
         }
       });
       if (response.data.success) {

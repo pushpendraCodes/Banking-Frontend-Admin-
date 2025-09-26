@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useEffect, useState, useCallback } from "react";
-import { FaArrowLeft, FaEye } from "react-icons/fa6";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { FaEye, FaChevronDown } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 export default function PaymentHistory() {
@@ -14,12 +14,45 @@ export default function PaymentHistory() {
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
+
+  // Enhanced filter states
   const [selectedAgent, setSelectedAgent] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+  const [selectedAreaManager, setSelectedAreaManager] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedTransactionType, setSelectedTransactionType] = useState("");
+  const [selectedMode, setSelectedMode] = useState("");
+  const [selectedSchemeType, setSelectedSchemeType] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const [dateFilter, setDateFilter] = useState(""); // "today" | "yesterday" | ""
 
   const manager = JSON.parse(localStorage.getItem("user"));
   const [agents, setAgents] = useState([]);
+  const [areaManagers, setAreaManagers] = useState([]);
+  const [customers, setCustomers] = useState([]);
 
+  // Search states for dropdowns
+  const [agentSearch, setAgentSearch] = useState("");
+  const [customerSearch, setCustomerSearch] = useState("");
+  const [areaManagerSearch, setAreaManagerSearch] = useState("");
+  const [agentDropdownOpen, setAgentDropdownOpen] = useState(false);
+  const [customerDropdownOpen, setCustomerDropdownOpen] = useState(false);
+  const [areaManagerDropdownOpen, setAreaManagerDropdownOpen] = useState(false);
+
+  // Refs for dropdown containers
+  const agentDropdownRef = useRef(null);
+  const customerDropdownRef = useRef(null);
+  const areaManagerDropdownRef = useRef(null);
+
+  // Predefined filter options
+  const statusOptions = ["pending", "approved", "rejected"];
+  const transactionTypeOptions = ["deposit", "withdrawal", "emi", "maturityPayout", "penality"];
+  const modeOptions = ["cash", "bankTransfer", "upi", "cheque", "card"];
+  const schemeTypeOptions = ["FD", "RD", "LOAN", "PIGMY"];
+
+  // const managerId = JSON.parse(localStorage.getItem("user"))._id
+  const token = localStorage.getItem("token");
   // Debounce search input
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -29,7 +62,29 @@ export default function PaymentHistory() {
     return () => clearTimeout(handler);
   }, [search]);
 
-  // Fetch transactions with filters
+  const fetchAreaManagers = async () => {
+    try {
+     const res = await axios.get(
+  `${import.meta.env.VITE_API_URL}areaManager?all=true`,
+  {
+    headers: { Authorization: `Bearer ${token}` },
+  }
+);
+
+      setAreaManagers(res.data.data || []);
+    } catch (err) { console.error(err); }
+  };
+
+  const fetchCustomers = async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}customer?all=true`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCustomers(res.data.data || []);
+    } catch (err) { console.error(err); }
+  };
+  // const token = localStorage.getItem("token");
+  // Fetch transactions with enhanced filters
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -38,14 +93,26 @@ export default function PaymentHistory() {
         search: debouncedSearch,
         page,
         limit,
-       
+        // managerId: manager._id,
       };
+
+      // Add all filter parameters
       if (selectedAgent) params.agentId = selectedAgent;
+      if (selectedCustomer) params.customerId = selectedCustomer;
+      if (selectedAreaManager) params.areaManagerId = selectedAreaManager;
+      if (selectedStatus) params.status = selectedStatus;
+      if (selectedTransactionType) params.transactionType = selectedTransactionType;
+      if (selectedMode) params.mode = selectedMode;
+      if (selectedSchemeType) params.schemeType = selectedSchemeType;
+      if (fromDate) params.fromDate = fromDate;
+      if (toDate) params.toDate = toDate;
       if (dateFilter) params.filter = dateFilter; // pass today/yesterday filter
 
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}transactionSchemes/transactions`,
-        { params }
+        { params, headers: { Authorization: `Bearer ${token}` }, }
+
+
       );
 
       if (response.data) {
@@ -60,14 +127,29 @@ export default function PaymentHistory() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, page, limit, selectedAgent, dateFilter, manager._id]);
+  }, [
+    debouncedSearch,
+    page,
+    limit,
+    selectedAgent,
+    selectedCustomer,
+    selectedAreaManager,
+    selectedStatus,
+    selectedTransactionType,
+    selectedMode,
+    selectedSchemeType,
+    fromDate,
+    toDate,
+    dateFilter,
+    manager._id
+  ]);
 
   // Fetch agent list
   const fetchAgents = useCallback(async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}agent`,
-        { params: { all: true } }
+        `${import.meta.env.VITE_API_URL}agent?all=true`,
+        { params: { all: true }, headers: { Authorization: `Bearer ${token}` } }
       );
       setAgents(response.data?.data || []);
     } catch {
@@ -77,35 +159,105 @@ export default function PaymentHistory() {
 
   useEffect(() => {
     fetchAgents();
-  }, [fetchAgents]);
+    fetchAreaManagers();
+    fetchCustomers();
+  }, []);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (agentDropdownRef.current && !agentDropdownRef.current.contains(event.target)) {
+        setAgentDropdownOpen(false);
+      }
+      if (customerDropdownRef.current && !customerDropdownRef.current.contains(event.target)) {
+        setCustomerDropdownOpen(false);
+      }
+      if (areaManagerDropdownRef.current && !areaManagerDropdownRef.current.contains(event.target)) {
+        setAreaManagerDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Reset all filters function
+  const resetAllFilters = () => {
+    setSelectedAgent("");
+    setSelectedCustomer("");
+    setSelectedAreaManager("");
+    setSelectedStatus("");
+    setSelectedTransactionType("");
+    setSelectedMode("");
+    setSelectedSchemeType("");
+    setFromDate("");
+    setToDate("");
+    setDateFilter("");
+    setSearch("");
+    setAgentSearch("");
+    setCustomerSearch("");
+    setAreaManagerSearch("");
+    setPage(1);
+  };
+
+  // Filter functions for searchable dropdowns
+  const filteredAgents = agents.filter(agent =>
+    agent.name.toLowerCase().includes(agentSearch.toLowerCase())
+  );
+
+  const filteredCustomers = customers.filter(customer =>
+    customer.name.toLowerCase().includes(customerSearch.toLowerCase())
+  );
+
+  const filteredAreaManagers = areaManagers.filter(manager =>
+    manager.name.toLowerCase().includes(areaManagerSearch.toLowerCase())
+  );
+
+  // Get selected names for display
+  const getSelectedAgentName = () => {
+    const agent = agents.find(a => a._id === selectedAgent);
+    return agent ? agent.name : "";
+  };
+
+  const getSelectedCustomerName = () => {
+    const customer = customers.find(c => c._id === selectedCustomer);
+    return customer ? customer.name : "";
+  };
+
+  const getSelectedAreaManagerName = () => {
+    const manager = areaManagers.find(m => m._id === selectedAreaManager);
+    return manager ? manager.name : "";
+  };
+
   // Accept transaction API call and optimistic update
- const handleAccept = async (id, status) => {
-  try {
-    const confirm = window.confirm(`Are you sure you want to ${status} this transaction?`);
-    if (!confirm) return; // ❌ stop if user cancels
+  const handleAccept = async (id, status) => {
+    try {
+      const confirm = window.confirm(`Are you sure you want to ${status} this transaction?`);
+      if (!confirm) return; // ❌ stop if user cancels
 
-    const body = { status, managerId: manager._id };
-    await axios.post(
-      `${import.meta.env.VITE_API_URL}transactionSchemes/transaction/approvedReject/${id}`,
-      body
-    );
+      const body = { status, managerId: manager._id };
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}transactionSchemes/transaction/approvedReject/${id}`,
+        body, {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+      );
 
-    setData((prev) =>
-      prev.map((trx) =>
-        trx._id === id ? { ...trx, status } : trx
-      )
-    );
-  } catch (err) {
-    alert("Failed to accept transaction");
-  }
-};
-
-
+      setData((prev) =>
+        prev.map((trx) =>
+          trx._id === id ? { ...trx, status } : trx
+        )
+      );
+    } catch (err) {
+      alert("Failed to accept transaction");
+    }
+  };
 
   // Status color helper
   const statusColorClass = (status) => {
@@ -122,72 +274,349 @@ export default function PaymentHistory() {
   };
 
   return (
-    <div className=" mx-auto p-4">
+    <div className="max-w-7xl mx-auto p-4">
       {/* Header */}
       <div className="flex gap-2 items-center mb-6">
-       
         <h2 className="text-2xl font-bold">Payments</h2>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap sm:flex-nowrap sm:items-center justify-between gap-4 mb-4">
-        {/* Agent Filter */}
-        <select
-          className="border border-gray-400 rounded px-3 py-2 w-full sm:w-64"
-          value={selectedAgent}
-          onChange={(e) => {
-            setSelectedAgent(e.target.value);
-            setPage(1);
-          }}
-          aria-label="Filter by agent"
-        >
-          <option value="">All Agents</option>
-          {agents.map((agent) => (
-            <option key={agent._id} value={agent._id}>
-              {agent.name}
-            </option>
-          ))}
-        </select>
+      {/* Enhanced Filters Section */}
+      <div className="bg-white rounded-lg shadow-sm border p-4 mb-4">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">Filters</h3>
+          <button
+            onClick={resetAllFilters}
+            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+          >
+            Clear All Filters
+          </button>
+        </div>
 
-        {/* Search */}
-        <input
-          type="search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search By Ledger Number"
-          className="border border-gray-400 rounded px-3 py-2 w-full sm:w-64"
-          aria-label="Search payments by ledger number"
-        />
+        {/* First Row - Dropdowns */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+          {/* Agent Filter - Searchable */}
+          <div className="relative" ref={agentDropdownRef}>
+            <div
+              className="border border-gray-400 rounded px-3 py-2 w-full cursor-pointer flex justify-between items-center bg-white"
+              onClick={() => setAgentDropdownOpen(!agentDropdownOpen)}
+            >
+              <span className={selectedAgent ? "text-black" : "text-gray-500"}>
+                {selectedAgent ? getSelectedAgentName() : "All Agents"}
+              </span>
+              <FaChevronDown className={`transition-transform ${agentDropdownOpen ? 'rotate-180' : ''}`} />
+            </div>
+            {agentDropdownOpen && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-y-auto">
+                <div className="p-2 border-b">
+                  <input
+                    type="text"
+                    placeholder="Search agents..."
+                    value={agentSearch}
+                    onChange={(e) => setAgentSearch(e.target.value)}
+                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:border-blue-500"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+                <div
+                  className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
+                  onClick={() => {
+                    setSelectedAgent("");
+                    setAgentDropdownOpen(false);
+                    setAgentSearch("");
+                    setPage(1);
+                  }}
+                >
+                  <span>All Agents</span>
+                  {!selectedAgent && <span className="text-blue-500">✓</span>}
+                </div>
+                {filteredAgents.map((agent) => (
+                  <div
+                    key={agent._id}
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
+                    onClick={() => {
+                      setSelectedAgent(agent._id);
+                      setAgentDropdownOpen(false);
+                      setAgentSearch("");
+                      setPage(1);
+                    }}
+                  >
+                    <span>{agent.name}</span>
+                    {selectedAgent === agent._id && <span className="text-blue-500">✓</span>}
+                  </div>
+                ))}
+                {filteredAgents.length === 0 && agentSearch && (
+                  <div className="px-3 py-2 text-gray-500">No agents found</div>
+                )}
+              </div>
+            )}
+          </div>
 
-        {/* Date Filter Buttons */}
-        <div className="flex gap-2 whitespace-nowrap">
-          <button
-            onClick={() => setDateFilter("today")}
-            className={`px-4 py-2 rounded font-semibold border ${dateFilter === "today"
-                ? "bg-yellow-400 text-white border-yellow-400"
-                : "bg-white text-gray-700 border-gray-300 hover:bg-yellow-50"
-              }`}
+          {/* Customer Filter - Searchable */}
+          <div className="relative" ref={customerDropdownRef}>
+            <div
+              className="border border-gray-400 rounded px-3 py-2 w-full cursor-pointer flex justify-between items-center bg-white"
+              onClick={() => setCustomerDropdownOpen(!customerDropdownOpen)}
+            >
+              <span className={selectedCustomer ? "text-black" : "text-gray-500"}>
+                {selectedCustomer ? getSelectedCustomerName() : "All Customers"}
+              </span>
+              <FaChevronDown className={`transition-transform ${customerDropdownOpen ? 'rotate-180' : ''}`} />
+            </div>
+            {customerDropdownOpen && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-y-auto">
+                <div className="p-2 border-b">
+                  <input
+                    type="text"
+                    placeholder="Search customers..."
+                    value={customerSearch}
+                    onChange={(e) => setCustomerSearch(e.target.value)}
+                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:border-blue-500"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+                <div
+                  className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
+                  onClick={() => {
+                    setSelectedCustomer("");
+                    setCustomerDropdownOpen(false);
+                    setCustomerSearch("");
+                    setPage(1);
+                  }}
+                >
+                  <span>All Customers</span>
+                  {!selectedCustomer && <span className="text-blue-500">✓</span>}
+                </div>
+                {filteredCustomers.map((customer) => (
+                  <div
+                    key={customer._id}
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
+                    onClick={() => {
+                      setSelectedCustomer(customer._id);
+                      setCustomerDropdownOpen(false);
+                      setCustomerSearch("");
+                      setPage(1);
+                    }}
+                  >
+                    <span>{customer.name}</span>
+                    {selectedCustomer === customer._id && <span className="text-blue-500">✓</span>}
+                  </div>
+                ))}
+                {filteredCustomers.length === 0 && customerSearch && (
+                  <div className="px-3 py-2 text-gray-500">No customers found</div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Area Manager Filter - Searchable */}
+          <div className="relative" ref={areaManagerDropdownRef}>
+            <div
+              className="border border-gray-400 rounded px-3 py-2 w-full cursor-pointer flex justify-between items-center bg-white"
+              onClick={() => setAreaManagerDropdownOpen(!areaManagerDropdownOpen)}
+            >
+              <span className={selectedAreaManager ? "text-black" : "text-gray-500"}>
+                {selectedAreaManager ? getSelectedAreaManagerName() : "All Area Managers"}
+              </span>
+              <FaChevronDown className={`transition-transform ${areaManagerDropdownOpen ? 'rotate-180' : ''}`} />
+            </div>
+            {areaManagerDropdownOpen && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded shadow-lg max-h-60 overflow-y-auto">
+                <div className="p-2 border-b">
+                  <input
+                    type="text"
+                    placeholder="Search area managers..."
+                    value={areaManagerSearch}
+                    onChange={(e) => setAreaManagerSearch(e.target.value)}
+                    className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:border-blue-500"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                </div>
+                <div
+                  className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
+                  onClick={() => {
+                    setSelectedAreaManager("");
+                    setAreaManagerDropdownOpen(false);
+                    setAreaManagerSearch("");
+                    setPage(1);
+                  }}
+                >
+                  <span>All Area Managers</span>
+                  {!selectedAreaManager && <span className="text-blue-500">✓</span>}
+                </div>
+                {filteredAreaManagers.map((manager) => (
+                  <div
+                    key={manager._id}
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
+                    onClick={() => {
+                      setSelectedAreaManager(manager._id);
+                      setAreaManagerDropdownOpen(false);
+                      setAreaManagerSearch("");
+                      setPage(1);
+                    }}
+                  >
+                    <span>{manager.name}</span>
+                    {selectedAreaManager === manager._id && <span className="text-blue-500">✓</span>}
+                  </div>
+                ))}
+                {filteredAreaManagers.length === 0 && areaManagerSearch && (
+                  <div className="px-3 py-2 text-gray-500">No area managers found</div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Status Filter */}
+          <select
+            className="border border-gray-400 rounded px-3 py-2 w-full"
+            value={selectedStatus}
+            onChange={(e) => {
+              setSelectedStatus(e.target.value);
+              setPage(1);
+            }}
+            aria-label="Filter by status"
           >
-            Today
-          </button>
-          <button
-            onClick={() => setDateFilter("yesterday")}
-            className={`px-4 py-2 rounded font-semibold border ${dateFilter === "yesterday"
-                ? "bg-yellow-400 text-white border-yellow-400"
-                : "bg-white text-gray-700 border-gray-300 hover:bg-yellow-50"
-              }`}
+            <option value="">All Status</option>
+            {statusOptions.map((status) => (
+              <option key={status} value={status}>
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Second Row - More Dropdowns */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+          {/* Transaction Type Filter */}
+          <select
+            className="border border-gray-400 rounded px-3 py-2 w-full"
+            value={selectedTransactionType}
+            onChange={(e) => {
+              setSelectedTransactionType(e.target.value);
+              setPage(1);
+            }}
+            aria-label="Filter by transaction type"
           >
-            Yesterday
-          </button>
-          <button
-            onClick={() => setDateFilter("")}
-            className={`px-4 py-2 rounded font-semibold border ${dateFilter === ""
-                ? "bg-yellow-400 text-white border-yellow-400"
-                : "bg-white text-gray-700 border-gray-300 hover:bg-yellow-50"
-              }`}
+            <option value="">All Transaction Types</option>
+            {transactionTypeOptions.map((type) => (
+              <option key={type} value={type}>
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </option>
+            ))}
+          </select>
+
+          {/* Mode Filter */}
+          <select
+            className="border border-gray-400 rounded px-3 py-2 w-full"
+            value={selectedMode}
+            onChange={(e) => {
+              setSelectedMode(e.target.value);
+              setPage(1);
+            }}
+            aria-label="Filter by mode"
           >
-            Clear
-          </button>
+            <option value="">All Modes</option>
+            {modeOptions.map((mode) => (
+              <option key={mode} value={mode}>
+                {mode.replace('_', ' ').charAt(0).toUpperCase() + mode.replace('_', ' ').slice(1)}
+              </option>
+            ))}
+          </select>
+
+          {/* Scheme Type Filter */}
+          <select
+            className="border border-gray-400 rounded px-3 py-2 w-full"
+            value={selectedSchemeType}
+            onChange={(e) => {
+              setSelectedSchemeType(e.target.value);
+              setPage(1);
+            }}
+            aria-label="Filter by scheme type"
+          >
+            <option value="">All Scheme Types</option>
+            {schemeTypeOptions.map((scheme) => (
+              <option key={scheme} value={scheme}>
+                {scheme.charAt(0).toUpperCase() + scheme.slice(1)}
+              </option>
+            ))}
+          </select>
+
+          {/* Search */}
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search By Ledger Number"
+            className="border border-gray-400 rounded px-3 py-2 w-full"
+            aria-label="Search payments by ledger number"
+          />
+        </div>
+
+        {/* Third Row - Date Filters */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+          {/* From Date */}
+          <div className="flex flex-col">
+            <label htmlFor="fromDate" className="text-sm font-medium mb-1">From Date</label>
+            <input
+              id="fromDate"
+              type="date"
+              value={fromDate}
+              onChange={(e) => {
+                setFromDate(e.target.value);
+                setPage(1);
+                if (dateFilter) setDateFilter(""); // Clear quick date filter
+              }}
+              className="border border-gray-400 rounded px-3 py-2 w-full"
+            />
+          </div>
+
+          {/* To Date */}
+          <div className="flex flex-col">
+            <label htmlFor="toDate" className="text-sm font-medium mb-1">To Date</label>
+            <input
+              id="toDate"
+              type="date"
+              value={toDate}
+              onChange={(e) => {
+                setToDate(e.target.value);
+                setPage(1);
+                if (dateFilter) setDateFilter(""); // Clear quick date filter
+              }}
+              className="border border-gray-400 rounded px-3 py-2 w-full"
+            />
+          </div>
+
+          {/* Quick Date Filter Buttons */}
+          <div className="flex flex-col">
+            <label className="text-sm font-medium mb-1">Quick Date Filters</label>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setDateFilter("today");
+                  setFromDate("");
+                  setToDate("");
+                }}
+                className={`px-3 py-2 rounded font-semibold border text-xs ${dateFilter === "today"
+                    ? "bg-yellow-400 text-white border-yellow-400"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-yellow-50"
+                  }`}
+              >
+                Today
+              </button>
+              <button
+                onClick={() => {
+                  setDateFilter("yesterday");
+                  setFromDate("");
+                  setToDate("");
+                }}
+                className={`px-3 py-2 rounded font-semibold border text-xs ${dateFilter === "yesterday"
+                    ? "bg-yellow-400 text-white border-yellow-400"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-yellow-50"
+                  }`}
+              >
+                Yesterday
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -201,6 +630,8 @@ export default function PaymentHistory() {
               <th className="px-4 py-2 border">Ledger No</th>
               <th className="px-4 py-2 border">Customer</th>
               <th className="px-4 py-2 border">Amount</th>
+              <th className="px-4 py-2 border">Type</th>
+              <th className="px-4 py-2 border">Mode</th>
               <th className="px-4 py-2 border">Action</th>
               <th className="px-4 py-2 border">Status</th>
             </tr>
@@ -208,19 +639,19 @@ export default function PaymentHistory() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="7" className="text-center py-10 text-gray-500">
+                <td colSpan="9" className="text-center py-10 text-gray-500">
                   Loading data...
                 </td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan="7" className="text-center py-10 text-red-500">
+                <td colSpan="9" className="text-center py-10 text-red-500">
                   Error: {error.message}
                 </td>
               </tr>
             ) : data.length === 0 ? (
               <tr>
-                <td colSpan="7" className="text-center py-10 text-gray-500">
+                <td colSpan="9" className="text-center py-10 text-gray-500">
                   No transactions found.
                 </td>
               </tr>
@@ -241,6 +672,12 @@ export default function PaymentHistory() {
                     {trx.customerId?.name || "N/A"}
                   </td>
                   <td className="px-4 py-2 border">{trx.amount.toFixed(2)}</td>
+                  <td className="px-4 py-2 border capitalize">
+                    {trx.transactionType || "N/A"}
+                  </td>
+                  <td className="px-4 py-2 border capitalize">
+                    {trx.mode?.replace('_', ' ') || "N/A"}
+                  </td>
                   <td className="px-4 py-2 border">
                     {trx.status === "pending" ? (
                       <div className="flex gap-2">

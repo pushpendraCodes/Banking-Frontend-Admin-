@@ -35,24 +35,27 @@ export default function CustomerList() {
   const token = localStorage.getItem("token");
 
   // Fetch Managers, Agents, Area Managers
-  const fetchManagers = async () => {
-    try {
-      const res = await axios.get(apiManagerUrl);
-      setManagers(res.data.data || []);
-    } catch (err) { console.error(err); }
-  };
-  const fetchAgents = async () => {
-    try {
-      const res = await axios.get(apiAgentUrl);
-      setAgents(res.data.data || []);
-    } catch (err) { console.error(err); }
-  };
-  const fetchAreaManagers = async () => {
-    try {
-       const res = await axios.get(`${import.meta.env.VITE_API_URL}areaManager`);
-      setAreaManagers(res.data.data || []);
-    } catch (err) { console.error(err); }
-  };
+const fetchManagers = async () => {
+  try {
+    const res = await axios.get(`${apiManagerUrl}?all=true`,{ headers: { Authorization: `Bearer ${token}` } });
+    setManagers(res.data.data || []);
+  } catch (err) { console.error(err); }
+};
+
+const fetchAgents = async () => {
+  try {
+    const res = await axios.get(`${apiAgentUrl}?all=true`,{ headers: { Authorization: `Bearer ${token}` } });
+    setAgents(res.data.data || []);
+  } catch (err) { console.error(err); }
+};
+
+const fetchAreaManagers = async () => {
+  try {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}areaManager?all=true`,{ headers: { Authorization: `Bearer ${token}` } });
+    setAreaManagers(res.data.data || []);
+  } catch (err) { console.error(err); }
+};
+
 
   // Fetch Customers
   const fetchCustomers = async () => {

@@ -10,7 +10,7 @@ const CareerList = () => {
   const [loading, setLoading] = useState(true);
 
   const adminId = JSON.parse(localStorage.getItem("user"))?._id;
-
+ const token = localStorage.getItem("token")
   useEffect(() => {
     const fetchCareers = async () => {
       try {
@@ -34,7 +34,9 @@ const CareerList = () => {
   const onDelete = async (careerId) => {
     if (!window.confirm("Are you sure you want to delete this career?")) return;
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}admin/career/${careerId}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}admin/career/${careerId}`, {
+          headers: {Authorization: `Bearer ${token}`,  },
+        });
       setCareers((prev) => prev.filter((c) => c._id !== careerId));
       alert("Career deleted successfully!");
     } catch (err) {

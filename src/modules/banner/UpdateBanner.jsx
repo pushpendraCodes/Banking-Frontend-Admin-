@@ -12,7 +12,7 @@ const UpdateBanner = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
-
+ const token = localStorage.getItem("token")
   // Fetch banner data
   useEffect(() => {
     const fetchBanner = async () => {
@@ -56,7 +56,7 @@ const UpdateBanner = () => {
         `${apiAdminBannerUrl}/update/${itemId}/${id}`,
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: { "Content-Type": "multipart/form-data",Authorization: `Bearer ${token}`,  },
         }
       );
 

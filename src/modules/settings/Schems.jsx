@@ -7,7 +7,7 @@ const Schems = () => {
   const [loading, setLoading] = useState(true);
 
   const Navigate = useNavigate()
-
+const token = localStorage.getItem("token")
  useEffect(() => {
     const fetchSchemes = async () => {
       try {
@@ -44,7 +44,12 @@ const handleDeleteScheme = async (scheme) => {
   if (window.confirm("Are you sure you want to delete this scheme?")) {
     try {
       const response = await axios.delete(
-        `${import.meta.env.VITE_API_URL}admin/schemes/delete/${scheme._id}`
+        `${import.meta.env.VITE_API_URL}admin/schemes/delete/${scheme._id}`,
+        {
+          headers:{
+              Authorization: `Bearer ${token}`
+          }
+        }
       );
 
       if (response.data.success) {

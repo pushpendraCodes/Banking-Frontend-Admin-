@@ -62,11 +62,17 @@ const UpdateGallery = () => {
         }
       }
 
-      await axios.put(
-        `${import.meta.env.VITE_API_URL}admin/gallery/update/${id}/${itemId}`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+     await axios.put(
+  `${import.meta.env.VITE_API_URL}admin/gallery/update/${id}/${itemId}`,
+  formData,
+  {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
+
 
       alert("Gallery updated successfully ✅");
       navigate(-1);

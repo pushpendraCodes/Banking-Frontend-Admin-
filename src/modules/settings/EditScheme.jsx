@@ -21,7 +21,7 @@ const EditScheme = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
-
+const token = localStorage.getItem("token")
   const logoInputRef = useRef(null);
   const pdfInputRef = useRef(null);
 
@@ -204,7 +204,7 @@ const EditScheme = () => {
 
       const response = await axios.put(`${import.meta.env.VITE_API_URL}admin/schemes/update/${id}`, uploadData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'multipart/form-data',Authorization: `Bearer ${token}`
         }
       });
       if (response.data.success) {
@@ -278,87 +278,57 @@ const EditScheme = () => {
             </div>
 
             {/* Logo Upload */}
-            <div>
-              <label htmlFor="logo" className="block text-sm font-medium text-gray-700 mb-2">
-                Logo Image
-              </label>
+           {/* New Logo Upload Area */}
+<div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-red-400 transition">
+  <div className="space-y-1 text-center">
+    {previews.logo && formData.logo ? (
+      <div className="mb-4">
+        <img
+          src={previews.logo}
+          alt="New logo preview"
+          className="mx-auto h-20 w-20 object-contain rounded"
+        />
+        <p className="text-sm text-gray-500 mt-2">{formData.logo?.name}</p>
+        <button
+          type="button"
+          onClick={() => handleRemoveFile("logo")}
+          className="mt-2 text-sm text-red-600 hover:text-red-700"
+        >
+          Remove new logo
+        </button>
+      </div>
+    ) : (
+      <label className="flex flex-col items-center cursor-pointer">
+        <svg
+          className="mx-auto h-12 w-12 text-gray-400"
+          stroke="currentColor"
+          fill="none"
+          viewBox="0 0 48 48"
+        >
+          <path
+            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        <span className="mt-2 text-sm text-gray-500">Upload Logo</span>
+        <input
+          id="logo"
+          name="logo"
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleFileChange}
+        />
+      </label>
+    )}
+  </div>
+</div>
 
-              {/* Current Logo Display */}
-              {currentFiles.logo && !formData.logo && (
-                <div className="mb-3 p-3 bg-gray-50 rounded-md">
-                  <p className="text-sm text-gray-600 mb-2">Current logo:</p>
-                  <div className="flex items-center justify-between">
-                    <img
-                      src={currentFiles.logo}
-                      alt="Current logo"
-                      className="h-16 w-16 object-contain rounded border"
-                    />
-                     <div className="flex text-sm text-gray-600 justify-center">
-                        <label
-                          htmlFor="logo"
-                          className="relative cursor-pointer bg-white rounded-md font-medium text-red-600 hover:text-red-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-red-500"
-                        >
-                          <span>Upload new logo</span>
-                          <input
-                            id="logo"
-                            ref={logoInputRef}
-                            name="logo"
-                            type="file"
-                            accept="image/*"
-                            className="sr-only"
-                            onChange={handleFileChange}
-                          />
-                        </label>
-                      </div>
-                      <p className="text-xs text-gray-500">PNG, JPG, GIF up to 1MB</p>
-                  </div>
-                </div>
-              )}
-
-             
-              {errors.logo && <p className="mt-1 text-sm text-red-600">{errors.logo}</p>}
-            </div>
 
 
- {/* New Logo Upload Area */}
-              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-red-400 transition">
-                <div className="space-y-1 text-center">
-                  {previews.logo && formData.logo ? (
-                    <div className="mb-4">
-                      <img
-                        src={previews.logo}
-                        alt="New logo preview"
-                        className="mx-auto h-20 w-20 object-contain rounded"
-                      />
-                      <p className="text-sm text-gray-500 mt-2">{formData.logo?.name}</p>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveFile('logo')}
-                        className="mt-2 text-sm text-red-600 hover:text-red-700"
-                      >
-                        Remove new logo
-                      </button>
-                    </div>
-                  ) : !currentFiles.logo && !formData.logo ? (
-                    <>
-                      <svg
-                        className="mx-auto h-12 w-12 text-gray-400"
-                        stroke="currentColor"
-                        fill="none"
-                        viewBox="0 0 48 48"
-                      >
-                        <path
-                          d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                          strokeWidth={2}
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    
-                    </>
-                  ) : null}
-                </div>
-              </div>
+
 
 
             {/* Description */}
@@ -381,95 +351,57 @@ const EditScheme = () => {
             </div>
 
             {/* PDF Upload */}
-            <div>
-              <label htmlFor="pdf" className="block text-sm font-medium text-gray-700 mb-2">
-                PDF Document
-              </label>
+           {/* New PDF Upload Area */}
+<div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-red-400 transition">
+  <div className="space-y-1 text-center">
+    {previews.pdf && formData.pdf ? (
+      <div className="mb-4">
+        <svg className="mx-auto h-12 w-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 48 48">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M7 21h10m0 0v-4a2 2 0 012-2h8a2 2 0 012 2v4m-10 0v10a2 2 0 002 2h8a2 2 0 002-2V21m-10 0H7a2 2 0 00-2 2v10a2 2 0 002 2h3m4-12h8m0 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v8"
+          />
+        </svg>
+        <p className="text-sm text-gray-900 font-medium">{previews.pdf}</p>
+        <button
+          type="button"
+          onClick={() => handleRemoveFile("pdf")}
+          className="mt-2 text-sm text-red-600 hover:text-red-700"
+        >
+          Remove new PDF
+        </button>
+      </div>
+    ) : (
+      <label className="flex flex-col items-center cursor-pointer">
+        <svg
+          className="mx-auto h-12 w-12 text-gray-400"
+          stroke="currentColor"
+          fill="none"
+          viewBox="0 0 48 48"
+        >
+          <path
+            d="M8 14v20c0 4.418 7.163 8 16 8s16-3.582 16-8M8 14c0-4.418 7.163-8 16-8s16 3.582 16 8"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        <span className="mt-2 text-sm text-gray-500">Upload PDF</span>
+        <input
+          id="pdf"
+          name="pdf"
+          type="file"
+          accept=".pdf"
+          className="hidden"
+          onChange={handleFileChange}
+        />
+      </label>
+    )}
+  </div>
+</div>
 
-              {/* Current PDF Display */}
-              {currentFiles.pdf && !formData.pdf && (
-                <div className="mb-3 p-3 bg-gray-50 rounded-md">
-                  <p className="text-sm text-gray-600 mb-2">Current PDF:</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <svg className="h-8 w-8 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                      </svg>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{extractFilename(currentFiles.pdf)}</p>
-                        <a
-                          href={currentFiles.pdf}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-blue-600 hover:text-blue-700"
-                        >
-                          View current PDF
-                        </a>
-                      </div>
-                    </div>
-                    <div className="flex text-sm text-gray-600 justify-center">
-                        <label
-                          htmlFor="pdf"
-                          className="relative cursor-pointer bg-white rounded-md font-medium text-red-600 hover:text-red-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-red-500"
-                        >
-                          <span>Upload new PDF</span>
-                          <input
-                            id="pdf"
-                            name="pdf"
-                            ref={pdfInputRef}
-                            type="file"
-                            accept=".pdf"
-                            className="sr-only"
-                            onChange={handleFileChange}
-                          />
-                        </label>
-                      </div>
-                      <p className="text-xs text-gray-500">PDF up to 1MB</p>
-
-                  </div>
-                </div>
-              )}
-
-              {/* New PDF Upload Area */}
-              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-red-400 transition">
-                <div className="space-y-1 text-center">
-                  {previews.pdf && formData.pdf ? (
-                    <div className="mb-4">
-                      <svg className="mx-auto h-12 w-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 48 48">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10m0 0v-4a2 2 0 012-2h8a2 2 0 012 2v4m-10 0v10a2 2 0 002 2h8a2 2 0 002-2V21m-10 0H7a2 2 0 00-2 2v10a2 2 0 002 2h3m4-12h8m0 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v8" />
-                      </svg>
-                      <p className="text-sm text-gray-900 font-medium">{previews.pdf}</p>
-                      <p className="text-xs text-gray-500">New PDF file selected</p>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveFile('pdf')}
-                        className="mt-2 text-sm text-red-600 hover:text-red-700"
-                      >
-                        Remove new PDF
-                      </button>
-                    </div>
-                  ) : !currentFiles.pdf && !formData.pdf ? (
-                    <>
-                      <svg
-                        className="mx-auto h-12 w-12 text-gray-400"
-                        stroke="currentColor"
-                        fill="none"
-                        viewBox="0 0 48 48"
-                      >
-                        <path
-                          d="M8 14v20c0 4.418 7.163 8 16 8 1.381 0 2.721-.087 4-.252M8 14c0 4.418 7.163 8 16 8s16-3.582 16-8M8 14c0-4.418 7.163-8 16-8s16 3.582 16 8m0 0v14m-16-8l4 4m0 0l4-4m-4 4V14"
-                          strokeWidth={2}
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    
-                    </>
-                  ) : null}
-                </div>
-              </div>
-              {errors.pdf && <p className="mt-1 text-sm text-red-600">{errors.pdf}</p>}
-            </div>
 
             {/* Form Actions */}
             <div className="flex items-center justify-between pt-4">

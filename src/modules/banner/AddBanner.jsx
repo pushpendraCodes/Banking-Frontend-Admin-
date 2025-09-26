@@ -10,7 +10,7 @@ const AddBanner = () => {
   const { register, handleSubmit, reset } = useForm();
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false); // ✅ loading state
-
+ const token = localStorage.getItem("token")
   const onSubmit = async (data) => {
     try {
       setLoading(true); // start loading
@@ -24,7 +24,7 @@ const AddBanner = () => {
 
       // Call backend API
       await axios.post(`${apiAdminBannerUrl}/add/${adminId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { "Content-Type": "multipart/form-data",Authorization: `Bearer ${token}`, },
       });
 
       alert("Banner added successfully!");

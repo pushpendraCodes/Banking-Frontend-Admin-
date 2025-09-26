@@ -47,6 +47,11 @@ import AreaManagerList from "./modules/areaManager/AreaManagerList";
 import AddAreaManager from "./modules/areaManager/AddAreaManager";
 import EditAreaManager from "./modules/areaManager/EditAreaManager";
 import ViewAreaManager from "./modules/areaManager/ViewAreaManager";
+
+import CreateRDForm from "./modules/coustomer/CreateRDForm";
+import CreateFDForm from "./modules/coustomer/CreateFDForm";
+import CreateLoan from "./modules/coustomer/CreateLoan";
+import CreatePigmyForm from "./modules/coustomer/CreatePigmyForm";
 // import ViewAreaManager from "./modules/areaManager/ViewAreaManager.jsx";
 
 function App() {
@@ -117,6 +122,49 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+
+   <Route
+            path="/create-fd/:customerId"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <CreateFDForm/>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-rd/:customerId"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <CreateRDForm/>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-loan/:customerId"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <CreateLoan/>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-pigmy/:customerId"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <CreatePigmyForm/>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
         <Route
           path="/coustomers/paymentdetails/:customerId/:schemeType"
           element={

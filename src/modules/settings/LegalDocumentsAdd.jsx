@@ -10,7 +10,7 @@ function LegalDocumentsAdd() {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const id = JSON.parse(localStorage.getItem("user"))._id;
-
+const token = localStorage.getItem("token")
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -35,6 +35,7 @@ function LegalDocumentsAdd() {
         {
           headers: {
             "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`
           },
         }
       );

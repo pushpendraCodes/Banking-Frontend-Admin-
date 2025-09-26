@@ -11,7 +11,7 @@ export default function LegalDocuments() {
   useEffect(() => {
     fetchDocuments();
   }, []);
-
+const token = localStorage.getItem("token")
   const fetchDocuments = async () => {
     try {
       setLoading(true);
@@ -33,7 +33,11 @@ export default function LegalDocuments() {
 
     try {
       const res = await axios.delete(
-        `${import.meta.env.VITE_API_URL}admin/legal-docs/${id}`
+        `${import.meta.env.VITE_API_URL}admin/legal-docs/${id}`,{
+          headers:{
+              Authorization: `Bearer ${token}`
+          }
+        }
       );
       if (res.data.success) {
         alert("Document deleted successfully!");

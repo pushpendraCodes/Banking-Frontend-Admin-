@@ -66,7 +66,7 @@ const AddAgent = () => {
       navigate(-1);
     } catch (error) {
       console.error("Error adding agent:", error);
-      alert("Failed to add agent ❌");
+      alert(error.response.data.message||"Failed to add agent ❌");
     }
   };
 
@@ -364,7 +364,7 @@ const AddAgent = () => {
             {/* Manager */}
             <div>
               <label className="block font-semibold text-sm mb-1 text-gray-700">
-                Manager <span className="text-red-500">*</span>
+                Area Manager <span className="text-red-500">*</span>
               </label>
               <select
                 {...register("areaManagerId", { required: "Manager selection is required" })}
@@ -372,7 +372,7 @@ const AddAgent = () => {
                   errors.managerId ? "border-red-400" : "border-gray-200 focus:border-yellow-400"
                 } rounded-lg bg-gray-50 outline-none duration-200`}
               >
-                <option value="">Select Manager</option>
+                <option value="">Select Area Manager</option>
                 {managers.map((mng) => (
                   <option key={mng._id} value={mng._id}>
                     {mng.name}

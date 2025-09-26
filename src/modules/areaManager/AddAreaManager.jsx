@@ -62,7 +62,7 @@ const AddAreaManager = () => {
       navigate(-1);
     } catch (error) {
       console.error("Error adding manager:", error);
-      alert("Error while adding manager ❌");
+      alert(error.response.data.error||"Error while adding manager ❌");
     }
   };
 

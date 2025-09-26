@@ -7,16 +7,18 @@ const ViewPayment = () => {
   const [paymentData, setTransactions] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-const navigate = useNavigate()
+  const navigate = useNavigate()
   const { id } = useParams();
-
+  const token = localStorage.getItem("token");
   const fetchTransaction = async () => {
     try {
       setLoading(true);
       setError("");
 
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}transactionSchemes/transaction/getByid/${id}`
+        `${import.meta.env.VITE_API_URL}transactionSchemes/transaction/getByid/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      }
       );
 
       if (res.data.success) {
@@ -55,17 +57,17 @@ const navigate = useNavigate()
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className=" mx-auto bg-white shadow rounded-lg p-6">
-       <div className="flex gap-2 items-center mb-3">
+        <div className="flex gap-2 items-center mb-3">
           <button
-                            onClick={() => navigate(-1)}
-                            className="text-black p-1 border-2 rounded-4xl"
-                        >
-                            <FaArrowLeft />
-                        </button>
-        <h2 className="text-2xl font-semibold text-gray-800  border-b pb-2">
-          Payment Details
-        </h2>
-       </div>
+            onClick={() => navigate(-1)}
+            className="text-black p-1 border-2 rounded-4xl"
+          >
+            <FaArrowLeft />
+          </button>
+          <h2 className="text-2xl font-semibold text-gray-800  border-b pb-2">
+            Payment Details
+          </h2>
+        </div>
 
         {/* Customer Details */}
         <div className="mb-6">
@@ -118,11 +120,10 @@ const navigate = useNavigate()
             <p>
               <span className="font-medium">Status:</span>{" "}
               <span
-                className={`px-2 py-1 rounded text-white ${
-                  paymentData?.status === "approved"
+                className={`px-2 py-1 rounded text-white ${paymentData?.status === "approved"
                     ? "bg-green-500"
                     : "bg-red-500"
-                }`}
+                  }`}
               >
                 {paymentData?.status}
               </span>

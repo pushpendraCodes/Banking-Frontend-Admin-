@@ -22,19 +22,19 @@ export default function AgentList() {
   // delete modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const token = localStorage.getItem("user");
+  const token = localStorage.getItem("token")
 
   // fetch agents
   const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        apiAgentUrl,
-        {
-          params: { search, page, limit, managerId, areaManagerId }
-         
-        }
-      );
+     const response = await axios.get(apiAgentUrl, {
+  params: { search, page, limit, managerId, areaManagerId },
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
+
 
       if (response.data?.data) {
         setData(response.data.data);
@@ -58,7 +58,11 @@ export default function AgentList() {
 
   const fetchManagers = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}manager`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}manager`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setManagers(res.data.data || []);
     } catch (error) {
       console.error("Error fetching managers:", error);
@@ -67,7 +71,11 @@ export default function AgentList() {
 
   const fetchAreaManagers = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}areaManager`);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}areaManager`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setAreaManagers(res.data.data || []);
     } catch (error) {
       console.error("Error fetching area managers:", error);
@@ -86,7 +94,11 @@ export default function AgentList() {
   // delete
   const handleDelete = async () => {
     try {
-      await axios.delete(`${apiAgentUrl}/${deleteId}`);
+      await axios.delete(`${apiAgentUrl}/${deleteId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       alert("Agent deleted successfully ✅");
 
       setData((prev) => prev.filter((item) => item._id !== deleteId));
@@ -103,8 +115,12 @@ export default function AgentList() {
       const confirmBlock = window.confirm("Are you sure you want to block this agent?");
       if (!confirmBlock) return;
 
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}manager/agent/block/${agentId}`
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}manager/agent/block/${agentId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
       );
 
       if (res.data.success) {
@@ -124,8 +140,12 @@ export default function AgentList() {
       const confirmUnblock = window.confirm("Are you sure you want to unblock this agent?");
       if (!confirmUnblock) return;
 
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}manager/agent/unblock/${agentId}`
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}manager/agent/unblock/${agentId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
       );
 
       if (res.data.success) {
@@ -289,9 +309,8 @@ export default function AgentList() {
         <button
           disabled={page === 1}
           onClick={() => setPage((p) => p - 1)}
-          className={`px-3 py-1 border rounded ${
-            page === 1 ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`px-3 py-1 border rounded ${page === 1 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
         >
           Prev
         </button>
@@ -301,9 +320,8 @@ export default function AgentList() {
         <button
           disabled={page === totalPages}
           onClick={() => setPage((p) => p + 1)}
-          className={`px-3 py-1 border rounded ${
-            page === totalPages ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className={`px-3 py-1 border rounded ${page === totalPages ? "opacity-50 cursor-not-allowed" : ""
+            }`}
         >
           Next
         </button>

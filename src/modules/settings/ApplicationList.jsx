@@ -9,7 +9,7 @@ export default function ApplicationsList() {
   const [loading, setLoading] = useState(true);
 
   const adminId = JSON.parse(localStorage.getItem("user"))?._id;
-
+const token = localStorage.getItem("token")
   useEffect(() => {
     fetchLoans();
   }, []);
@@ -34,7 +34,12 @@ export default function ApplicationsList() {
 
     try {
       const res = await axios.delete(
-        `${import.meta.env.VITE_API_URL}admin/loan-application/${id}`
+        `${import.meta.env.VITE_API_URL}admin/loan-application/${id}`,
+        {
+          headers:{
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
       if (res.data.success) {
         alert("Application deleted successfully!");
