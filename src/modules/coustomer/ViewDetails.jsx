@@ -186,7 +186,17 @@ function ViewDetails() {
                     <p className="text-gray-800 font-semibold">{customer?.savingAccountNumber || "Not Assigned"}</p>
                   </div>
                 </div>
-
+  <div className="flex items-center p-4 bg-gray-50 rounded-lg">
+              <FaPiggyBank className="text-green-500 mr-3" />
+              <div className="flex-1">
+                <span className="text-sm font-medium text-gray-600">Saving Account Balance</span>
+                <p className="text-gray-800 font-semibold">
+                  {customer?.savingAccountBalance != null
+                    ? `₹${Number(customer.savingAccountBalance).toLocaleString('en-IN')}`
+                    : "0"}
+                </p>
+              </div>
+            </div>
                 <div className="flex items-center p-4 bg-gray-50 rounded-lg">
                   <FaIdCard className="text-blue-500 mr-3" />
                   <div className="flex-1">
