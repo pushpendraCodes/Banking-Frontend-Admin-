@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { FaEye, FaPen, FaTrash } from "react-icons/fa";
+import { useEffect, useState, useRef } from "react";
+import { FaEye, FaPen, FaTrash, FaChevronDown } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import DeletePopup from "../../component/DeletePopup";
 
@@ -15,24 +15,76 @@ export default function AreaManagerList() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
 
-  const [managers, setManagers] = useState([]); // ✅ list of managers for dropdown
-  const [selectedManager, setSelectedManager] = useState(""); // ✅ selected managerId
+  // Manager dropdown functionality
+  const [managers, setManagers] = useState([]);
+  const [selectedManager, setSelectedManager] = useState("");
+  
+  // Manager dropdown search functionality
+  const [filteredManagers, setFilteredManagers] = useState([]);
+  const [managerSearch, setManagerSearch] = useState("");
+  const [selectedManagerObj, setSelectedManagerObj] = useState(null);
+  const [isManagerDropdownOpen, setIsManagerDropdownOpen] = useState(false);
+  const managerDropdownRef = useRef(null);
 
   const token = localStorage.getItem("token");
 
-  // 🔽 Fetch Managers for dropdown
+  // Fetch Managers for dropdown
   const fetchManagersList = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}manager?all=true`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setManagers(res.data?.data || []);
+      const managerData = res.data?.data || [];
+      setManagers(managerData);
+      setFilteredManagers(managerData);
     } catch (err) {
       console.error("Error fetching managers:", err);
     }
   };
 
-  // ✅ Fetch Area Managers with filters
+  // Handle manager search
+  const handleManagerSearch = (searchTerm) => {
+    setManagerSearch(searchTerm);
+    const filtered = managers.filter(manager =>
+      manager.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (manager.email && manager.email.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+    setFilteredManagers(filtered);
+  };
+
+  // Handle manager selection
+  const handleManagerSelect = (manager) => {
+    setSelectedManagerObj(manager);
+    setSelectedManager(manager._id);
+    setManagerSearch(manager.name);
+    setIsManagerDropdownOpen(false);
+    setPage(1);
+  };
+
+  // Clear manager selection
+  const clearManagerSelection = () => {
+    setSelectedManagerObj(null);
+    setSelectedManager("");
+    setManagerSearch("");
+    setFilteredManagers(managers);
+    setPage(1);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (managerDropdownRef.current && !managerDropdownRef.current.contains(event.target)) {
+        setIsManagerDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Fetch Area Managers with filters
   const fetchAreaManagers = async (query = "", pageNum = 1, managerId = "") => {
     try {
       let url = `${import.meta.env.VITE_API_URL}areaManager?search=${query}&page=${pageNum}&limit=${limit}`;
@@ -51,7 +103,7 @@ export default function AreaManagerList() {
   };
 
   useEffect(() => {
-    fetchManagersList(); // fetch dropdown list once
+    fetchManagersList();
   }, []);
 
   useEffect(() => {
@@ -99,7 +151,7 @@ export default function AreaManagerList() {
         </Link>
       </div>
 
-      {/* 🔍 Filters */}
+      {/* Filters */}
       <div className="flex flex-wrap items-center gap-4 mb-4">
         {/* Search Box */}
         <form onSubmit={handleSearch} className="flex items-center gap-2">
@@ -113,28 +165,80 @@ export default function AreaManagerList() {
           />
         </form>
 
-        {/* Manager Dropdown */}
-        <div>
-          <label className="text-sm font-medium mr-2">Filter by Manager:</label>
-          <select
-            value={selectedManager}
-            onChange={(e) => {
-              setSelectedManager(e.target.value);
-              setPage(1); // reset page when filter changes
-            }}
-            className="border border-gray-400 px-3 py-1 rounded"
-          >
-            <option value="">All Managers</option>
-            {managers.map((m) => (
-              <option key={m._id} value={m._id}>
-                {m.name} ({m.email})
-              </option>
-            ))}
-          </select>
+        {/* Searchable Manager Dropdown */}
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium">Filter by Manager:</label>
+          <div className="relative" ref={managerDropdownRef}>
+            <div className="relative">
+              <input
+                type="text"
+                value={managerSearch}
+                onChange={(e) => {
+                  handleManagerSearch(e.target.value);
+                  setIsManagerDropdownOpen(true);
+                }}
+                onFocus={() => setIsManagerDropdownOpen(true)}
+                placeholder="Search Manager..."
+                className="border border-gray-400 px-3 py-2 pr-8 rounded w-64 focus:outline-none focus:border-blue-500"
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <FaChevronDown 
+                  className={`text-gray-400 transition-transform duration-200 ${
+                    isManagerDropdownOpen ? 'rotate-180' : ''
+                  }`} 
+                  size={12} 
+                />
+              </div>
+            </div>
+
+            {isManagerDropdownOpen && (
+              <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                <div
+                  onClick={clearManagerSelection}
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-200 text-gray-600"
+                >
+                  <span className="font-medium">All Managers</span>
+                </div>
+                
+                {filteredManagers.length > 0 ? (
+                  filteredManagers.map((manager) => (
+                    <div
+                      key={manager._id}
+                      onClick={() => handleManagerSelect(manager)}
+                      className={`px-4 py-2 hover:bg-blue-50 cursor-pointer ${
+                        selectedManagerObj?._id === manager._id ? 'bg-blue-100' : ''
+                      }`}
+                    >
+                      <div className="font-medium">{manager.name}</div>
+                      {manager.email && (
+                        <div className="text-sm text-gray-600">{manager.email}</div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div className="px-4 py-2 text-gray-500">
+                    No managers found
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* 📋 Table */}
+      {/* Clear Filter */}
+      {selectedManagerObj && (
+        <div className="flex gap-2 mb-4">
+          <button
+            onClick={clearManagerSelection}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm"
+          >
+            Clear Manager Filter
+          </button>
+        </div>
+      )}
+
+      {/* Table */}
       <div className="bg-white rounded shadow-sm overflow-x-auto">
         <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100 text-gray-700">
@@ -200,7 +304,7 @@ export default function AreaManagerList() {
         </table>
       </div>
 
-      {/* 📄 Pagination */}
+      {/* Pagination */}
       <div className="flex justify-center items-center gap-4 mt-4">
         <button
           disabled={page === 1}
@@ -221,7 +325,7 @@ export default function AreaManagerList() {
         </button>
       </div>
 
-      {/* ✅ Delete Popup */}
+      {/* Delete Popup */}
       <DeletePopup
         show={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}

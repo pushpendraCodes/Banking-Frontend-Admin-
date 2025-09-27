@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { FaBan, FaEye, FaPen, FaTrash, FaUnlock } from "react-icons/fa";
+import { useEffect, useState, useRef } from "react";
+import { FaBan, FaEye, FaPen, FaTrash, FaUnlock, FaChevronDown } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { apiAgentUrl } from "../../api/apiRoutes";
 import DeletePopup from "../../component/DeletePopup";
@@ -19,22 +19,37 @@ export default function AgentList() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
 
+  // Manager dropdown search functionality
+  const [managers, setManagers] = useState([]);
+  const [filteredManagers, setFilteredManagers] = useState([]);
+  const [managerSearch, setManagerSearch] = useState("");
+  const [selectedManagerObj, setSelectedManagerObj] = useState(null);
+  const [isManagerDropdownOpen, setIsManagerDropdownOpen] = useState(false);
+  const managerDropdownRef = useRef(null);
+
+  // Area Manager dropdown search functionality
+  const [areaManagers, setAreaManagers] = useState([]);
+  const [filteredAreaManagers, setFilteredAreaManagers] = useState([]);
+  const [areaManagerSearch, setAreaManagerSearch] = useState("");
+  const [selectedAreaManagerObj, setSelectedAreaManagerObj] = useState(null);
+  const [isAreaManagerDropdownOpen, setIsAreaManagerDropdownOpen] = useState(false);
+  const areaManagerDropdownRef = useRef(null);
+
   // delete modal
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
 
   // fetch agents
   const fetchData = async () => {
     setLoading(true);
     try {
-     const response = await axios.get(apiAgentUrl, {
-  params: { search, page, limit, managerId, areaManagerId },
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-});
-
+      const response = await axios.get(apiAgentUrl, {
+        params: { search, page, limit, managerId, areaManagerId },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.data?.data) {
         setData(response.data.data);
@@ -51,11 +66,6 @@ export default function AgentList() {
     }
   };
 
-
-  // fetch managers + area managers
-  const [managers, setManagers] = useState([]);
-  const [areaManagers, setAreaManagers] = useState([]);
-
   const fetchManagers = async () => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_URL}manager`, {
@@ -63,7 +73,9 @@ export default function AgentList() {
           Authorization: `Bearer ${token}`,
         },
       });
-      setManagers(res.data.data || []);
+      const managerData = res.data.data || [];
+      setManagers(managerData);
+      setFilteredManagers(managerData);
     } catch (error) {
       console.error("Error fetching managers:", error);
     }
@@ -76,11 +88,86 @@ export default function AgentList() {
           Authorization: `Bearer ${token}`,
         },
       });
-      setAreaManagers(res.data.data || []);
+      const areaManagerData = res.data.data || [];
+      setAreaManagers(areaManagerData);
+      setFilteredAreaManagers(areaManagerData);
     } catch (error) {
       console.error("Error fetching area managers:", error);
     }
   };
+
+  // Handle manager search
+  const handleManagerSearch = (searchTerm) => {
+    setManagerSearch(searchTerm);
+    const filtered = managers.filter(manager =>
+      manager.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (manager.email && manager.email.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+    setFilteredManagers(filtered);
+  };
+
+  // Handle manager selection
+  const handleManagerSelect = (manager) => {
+    setSelectedManagerObj(manager);
+    setManagerId(manager._id);
+    setManagerSearch(manager.name);
+    setIsManagerDropdownOpen(false);
+    setPage(1);
+  };
+
+  // Clear manager selection
+  const clearManagerSelection = () => {
+    setSelectedManagerObj(null);
+    setManagerId("");
+    setManagerSearch("");
+    setFilteredManagers(managers);
+    setPage(1);
+  };
+
+  // Handle area manager search
+  const handleAreaManagerSearch = (searchTerm) => {
+    setAreaManagerSearch(searchTerm);
+    const filtered = areaManagers.filter(manager =>
+      manager.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (manager.email && manager.email.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+    setFilteredAreaManagers(filtered);
+  };
+
+  // Handle area manager selection
+  const handleAreaManagerSelect = (manager) => {
+    setSelectedAreaManagerObj(manager);
+    setAreaManagerId(manager._id);
+    setAreaManagerSearch(manager.name);
+    setIsAreaManagerDropdownOpen(false);
+    setPage(1);
+  };
+
+  // Clear area manager selection
+  const clearAreaManagerSelection = () => {
+    setSelectedAreaManagerObj(null);
+    setAreaManagerId("");
+    setAreaManagerSearch("");
+    setFilteredAreaManagers(areaManagers);
+    setPage(1);
+  };
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (managerDropdownRef.current && !managerDropdownRef.current.contains(event.target)) {
+        setIsManagerDropdownOpen(false);
+      }
+      if (areaManagerDropdownRef.current && !areaManagerDropdownRef.current.contains(event.target)) {
+        setIsAreaManagerDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     fetchManagers();
@@ -190,40 +277,142 @@ export default function AgentList() {
           className="border border-gray-400 px-3 py-1 rounded w-64"
         />
 
-        {/* Manager filter */}
-        <select
-          value={managerId}
-          onChange={(e) => {
-            setManagerId(e.target.value);
-            setPage(1);
-          }}
-          className="border border-gray-400 px-3 py-1 rounded"
-        >
-          <option value="">All Managers</option>
-          {managers.map((m) => (
-            <option key={m._id} value={m._id}>
-              {m.name}
-            </option>
-          ))}
-        </select>
+        {/* Searchable Manager Dropdown */}
+        <div className="relative" ref={managerDropdownRef}>
+          <div className="relative">
+            <input
+              type="text"
+              value={managerSearch}
+              onChange={(e) => {
+                handleManagerSearch(e.target.value);
+                setIsManagerDropdownOpen(true);
+              }}
+              onFocus={() => setIsManagerDropdownOpen(true)}
+              placeholder="Search Manager..."
+              className="border border-gray-400 px-3 py-2 pr-8 rounded w-64 focus:outline-none focus:border-blue-500"
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <FaChevronDown 
+                className={`text-gray-400 transition-transform duration-200 ${
+                  isManagerDropdownOpen ? 'rotate-180' : ''
+                }`} 
+                size={12} 
+              />
+            </div>
+          </div>
 
-        {/* Area Manager filter */}
-        <select
-          value={areaManagerId}
-          onChange={(e) => {
-            setAreaManagerId(e.target.value);
-            setPage(1);
-          }}
-          className="border border-gray-400 px-3 py-1 rounded"
-        >
-          <option value="">All Area Managers</option>
-          {areaManagers.map((am) => (
-            <option key={am._id} value={am._id}>
-              {am.name}
-            </option>
-          ))}
-        </select>
+          {isManagerDropdownOpen && (
+            <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+              <div
+                onClick={clearManagerSelection}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-200 text-gray-600"
+              >
+                <span className="font-medium">All Managers</span>
+              </div>
+              
+              {filteredManagers.length > 0 ? (
+                filteredManagers.map((manager) => (
+                  <div
+                    key={manager._id}
+                    onClick={() => handleManagerSelect(manager)}
+                    className={`px-4 py-2 hover:bg-blue-50 cursor-pointer ${
+                      selectedManagerObj?._id === manager._id ? 'bg-blue-100' : ''
+                    }`}
+                  >
+                    <div className="font-medium">{manager.name}</div>
+                    {manager.email && (
+                      <div className="text-sm text-gray-600">{manager.email}</div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="px-4 py-2 text-gray-500">
+                  No managers found
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Searchable Area Manager Dropdown */}
+        <div className="relative" ref={areaManagerDropdownRef}>
+          <div className="relative">
+            <input
+              type="text"
+              value={areaManagerSearch}
+              onChange={(e) => {
+                handleAreaManagerSearch(e.target.value);
+                setIsAreaManagerDropdownOpen(true);
+              }}
+              onFocus={() => setIsAreaManagerDropdownOpen(true)}
+              placeholder="Search Area Manager..."
+              className="border border-gray-400 px-3 py-2 pr-8 rounded w-64 focus:outline-none focus:border-blue-500"
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <FaChevronDown 
+                className={`text-gray-400 transition-transform duration-200 ${
+                  isAreaManagerDropdownOpen ? 'rotate-180' : ''
+                }`} 
+                size={12} 
+              />
+            </div>
+          </div>
+
+          {isAreaManagerDropdownOpen && (
+            <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+              <div
+                onClick={clearAreaManagerSelection}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-200 text-gray-600"
+              >
+                <span className="font-medium">All Area Managers</span>
+              </div>
+              
+              {filteredAreaManagers.length > 0 ? (
+                filteredAreaManagers.map((manager) => (
+                  <div
+                    key={manager._id}
+                    onClick={() => handleAreaManagerSelect(manager)}
+                    className={`px-4 py-2 hover:bg-blue-50 cursor-pointer ${
+                      selectedAreaManagerObj?._id === manager._id ? 'bg-blue-100' : ''
+                    }`}
+                  >
+                    <div className="font-medium">{manager.name}</div>
+                    {manager.email && (
+                      <div className="text-sm text-gray-600">{manager.email}</div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <div className="px-4 py-2 text-gray-500">
+                  No area managers found
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Clear Filters */}
+      {(selectedManagerObj || selectedAreaManagerObj) && (
+        <div className="flex gap-2 mb-4">
+          {selectedManagerObj && (
+            <button
+              onClick={clearManagerSelection}
+              className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm"
+            >
+              Clear Manager
+            </button>
+          )}
+          {selectedAreaManagerObj && (
+            <button
+              onClick={clearAreaManagerSelection}
+              className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded text-sm"
+            >
+              Clear Area Manager
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Table */}
       <div className="bg-white rounded shadow-sm overflow-x-auto">
