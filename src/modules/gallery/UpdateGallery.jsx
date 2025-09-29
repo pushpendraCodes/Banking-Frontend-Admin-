@@ -7,14 +7,20 @@ import { useNavigate, useParams } from "react-router-dom";
 const UpdateGallery = () => {
   const navigate = useNavigate();
   const { id, itemId } = useParams();
-  const { register, handleSubmit, reset, setValue } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm();
   const [imagePreviews, setImagePreviews] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
-  const [loading, setLoading] = useState(false); // ✅ loading state
+  const [loading, setLoading] = useState(false);
 
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
 
-  // ✅ Load existing gallery item
+  // Load existing gallery item
   useEffect(() => {
     const fetchItem = async () => {
       setLoading(true);
@@ -22,11 +28,8 @@ const UpdateGallery = () => {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}admin/gallery/get/${itemId}`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
-
         );
         const item = res.data.data;
         setValue("caption", item.caption || "");
@@ -41,13 +44,18 @@ const UpdateGallery = () => {
     fetchItem();
   }, [id, itemId, setValue]);
 
-  // ✅ Handle image selection
+  // Handle new image selection
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     setImagePreviews(files.map((file) => URL.createObjectURL(file)));
   };
 
-  // ✅ Submit form
+  // Remove an existing image
+  const removeExistingImage = (url) => {
+    setExistingImages(existingImages.filter((img) => img !== url));
+  };
+
+  // Submit form
   const onSubmit = async (data) => {
     setLoading(true);
     try {
@@ -62,17 +70,16 @@ const UpdateGallery = () => {
         }
       }
 
-     await axios.put(
-  `${import.meta.env.VITE_API_URL}admin/gallery/update/${id}/${itemId}`,
-  formData,
-  {
-    headers: {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token}`,
-    },
-  }
-);
-
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}admin/gallery/update/${id}/${itemId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       alert("Gallery updated successfully ✅");
       navigate(-1);
@@ -84,64 +91,63 @@ const UpdateGallery = () => {
     }
   };
 
-  // ✅ Remove an existing image
-  const removeExistingImage = (url) => {
-    setExistingImages(existingImages.filter((img) => img !== url));
-  };
-
   return (
     <>
-      <div className="bg-[#fef7ef] flex items-center gap-2 mb-4 p-2 rounded">
+      {/* Header */}
+      <div className="bg-[#fff7e6] flex items-center gap-3 mb-6 p-4 rounded-lg border border-yellow-200 shadow-sm">
         <button
           onClick={() => navigate(-1)}
-          className="text-black p-1 border-2 rounded-4xl"
+          className="text-black p-2 border-2 border-yellow-400 rounded-full hover:bg-yellow-100 transition"
         >
           <FaArrowLeft />
         </button>
-        <h2 className="text-2xl font-bold">Update Gallery</h2>
+        <h2 className="text-2xl font-bold text-yellow-700">Update Gallery</h2>
       </div>
 
-      <div className="max-w-5xl mx-auto mt-10 bg-[#ffffff] p-6 rounded">
-        {loading && (
-          <p className="text-center text-gray-500 mb-4">Loading...</p>
-        )}
+      {/* Form Card */}
+      <div className="max-w-4xl mx-auto bg-white rounded-xl border border-gray-200 shadow-md overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+          <h3 className="text-lg font-semibold text-gray-700">Gallery Details</h3>
+        </div>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
           {/* Caption */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium">Caption</label>
+          <div className="p-4 border rounded-lg bg-gray-50 hover:bg-gray-100 transition">
+            <label className="block text-sm font-medium mb-2 text-gray-700">Caption</label>
             <input
               type="text"
-              {...register("caption", { required: true })}
-              className="mt-1 border px-3 py-2 rounded w-full"
+              {...register("caption", { required: "Caption is required" })}
+              className={`border px-4 py-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition ${
+                errors.caption ? "border-red-500" : "border-gray-300"
+              }`}
               placeholder="Enter caption"
               disabled={loading}
             />
+            {errors.caption && <p className="text-red-500 text-sm mt-1">{errors.caption.message}</p>}
           </div>
 
           {/* Category */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium">Category</label>
+          <div className="p-4 border rounded-lg bg-gray-50 hover:bg-gray-100 transition">
+            <label className="block text-sm font-medium mb-2 text-gray-700">Category</label>
             <input
               type="text"
-              {...register("category", { required: true })}
-              className="mt-1 border px-3 py-2 rounded w-full"
+              {...register("category", { required: "Category is required" })}
+              className={`border px-4 py-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition ${
+                errors.category ? "border-red-500" : "border-gray-300"
+              }`}
               placeholder="Enter category"
               disabled={loading}
             />
+            {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>}
           </div>
 
           {/* Existing Images */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium">Existing Images</label>
+          <div className="p-4 border rounded-lg bg-gray-50 hover:bg-gray-100 transition">
+            <label className="block text-sm font-medium mb-2 text-gray-700">Existing Images</label>
             <div className="flex flex-wrap gap-2 mt-2">
               {existingImages.map((url, idx) => (
                 <div key={idx} className="relative">
-                  <img
-                    src={url}
-                    alt="gallery"
-                    className="h-24 w-32 object-cover rounded border"
-                  />
+                  <img src={url} alt="gallery" className="h-24 w-32 object-cover rounded border" />
                   {!loading && (
                     <button
                       type="button"
@@ -157,15 +163,15 @@ const UpdateGallery = () => {
           </div>
 
           {/* Upload New Images */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium">Upload New Images</label>
+          <div className="p-4 border rounded-lg bg-gray-50 hover:bg-gray-100 transition">
+            <label className="block text-sm font-medium mb-2 text-gray-700">Upload New Images</label>
             <input
               type="file"
               multiple
               accept="image/*"
               {...register("galleryImage")}
               onChange={handleImageChange}
-              className="mt-1 border px-3 py-2 rounded"
+              className="mt-1 border px-3 py-2 rounded w-full cursor-pointer"
               disabled={loading}
             />
 
@@ -176,7 +182,7 @@ const UpdateGallery = () => {
                     key={idx}
                     src={src}
                     alt="preview"
-                    className="h-24 w-32 object-cover rounded border"
+                    className="h-24 w-32 object-cover rounded border shadow-sm hover:shadow-md transition-transform hover:scale-105"
                   />
                 ))}
               </div>
@@ -187,8 +193,9 @@ const UpdateGallery = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`${loading ? "bg-gray-400" : "bg-yellow-400 hover:bg-yellow-500"
-              } text-white px-4 py-2 rounded`}
+            className={`w-full mt-4 py-3 rounded-md font-semibold text-white transition ${
+              loading ? "bg-gray-400 cursor-not-allowed" : "bg-yellow-500 hover:bg-yellow-600 shadow-md"
+            }`}
           >
             {loading ? "Updating..." : "Update Gallery"}
           </button>
