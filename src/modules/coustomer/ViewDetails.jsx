@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaArrowLeft, FaUser, FaEnvelope, FaPhone, FaTimes ,FaMapMarkerAlt,FaExclamationTriangle, FaUserTie, FaCalendarAlt, FaToggleOn, FaUsers, FaHeart, FaBirthdayCake, FaPiggyBank, FaChartLine, FaIdCard, FaCreditCard, FaPen, FaCheck, FaVenus } from "react-icons/fa";
+import { FaArrowLeft, FaUser, FaEnvelope, FaPhone, FaTimes, FaMapMarkerAlt, FaExclamationTriangle, FaUserTie, FaCalendarAlt, FaToggleOn, FaUsers, FaHeart, FaBirthdayCake, FaPiggyBank, FaChartLine, FaIdCard, FaCreditCard, FaPen, FaCheck, FaVenus } from "react-icons/fa";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { apiCustomerUrl } from "../../api/apiRoutes";
@@ -7,6 +7,7 @@ import FDDepositModal from "../modal/FDDepositModal";
 import RDEmiPayModal from "../modal/RDEmiPayModal";
 import LoanEmiPayModal from "../modal/LoanEmiPayModal";
 import PigmyEmiPayModal from "../modal/PigmyEmiPayModal";
+import FDMaturityModal from "./FDMaturityModal";
 function ViewDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -92,12 +93,12 @@ function ViewDetails() {
             <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
               <div className="flex items-center mb-6">
                 <div className="bg-orange-100 p-1 rounded-full mr-4 w-20 h-20 flex items-center justify-center overflow-hidden">
-  <img
-    src={customer?.picture}
-    alt="Profile"
-    className="w-full h-full object-cover rounded-full"
-  />
-</div>
+                  <img
+                    src={customer?.picture}
+                    alt="Profile"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
 
                 <h2 className="text-2xl font-bold text-gray-800">Customer Information</h2>
               </div>
@@ -106,7 +107,7 @@ function ViewDetails() {
                 {/* Personal Details */}
                 <div className="flex items-center p-4 bg-gray-50 rounded-lg">
                   <FaUser className="text-orange-500 mr-3" />
-                
+
                   <div className="flex-1">
                     <span className="text-sm font-medium text-gray-600">Name</span>
                     <p className="text-gray-800 font-semibold">{customer?.name || "N/A"}</p>
@@ -186,17 +187,17 @@ function ViewDetails() {
                     <p className="text-gray-800 font-semibold">{customer?.savingAccountNumber || "Not Assigned"}</p>
                   </div>
                 </div>
-  <div className="flex items-center p-4 bg-gray-50 rounded-lg">
-              <FaPiggyBank className="text-green-500 mr-3" />
-              <div className="flex-1">
-                <span className="text-sm font-medium text-gray-600">Saving Account Balance</span>
-                <p className="text-gray-800 font-semibold">
-                  {customer?.savingAccountBalance != null
-                    ? `₹${Number(customer.savingAccountBalance).toLocaleString('en-IN')}`
-                    : "0"}
-                </p>
-              </div>
-            </div>
+                <div className="flex items-center p-4 bg-gray-50 rounded-lg">
+                  <FaPiggyBank className="text-green-500 mr-3" />
+                  <div className="flex-1">
+                    <span className="text-sm font-medium text-gray-600">Saving Account Balance</span>
+                    <p className="text-gray-800 font-semibold">
+                      {customer?.savingAccountBalance != null
+                        ? `₹${Number(customer.savingAccountBalance).toLocaleString('en-IN')}`
+                        : "0"}
+                    </p>
+                  </div>
+                </div>
                 <div className="flex items-center p-4 bg-gray-50 rounded-lg">
                   <FaIdCard className="text-blue-500 mr-3" />
                   <div className="flex-1">
@@ -256,8 +257,8 @@ function ViewDetails() {
                     <span className="text-sm font-medium text-gray-600">Account Status</span>
                     <div className="flex items-center mt-1">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${customer?.isActive
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
                         }`}>
                         {customer?.isActive ? 'Active' : 'Inactive'}
                       </span>
@@ -366,7 +367,7 @@ function ViewDetails() {
           </div>
         </div>
 
-       
+
         {/* FD Schemes Section */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <div className="flex items-center justify-between mb-6">
@@ -380,7 +381,12 @@ function ViewDetails() {
             {customer?.fdSchemes?.length > 0 &&
               <div className="flex gap-2 items-center">
                 {/* FD Deposit Button/Modal */}
-
+                <Link
+                  to={`/create-fd/${customer.CustomerId}/${customer.savingAccountNumber}`}
+                  className="bg-green-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition duration-200"
+                >
+                  Create New FD +
+                </Link>
 
                 {/* Payment Details Link */}
                 <Link
@@ -389,6 +395,7 @@ function ViewDetails() {
                 >
                   Payment Details
                 </Link>
+
               </div>
 
             }
@@ -398,96 +405,107 @@ function ViewDetails() {
             <>
 
               <div className="grid gap-6">
-  {customer?.fdSchemes?.length > 0 ? (
-    customer.fdSchemes.map((fd, i) => (
-      <div
-        key={i}
-        className="border-2 border-green-200 rounded-xl p-6 bg-green-50 hover:shadow-lg transition-shadow"
-      >
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* Column 1 */}
-          <div className="space-y-3">
-            <div>
-              <span className="text-sm font-medium text-gray-600">FD Account No</span>
-              <p className="text-lg font-bold text-gray-800">{fd.fdAccountNumber || "N/A"}</p>
-            </div>
-            <div>
-              <span className="text-sm font-medium text-gray-600">Principal Amount</span>
-              <p className="text-xl font-bold text-green-600">
-                ₹{fd.fdPrincipalAmount ? fd.fdPrincipalAmount.toLocaleString() : "0"}
-              </p>
-            </div>
-            <div>
-              <span className="text-sm font-medium text-gray-600">Deposit Amount</span>
-              <p className="text-lg font-semibold text-gray-800">
-                ₹{fd.fdDepositAmount ? fd.fdDepositAmount.toLocaleString() : "0"}
-              </p>
-            </div>
-          </div>
+                {customer?.fdSchemes?.length > 0 ? (
+                  customer.fdSchemes.map((fd, i) => (
+                    <div
+                      key={i}
+                      className="border-2 border-green-200 rounded-xl p-6 bg-green-50 hover:shadow-lg transition-shadow"
+                    >
+                      <div className="grid md:grid-cols-3 gap-6">
+                        {/* Column 1 */}
+                        <div className="space-y-3">
+                          <div>
+                            <span className="text-sm font-medium text-gray-600">FD Account No</span>
+                            <p className="text-lg font-bold text-gray-800">{fd.fdAccountNumber || "N/A"}</p>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium text-gray-600">Principal Amount</span>
+                            <p className="text-xl font-bold text-green-600">
+                              ₹{fd.fdPrincipalAmount ? fd.fdPrincipalAmount.toLocaleString() : "0"}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium text-gray-600">Deposit Amount</span>
+                            <p className="text-lg font-semibold text-gray-800">
+                              ₹{fd.fdDepositAmount ? fd.fdDepositAmount.toLocaleString() : "0"}
+                            </p>
+                          </div>
+                        </div>
 
-          {/* Column 2 */}
-          <div className="space-y-3">
-            <div>
-              <span className="text-sm font-medium text-gray-600">Interest Rate</span>
-              <p className="text-lg font-bold text-blue-600">{fd.fdInterestRate || 0}% p.a.</p>
-            </div>
-            <div>
-              <span className="text-sm font-medium text-gray-600">Tenure</span>
-              <p className="text-lg font-semibold text-gray-800">
-                {fd.fdTenure || "N/A"} {fd.fdTenureType || ""}
-              </p>
-            </div>
-            <div>
-              <span className="text-sm font-medium text-gray-600">Opening Date</span>
-              <p className="text-lg font-semibold text-gray-800">
-                {fd.fdOpeningDate ? new Date(fd.fdOpeningDate).toLocaleDateString() : "N/A"}
-              </p>
-            </div>
-          </div>
+                        {/* Column 2 */}
+                        <div className="space-y-3">
+                          <div>
+                            <span className="text-sm font-medium text-gray-600">Interest Rate</span>
+                            <p className="text-lg font-bold text-blue-600">{fd.fdInterestRate || 0}% p.a.</p>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium text-gray-600">Tenure</span>
+                            <p className="text-lg font-semibold text-gray-800">
+                              {fd.fdTenure || "N/A"} {fd.fdTenureType || ""}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium text-gray-600">Opening Date</span>
+                            <p className="text-lg font-semibold text-gray-800">
+                              {fd.fdOpeningDate ? new Date(fd.fdOpeningDate).toLocaleDateString() : "N/A"}
+                            </p>
+                          </div>
+                        </div>
 
-          {/* Column 3 */}
-          <div className="space-y-3">
-            <div>
-              <span className="text-sm font-medium text-gray-600">Maturity Date</span>
-              <p className="text-lg font-semibold text-gray-800">
-                {fd.fdMaturityDate ? new Date(fd.fdMaturityDate).toLocaleDateString() : "N/A"}
-              </p>
-            </div>
-            <div>
-              <span className="text-sm font-medium text-gray-600">Maturity Amount</span>
-              <p className="text-xl font-bold text-green-600">
-                ₹{fd.fdMaturityAmount ? fd.fdMaturityAmount.toLocaleString() : "0"}
-              </p>
-            </div>
-            <div>
-              <span className="text-sm font-medium text-gray-600">Status</span>
-              <span
-                className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${
-                  fd.fdAccountStatus === "Active"
-                    ? "bg-green-200 text-green-800"
-                    : fd.fdAccountStatus === "Matured"
-                    ? "bg-blue-200 text-blue-800"
-                    : "bg-red-200 text-red-800"
-                }`}
-              >
-                {fd.fdAccountStatus || "Unknown"}
-              </span>
-            </div>
-          </div>
-        </div>
+                        {/* Column 3 */}
+                        <div className="space-y-3">
+                          <div>
+                            <span className="text-sm font-medium text-gray-600">Maturity Date</span>
+                            <p className="text-lg font-semibold text-gray-800">
+                              {fd.fdMaturityDate ? new Date(fd.fdMaturityDate).toLocaleDateString() : "N/A"}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium text-gray-600">Maturity Amount</span>
+                            <p className="text-xl font-bold text-green-600">
+                              ₹{fd.fdMaturityAmount ? fd.fdMaturityAmount.toLocaleString() : "0"}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium text-gray-600">Status</span>
+                         <span
+  className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${
+    fd.fdAccountStatus === "active"
+      ? "bg-green-200 text-green-800"
+      : fd.fdAccountStatus === "matured"
+        ? "bg-blue-200 text-blue-800"
+        : fd.fdAccountStatus === "pending"
+          ? "bg-yellow-200 text-yellow-800"
+          : "bg-red-200 text-red-800"
+  }`}
+>
+  {fd.fdAccountStatus || "Unknown"}
+</span>
 
-        {/* Actions */}
-        {fd.fdDepositAmount==0 && 
-          <div className="mt-6 flex justify-left text-left">
-          <FDDepositModal fd={fd} customerId={customer._id}  />
-        </div>
-        }
-      </div>
-    ))
-  ) : (
-    <p className="text-gray-500 italic">No FD Schemes found.</p>
-  )}
-</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      {fd.fdDepositAmount == 0 &&
+                        <div className="mt-6 flex justify-left text-left">
+                          <FDDepositModal fd={fd} customerId={customer._id} savingAc={customer.savingAccountNumber} />
+                        </div>
+
+
+                      }
+
+                      {fd.fdAccountStatus !== "closed" && fd.fdDepositAmount > 0 &&
+                        <div className="mt-6 flex justify-left text-left">
+                          <FDMaturityModal customer={customer} fdAccountNumber={fd.fdAccountNumber} />
+                        </div>
+                      }
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500 italic">No FD Schemes found.</p>
+                )}
+              </div>
 
             </>
           )
@@ -502,7 +520,8 @@ function ViewDetails() {
                 {/* Create FD Link/Button */}
                 <div className="mt-6">
                   <Link
-                    to={`/create-fd/${customer.CustomerId}`}
+
+                    to={`/create-fd/${customer.CustomerId}/${customer.savingAccountNumber}`}
                     className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
                   >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -564,7 +583,7 @@ function ViewDetails() {
                       </div>
                       <div>
                         <span className="text-sm font-medium text-gray-600">Total Installments</span>
-                        <p className="text-lg font-semibold text-gray-800">{rd.rdTotalInstallments||0}</p>
+                        <p className="text-lg font-semibold text-gray-800">{rd.rdTotalInstallments || 0}</p>
                       </div>
                     </div>
 
@@ -589,7 +608,7 @@ function ViewDetails() {
                     <div className="space-y-3">
                       <div>
                         <span className="text-sm font-medium text-gray-600">RD Total DepositedtAmount</span>
-                        <p className="text-lg font-bold text-blue-600">{rd.rdTotalDepositedtAmount||0}</p>
+                        <p className="text-lg font-bold text-blue-600">{rd.rdTotalDepositedtAmount || 0}</p>
                       </div>
                       <div>
                         <span className="text-sm font-medium text-gray-600">RD Total DepositedInstallment</span>
@@ -625,12 +644,12 @@ function ViewDetails() {
                   </div>
 
 
-                   <div className="mt-6 flex justify-left text-left">
-          <RDEmiPayModal rd={rd} customerId={customer._id}  />
-        </div>
+                  <div className="mt-6 flex justify-left text-left">
+                    <RDEmiPayModal rd={rd} customerId={customer._id} />
+                  </div>
                 </div>
 
-        
+
               ))}
             </div>
           ) : (
@@ -766,9 +785,9 @@ function ViewDetails() {
                   </div>
 
 
-                        <div className="mt-6 flex justify-left text-left">
-          <LoanEmiPayModal loan={loan} customerId={customer._id}  />
-        </div>
+                  <div className="mt-6 flex justify-left text-left">
+                    <LoanEmiPayModal loan={loan} customerId={customer._id} />
+                  </div>
                 </div>
               ))}
             </div>
@@ -903,9 +922,9 @@ function ViewDetails() {
                     </div>
                   </div>
 
-                             <div className="mt-6 flex justify-left text-left">
-          <PigmyEmiPayModal pigmy={pigmy} customerId={customer._id}  />
-        </div>
+                  <div className="mt-6 flex justify-left text-left">
+                    <PigmyEmiPayModal pigmy={pigmy} customerId={customer._id} />
+                  </div>
                 </div>
               ))}
             </div>

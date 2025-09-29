@@ -125,7 +125,7 @@ function App() {
 
 
    <Route
-            path="/create-fd/:customerId"
+            path="/create-fd/:customerId/:savingAc"
             element={
               <ProtectedRoute>
                 <Layout>
@@ -135,7 +135,7 @@ function App() {
             }
           />
           <Route
-            path="/create-rd/:customerId"
+            path="/create-rd/:customerId/:savingAc"
             element={
               <ProtectedRoute>
                 <Layout>

@@ -1,0 +1,15 @@
+/* app.css */
+
+body, html {
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+
+/* Optional: apply font to all elements */
+* {
+  font-family: inherit;
+}

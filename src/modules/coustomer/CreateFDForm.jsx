@@ -4,11 +4,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 export default function CreateFDForm() {
 
-  const { customerId } = useParams()
+  const { customerId ,savingAc} = useParams()
   const [formData, setFormData] = useState({
     fdTenure: '',
     fdTenureType: 'month',
-    type: 'standeredRd',
+    type: '12 Month ',
     // savingAccountNo: accountNo||'',
     fdDepositAmount: ''
   });
@@ -32,26 +32,29 @@ export default function CreateFDForm() {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
+  const MIN_FD_AMOUNT = import.meta.env.VITE_MINIMUM_FD_AMOUNT // Minimum FD deposit amount
 
-    if (!formData.fdTenure) {
-      newErrors.fdTenure = 'FD Tenure is required';
-    } else if (formData.fdTenure <= 0) {
-      newErrors.fdTenure = 'FD Tenure must be greater than 0';
-    }
+const validateForm = () => {
+  const newErrors = {};
 
+  if (!formData.fdTenure) {
+    newErrors.fdTenure = 'FD Tenure is required';
+  } else if (formData.fdTenure <= 0) {
+    newErrors.fdTenure = 'FD Tenure must be greater than 0';
+  }
 
+  if (!formData.fdDepositAmount) {
+    newErrors.fdDepositAmount = 'Deposit Amount is required';
+  } else if (formData.fdDepositAmount <= 0) {
+    newErrors.fdDepositAmount = 'Deposit amount must be greater than 0';
+  } else if (formData.fdDepositAmount < MIN_FD_AMOUNT) {
+    newErrors.fdDepositAmount = `Minimum deposit amount is ₹${MIN_FD_AMOUNT}`;
+  }
 
-    if (!formData.fdDepositAmount) {
-      newErrors.fdDepositAmount = 'Deposit Amount is required';
-    } else if (formData.fdDepositAmount <= 0) {
-      newErrors.fdDepositAmount = 'Deposit amount must be greater than 0';
-    }
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
 
 
   const Navigate = useNavigate()
@@ -155,7 +158,7 @@ export default function CreateFDForm() {
           >
             <option value="month">Months</option>
             <option value="year">Years</option>
-            <option value="day">Days</option>
+            {/* <option value="day">Days</option> */}
           </select>
         </div>
 
@@ -171,10 +174,12 @@ export default function CreateFDForm() {
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
-            <option value="standeredRd">Standard RD</option>
-            <option value="premiumFd">Premium FD</option>
-            <option value="seniorCitizenFd">Senior Citizen FD</option>
-            <option value="taxSaverFd">Tax Saver FD</option>
+            <option value="9M FD">9M FD</option>
+            <option value="12M FD">12M FD</option>
+            <option value="24M FD">24M FD</option>
+            <option value="36M FD">36M FD</option>
+            <option value="60M FD">60M FD</option>
+            <option value="84M FD">84M FD</option>
           </select>
         </div>
 
@@ -218,6 +223,8 @@ export default function CreateFDForm() {
           {errors.fdDepositAmount && (
             <p className="mt-1 text-sm text-red-600">{errors.fdDepositAmount}</p>
           )}
+  
+
           {formData.fdDepositAmount && (
             <p className="mt-1 text-sm text-gray-500">
               Amount in words: ₹{parseInt(formData.fdDepositAmount).toLocaleString('en-IN')}
@@ -268,8 +275,8 @@ export default function CreateFDForm() {
             <span className="ml-2">{formData.type || '-'}</span>
           </div>
           <div>
-            <span className="font-medium text-gray-600">Account:</span>
-            <span className="ml-2">{formData.savingAccountNo || '-'}</span>
+            <span className="font-medium text-gray-600">Customer Saving Ac -:</span>
+            <span className="ml-2">{savingAc || '-'}</span>
           </div>
           <div>
             <span className="font-medium text-gray-600">Amount:</span>

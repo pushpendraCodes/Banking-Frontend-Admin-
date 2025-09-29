@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { X, CreditCard, Smartphone, Building, Banknote } from 'lucide-react';
 import axios from 'axios';
 
-export default function FDDepositModal({fd,customerId}) {
+export default function FDDepositModal({fd,customerId,savingAc}) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     customerId:customerId|| '',
     fdAccountNumber:fd?.fdAccountNumber ||  '',
     transactionType: 'deposit',
-    amount: '',
+    amount: fd.fdPrincipalAmount,
     mode: ''
   });
   const [errors, setErrors] = useState({}); 
@@ -216,6 +216,7 @@ const handleSubmit = async (e) => {
                   type="number"
                   id="amount"
                   name="amount"
+                  disabled
                   value={formData.amount}
                   onChange={handleInputChange}
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors ${
@@ -276,9 +277,9 @@ const handleSubmit = async (e) => {
                 <h4 className="text-sm font-medium text-green-800 mb-3">Transaction Summary</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-green-700">Customer ID:</span>
+                    <span className="text-green-700">Customer Saving Ac Number:</span>
                     <span className="font-medium text-green-800">
-                      {formData.customerId || '-'}
+                      {savingAc || '-'}
                     </span>
                   </div>
                   <div className="flex justify-between">
