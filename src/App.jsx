@@ -52,6 +52,8 @@ import CreateRDForm from "./modules/coustomer/CreateRDForm";
 import CreateFDForm from "./modules/coustomer/CreateFDForm";
 import CreateLoan from "./modules/coustomer/CreateLoan";
 import CreatePigmyForm from "./modules/coustomer/CreatePigmyForm";
+import CreateLakhpatiSchem from "./modules/coustomer/CrateLakhpatiSchem";
+import CreateMipForm from "./modules/coustomer/CreateMipForm";
 // import ViewAreaManager from "./modules/areaManager/ViewAreaManager.jsx";
 
 function App() {
@@ -155,7 +157,27 @@ function App() {
             }
           />
           <Route
-            path="/create-pigmy/:customerId"
+            path="/create-mip/:customerId/:savingAc"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <CreateMipForm/>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-lakhpati/:customerId/:savingAc"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <CreateLakhpatiSchem/>
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create-pigmy/:customerId/:savingAc"
             element={
               <ProtectedRoute>
                 <Layout>

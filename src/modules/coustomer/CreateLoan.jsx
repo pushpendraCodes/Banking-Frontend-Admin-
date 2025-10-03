@@ -9,9 +9,10 @@ export default function CreateLoan() {
   const [formData, setFormData] = useState({
     loanPrincipalAmount: "",
     loanTenure: "",
-    loanTenureType: "year",
+    loanTenureType: "month",
     loanEMIFrequency: "monthly",
     loanType: "personal",
+    loanInterestRate: "10",
   });
 
   const [errors, setErrors] = useState({});
@@ -32,24 +33,52 @@ export default function CreateLoan() {
     }
   };
   const token = localStorage.getItem("token");
+
   const validateForm = () => {
-    const newErrors = {};
+  const newErrors = {};
 
-    if (!formData.loanPrincipalAmount) {
-      newErrors.loanPrincipalAmount = "Loan amount is required";
-    } else if (formData.loanPrincipalAmount <= 0) {
-      newErrors.loanPrincipalAmount = "Loan amount must be greater than 0";
-    }
+  // Loan Amount
+  if (!formData.loanPrincipalAmount) {
+    newErrors.loanPrincipalAmount = "Loan amount is required";
+  } else if (Number(formData.loanPrincipalAmount) <= 0) {
+    newErrors.loanPrincipalAmount = "Loan amount must be greater than 0";
+  }
 
-    if (!formData.loanTenure) {
-      newErrors.loanTenure = "Loan tenure is required";
-    } else if (formData.loanTenure <= 0) {
-      newErrors.loanTenure = "Tenure must be greater than 0";
-    }
+  // Loan Tenure
+  if (!formData.loanTenure) {
+    newErrors.loanTenure = "Loan tenure is required";
+  } else if (Number(formData.loanTenure) <= 0) {
+    newErrors.loanTenure = "Tenure must be greater than 0";
+  }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  // Interest Rate
+  if (!formData.loanInterestRate) {
+    newErrors.loanInterestRate = "Interest rate is required";
+  } else if (Number(formData.loanInterestRate) <= 0) {
+    newErrors.loanInterestRate = "Interest rate must be greater than 0%";
+  } else if (Number(formData.loanInterestRate) > 50) {
+    newErrors.loanInterestRate = "Interest rate cannot exceed 50%";
+  }
+
+  // Tenure Type
+  if (!formData.loanTenureType) {
+    newErrors.loanTenureType = "Please select tenure type";
+  }
+
+  // EMI Frequency
+  if (!formData.loanEMIFrequency) {
+    newErrors.loanEMIFrequency = "Please select EMI frequency";
+  }
+
+  // Loan Type
+  if (!formData.loanType) {
+    newErrors.loanType = "Please select loan type";
+  }
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,8 +92,8 @@ export default function CreateLoan() {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}customer/createLoan/${customerId}`,
         formData,
-         {
-           headers: {
+        {
+          headers: {
             Authorization: `Bearer ${token}`,
           },
         }
@@ -78,6 +107,7 @@ export default function CreateLoan() {
           loanTenureType: "year",
           loanEMIFrequency: "monthly",
           loanType: "personal",
+          loanInterestRate: "10",
         });
         navigate(-1);
       } else {
@@ -87,7 +117,7 @@ export default function CreateLoan() {
       console.error("Error creating loan:", error);
       alert(
         error.response?.data?.message ||
-          "Failed to create loan. Please try again."
+        "Failed to create loan. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -123,9 +153,8 @@ export default function CreateLoan() {
             name="loanPrincipalAmount"
             value={formData.loanPrincipalAmount}
             onChange={handleChange}
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-              errors.loanPrincipalAmount ? "border-red-500" : "border-gray-300"
-            }`}
+            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.loanPrincipalAmount ? "border-red-500" : "border-gray-300"
+              }`}
             placeholder="Enter principal amount"
           />
           {errors.loanPrincipalAmount && (
@@ -149,9 +178,8 @@ export default function CreateLoan() {
             name="loanTenure"
             value={formData.loanTenure}
             onChange={handleChange}
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-              errors.loanTenure ? "border-red-500" : "border-gray-300"
-            }`}
+            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.loanTenure ? "border-red-500" : "border-gray-300"
+              }`}
             placeholder="Enter tenure (e.g., 3)"
           />
           {errors.loanTenure && (
@@ -159,7 +187,8 @@ export default function CreateLoan() {
           )}
         </div>
 
-        {/* Loan Tenure Type */}
+
+    {/* Loan Tenure Type */}
         <div>
           <label
             htmlFor="loanTenureType"
@@ -178,6 +207,30 @@ export default function CreateLoan() {
             <option value="year">Years</option>
           </select>
         </div>
+
+        <div>
+          <label
+            htmlFor="loanTenure"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Loan Interest Rate *
+          </label>
+          <input
+            type="number"
+            id="loanInterestRate"
+            name="loanInterestRate"
+            value={formData.loanInterestRate}
+            onChange={handleChange}
+            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${errors.loanInterestRate ? "border-red-500" : "border-gray-300"
+              }`}
+            placeholder="Enter tenure (e.g., 3)"
+          />
+         {errors.loanInterestRate && (
+  <p className="mt-1 text-sm text-red-600">{errors.loanInterestRate}</p>
+)}
+        </div>
+
+    
 
         {/* EMI Frequency */}
         <div>
@@ -215,10 +268,15 @@ export default function CreateLoan() {
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg"
           >
-            <option value="personal">Personal</option>
-            <option value="home">Home</option>
-            <option value="auto">Auto</option>
-            <option value="education">Education</option>
+            <option value="">Select Loan Type</option>
+            <option value="gold">Gold Loan (सोने तारण कर्ज)</option>
+            <option value="vehicle">Vehicle Loan (वाहन कर्ज)</option>
+            <option value="household">Household Appliance Loan (घरेलू उपकरण कर्ज)</option>
+            <option value="business">Business Loan (व्यवसायिक कर्ज)</option>
+            <option value="salary">Salary-backed Loan (पगारतारण कर्ज)</option>
+            <option value="regular">Regular Loan (नियमित कर्ज)</option>
+            <option value="savingsGroup">Savings Group Loan (बचत गट)</option>
+            <option value="mortgage">Mortgage Loan (तारण कर्ज)</option>
           </select>
         </div>
 
@@ -227,11 +285,10 @@ export default function CreateLoan() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors ${
-              isSubmitting
+            className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors ${isSubmitting
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700 text-white"
-            }`}
+              }`}
           >
             {isSubmitting ? "Creating Loan..." : "Create Loan"}
           </button>

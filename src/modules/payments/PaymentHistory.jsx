@@ -49,7 +49,7 @@ export default function PaymentHistory() {
   const statusOptions = ["pending", "approved", "rejected"];
   const transactionTypeOptions = ["deposit", "withdrawal", "emi", "maturityPayout", "penality"];
   const modeOptions = ["cash", "bankTransfer", "upi", "cheque", "card"];
-  const schemeTypeOptions = ["FD", "RD", "LOAN", "PIGMY","SAVING_ACCOUNT"];
+  const schemeTypeOptions = ["FD", "RD", "LOAN", "PIGMY","SAVING_ACCOUNT" ,"MIP","Lakhpati"];
 
   // const managerId = JSON.parse(localStorage.getItem("user"))._id
   const token = localStorage.getItem("token");

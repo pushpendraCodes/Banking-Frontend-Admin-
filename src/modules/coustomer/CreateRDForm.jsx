@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function CreateRDForm() {
-  const { customerId } = useParams();
+  const { customerId ,savingAc} = useParams();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -33,24 +33,25 @@ export default function CreateRDForm() {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
+ const validateForm = () => {
+  const newErrors = {};
 
-    if (!formData.rdTenure) {
-      newErrors.rdTenure = "RD Tenure is required";
-    } else if (formData.rdTenure <= 0) {
-      newErrors.rdTenure = "RD Tenure must be greater than 0";
-    }
+  if (!formData.rdTenure) {
+    newErrors.rdTenure = "RD Tenure is required";
+  } else if (formData.rdTenure <= 0) {
+    newErrors.rdTenure = "RD Tenure must be greater than 0";
+  }
 
-    if (!formData.rdInstallAmount) {
-      newErrors.rdInstallAmount = "Installment Amount is required";
-    } else if (formData.rdInstallAmount <= 0) {
-      newErrors.rdInstallAmount = "Installment amount must be greater than 0";
-    }
+  if (!formData.rdInstallAmount) {
+    newErrors.rdInstallAmount = "Installment Amount is required";
+  } else if (Number(formData.rdInstallAmount) < 500) {
+    newErrors.rdInstallAmount = "Minimum installment amount is ₹500";
+  }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
   const token = localStorage.getItem("token");
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -274,7 +275,7 @@ export default function CreateRDForm() {
           <div>
             <span className="font-medium text-gray-600">Tenure:</span>
             <span className="ml-2">
-              {formData.rdTenure || "-"} {formData.rdTenureType}
+              {formData.rdTenure || "-"} month
             </span>
           </div>
           <div>
@@ -282,8 +283,8 @@ export default function CreateRDForm() {
             <span className="ml-2">{formData.type || "-"}</span>
           </div>
           <div>
-            <span className="font-medium text-gray-600">Account:</span>
-            <span className="ml-2">{formData.savingAccountNo || "-"}</span>
+            <span className="font-medium text-gray-600">Saving Account:</span>
+            <span className="ml-2">{savingAc|| "-"}</span>
           </div>
           <div>
             <span className="font-medium text-gray-600">Installment:</span>

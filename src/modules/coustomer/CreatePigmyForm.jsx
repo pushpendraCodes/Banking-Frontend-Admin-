@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function CreatePigmyForm() {
-  const { customerId } = useParams();
+  const { customerId,savingAc } = useParams();
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const [formData, setFormData] = useState({
@@ -50,7 +50,7 @@ export default function CreatePigmyForm() {
         `${import.meta.env.VITE_API_URL}customer/createPigmy/${customerId}`,
         formData,
         {
-           headers: {
+          headers: {
             Authorization: `Bearer ${token}`,
           },
         }
@@ -72,7 +72,7 @@ export default function CreatePigmyForm() {
       console.error("Error creating Pigmy:", error);
       alert(
         error.response?.data?.message ||
-          "Failed to create Pigmy. Please try again."
+        "Failed to create Pigmy. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -81,7 +81,7 @@ export default function CreatePigmyForm() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
-       <div className="mb-6 flex items-center gap-4">
+      <div className="mb-6 flex items-center gap-4">
         <button
           type="button"
           onClick={() => navigate(-1)}
@@ -117,9 +117,8 @@ export default function CreatePigmyForm() {
             name="pigmyDailyDeposit"
             value={formData.pigmyDailyDeposit}
             onChange={handleChange}
-            className={`w-full px-4 py-2 border rounded-lg ${
-              errors.pigmyDailyDeposit ? "border-red-500" : "border-gray-300"
-            }`}
+            className={`w-full px-4 py-2 border rounded-lg ${errors.pigmyDailyDeposit ? "border-red-500" : "border-gray-300"
+              }`}
             placeholder="Enter daily deposit"
           />
           {errors.pigmyDailyDeposit && (
@@ -132,20 +131,23 @@ export default function CreatePigmyForm() {
         {/* Tenure */}
         <div>
           <label className="block mb-2 font-medium">Tenure *</label>
-          <input
-            type="number"
+          <select
             name="pigMyTenure"
             value={formData.pigMyTenure}
             onChange={handleChange}
-            className={`w-full px-4 py-2 border rounded-lg ${
-              errors.pigMyTenure ? "border-red-500" : "border-gray-300"
-            }`}
-            placeholder="Enter tenure (e.g., 12)"
-          />
+            className={`w-full px-4 py-2 border rounded-lg ${errors.pigMyTenure ? "border-red-500" : "border-gray-300"
+              }`}
+          >
+            <option value="">Select tenure</option>
+            <option value="6">6 Months</option>
+            <option value="12">12 Months</option>
+          </select>
+
           {errors.pigMyTenure && (
             <p className="mt-1 text-sm text-red-600">{errors.pigMyTenure}</p>
           )}
         </div>
+
 
         {/* Tenure Type */}
         <div>
@@ -157,8 +159,8 @@ export default function CreatePigmyForm() {
             className="w-full px-4 py-2 border rounded-lg"
           >
             <option value="month">Month(s)</option>
-            <option value="year">Year(s)</option>
-            <option value="week">Week(s)</option>
+            {/* <option value="year">Year(s)</option>
+            <option value="week">Week(s)</option> */}
           </select>
         </div>
 
@@ -167,11 +169,10 @@ export default function CreatePigmyForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`flex-1 px-6 py-3 rounded-lg text-white font-medium transition-colors ${
-              isSubmitting
+            className={`flex-1 px-6 py-3 rounded-lg text-white font-medium transition-colors ${isSubmitting
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-600 hover:bg-blue-700"
-            }`}
+              }`}
           >
             {isSubmitting ? "Creating..." : "Create Pigmy"}
           </button>
@@ -193,6 +194,10 @@ export default function CreatePigmyForm() {
           <div>
             <span className="font-medium">Type:</span>{" "}
             <span>{formData.type}</span>
+          </div>
+          <div>
+            <span className="font-medium">Saving Account:</span>{" "}
+            <span>{savingAc}</span>
           </div>
           <div>
             <span className="font-medium">Daily Deposit:</span>{" "}

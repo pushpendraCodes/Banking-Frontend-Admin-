@@ -4,12 +4,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 export default function CreateFDForm() {
 
-  const { customerId ,savingAc} = useParams()
+  const { customerId, savingAc } = useParams()
   const [formData, setFormData] = useState({
-    fdTenure: '',
+    fdTenure: 9,
     fdTenureType: 'month',
     type: '12 Month ',
     // savingAccountNo: accountNo||'',
+    interestRate: "8",
     fdDepositAmount: ''
   });
 
@@ -32,23 +33,35 @@ export default function CreateFDForm() {
     }
   };
 
-  const MIN_FD_AMOUNT = import.meta.env.VITE_MINIMUM_FD_AMOUNT // Minimum FD deposit amount
+  const MIN_FD_AMOUNT = import.meta.env.VITE_MINIMUM_FD_AMOUNT || 5000 // Minimum FD deposit amount
+  console.log(MIN_FD_AMOUNT, formData.fdDepositAmount, "MIN_FD_AMOUNT")
 
-const validateForm = () => {
+ const validateForm = () => {
   const newErrors = {};
 
+  // FD Tenure validation
   if (!formData.fdTenure) {
     newErrors.fdTenure = 'FD Tenure is required';
   } else if (formData.fdTenure <= 0) {
     newErrors.fdTenure = 'FD Tenure must be greater than 0';
   }
 
+  // FD Deposit Amount validation
   if (!formData.fdDepositAmount) {
     newErrors.fdDepositAmount = 'Deposit Amount is required';
   } else if (formData.fdDepositAmount <= 0) {
     newErrors.fdDepositAmount = 'Deposit amount must be greater than 0';
-  } else if (formData.fdDepositAmount < MIN_FD_AMOUNT) {
+  } else if (Number(formData.fdDepositAmount) < MIN_FD_AMOUNT) {
     newErrors.fdDepositAmount = `Minimum deposit amount is ₹${MIN_FD_AMOUNT}`;
+  }
+
+  // Interest Rate validation
+  if (!formData.interestRate) {
+    newErrors.interestRate = "Interest rate is required";
+  } else if (formData.interestRate <= 0) {
+    newErrors.interestRate = "Interest rate must be greater than 0";
+  } else if (formData.interestRate > 15) {
+    newErrors.interestRate = "Interest rate must not exceed 15%";
   }
 
   setErrors(newErrors);
@@ -56,11 +69,12 @@ const validateForm = () => {
 };
 
 
-
+  console.log(errors, formData.fdDepositAmount < MIN_FD_AMOUNT)
   const Navigate = useNavigate()
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log(validateForm(), "validateForm()")
     if (!validateForm()) {
       return;
     }
@@ -74,9 +88,9 @@ const validateForm = () => {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}customer/createFD/${customerId}`,  // <-- replace with your actual endpoint
         formData,
-        
- {
-           headers: {
+
+        {
+          headers: {
             Authorization: `Bearer ${token}`,
           },
         }
@@ -126,23 +140,34 @@ const validateForm = () => {
         {/* FD Tenure */}
 
         <div>
-          <label htmlFor="fdTenure" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="fdTenure"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             FD Tenure *
           </label>
-          <input
-            type="number"
+          <select
             id="fdTenure"
             name="fdTenure"
             value={formData.fdTenure}
             onChange={handleChange}
-            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.fdTenure ? 'border-red-500' : 'border-gray-300'
+            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.fdTenure ? "border-red-500" : "border-gray-300"
               }`}
-            placeholder="Enter tenure (e.g., 36)"
-          />
+          >
+            <option value="">Select tenure</option>
+            <option value="9">9 Months</option>
+            <option value="12">12 Months</option>
+            <option value="24">24 Months</option>
+            <option value="36">36 Months</option>
+            <option value="48">48 Months</option>
+            <option value="60">60 Months</option>
+            <option value="84">84 Months</option>
+          </select>
           {errors.fdTenure && (
             <p className="mt-1 text-sm text-red-600">{errors.fdTenure}</p>
           )}
         </div>
+
 
         {/* FD Tenure Type */}
         <div>
@@ -157,7 +182,7 @@ const validateForm = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="month">Months</option>
-            <option value="year">Years</option>
+            {/* <option value="year">Years</option> */}
             {/* <option value="day">Days</option> */}
           </select>
         </div>
@@ -223,13 +248,34 @@ const validateForm = () => {
           {errors.fdDepositAmount && (
             <p className="mt-1 text-sm text-red-600">{errors.fdDepositAmount}</p>
           )}
-  
+
 
           {formData.fdDepositAmount && (
             <p className="mt-1 text-sm text-gray-500">
               Amount in words: ₹{parseInt(formData.fdDepositAmount).toLocaleString('en-IN')}
             </p>
           )}
+        </div>
+        <div>
+          <label htmlFor="interestRate" className="block text-sm font-medium text-gray-700 mb-2">
+           INtrest Rate (₹) *
+          </label>
+          <input
+            type="number"
+            id="interestRate"
+            name="interestRate"
+            value={formData.interestRate}
+            onChange={handleChange}
+            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${errors.interestRate ? 'border-red-500' : 'border-gray-300'
+              }`}
+            placeholder="Enter deposit amount (e.g., 1500000)"
+          />
+          {errors.interestRate && (
+            <p className="mt-1 text-sm text-red-600">{errors.interestRate}</p>
+          )}
+
+
+         
         </div>
 
         {/* Submit Buttons */}
@@ -238,8 +284,8 @@ const validateForm = () => {
             type="submit"
             disabled={isSubmitting}
             className={`flex-1 px-6 py-3 rounded-lg font-medium transition-colors ${isSubmitting
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700 text-white'
               }`}
           >
             {isSubmitting ? (
