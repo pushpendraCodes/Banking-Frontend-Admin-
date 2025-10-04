@@ -90,7 +90,7 @@ const handleSubmit = async (e) => {
 
     // Actual API call
     const response = await axios.post(
-      `${import.meta.env.VITE_API_URL}transactionSchemes/fdTransaction`, // 🔹 replace with your backend endpoint
+      `${import.meta.env.VITE_API_URL}/transactionSchemes/fdTransaction`, // 🔹 replace with your backend endpoint
       formData,
       {
            headers: {

@@ -27,7 +27,7 @@ const PigmyMaturityModal = ({ customer, pigMyAccountNumber }) => {
     const elapsedDays = moment(now).diff(moment(openingDate), "days");
 
     // Principal actually deposited till now
-    const principal = dailyDeposit * elapsedDays;
+  const principal = scheme.pigMyTotalDepositedAmount
 
     let interestEarned = 0;
     let penalty = 0;
@@ -60,7 +60,9 @@ const PigmyMaturityModal = ({ customer, pigMyAccountNumber }) => {
       }
     }
 
-    const netPayable = principal + interestEarned - penalty;
+  const netPayable =
+  (Number(principal) || 0) + (Number(interestEarned) || 0) - (Number(penalty) || 0);
+
 
     return {
       principalDeposited: principal,

@@ -1057,13 +1057,13 @@ function ViewDetails() {
                                             </div> */}
                       <div>
                         <span className="text-sm font-medium text-gray-600">Status</span>
-                        <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${pigmy.pigMyAccountStatus === 'active'
+                        <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${pigmy.pigmyAccount === 'active'
                           ? 'bg-green-200 text-green-800'
-                          : pigmy.pigMyAccountStatus === 'matured'
+                          : pigmy.pigmyAccount === 'matured'
                             ? 'bg-blue-200 text-blue-800'
                             : 'bg-red-200 text-red-800'
                           }`}>
-                          {pigmy.pigMyAccountStatus}
+                          {pigmy.pigmyAccount}
                           {pigmy?.pigMyCloseDate && (
                             <span className="block text-xs font-normal text-gray-700">
                               {new Date(pigmy.pigMyCloseDate).toLocaleString("en-IN", {
@@ -1144,7 +1144,7 @@ function ViewDetails() {
                   Create New Lakhpati schems
                 </Link>
                 <Link
-                  to={`/coustomers/paymentdetails/${id}/PIGMY`}
+                  to={`/coustomers/paymentdetails/${id}/Lakhpati`}
                   className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-md transition duration-200"
                 >
                   Payment Details
@@ -1258,7 +1258,7 @@ function ViewDetails() {
                         <span className="text-sm font-medium text-gray-600">Status</span>
                         <span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${lakhpatiSchemes.lakhpatiYojanaAccountStatus === 'active'
                           ? 'bg-green-200 text-green-800'
-                          : pigmy.lakhpatiYojanaAccountStatus === 'matured'
+                          : lakhpatiSchemes.lakhpatiYojanaAccountStatus === 'matured'
                             ? 'bg-blue-200 text-blue-800'
                             : 'bg-red-200 text-red-800'
                           }`}>
