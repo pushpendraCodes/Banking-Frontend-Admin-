@@ -13,8 +13,8 @@ const settingsList = [
 
 const Settings = () => {
   return (
-    <div className=" mx-auto bg-[#fff8f0] p-6 rounded shadow">
-     <h2 className="text-2xl font-semibold mb-4">Settings</h2>
+    <div className=" mx-auto  p-6 rounded shadow">
+     <h2 className="text-2xl bg-[#dc5212] p-3 font-semibold mb-4">Settings</h2>
       {settingsList.map((item, index) => (
         <Link
         to={item.path}

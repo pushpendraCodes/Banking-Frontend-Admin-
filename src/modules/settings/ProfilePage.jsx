@@ -11,8 +11,8 @@ function ProfilePage() {
 
   return (
     <>
-      <div>
-        <h2 className="bg-[#fff7f4] px-3 text-lg font-bold">
+      <div className="bg-[#dc5212] p-3 m-2 rounded-md">
+        <h2 className=" text-lg font-bold">
        Profile Page
         </h2>
       </div>

@@ -85,7 +85,7 @@ const renderPreview = (url) => {
 
   return (
     <>
-      <div className="bg-[#fef7ef] flex items-center gap-2 mb-4 p-2 rounded">
+      <div className="bg-[#dc5212] m-2 flex items-center gap-2 mb-4 p-2 rounded">
         <button
           onClick={() => navigate(-1)}
           className="text-black p-1 border-2 rounded-4xl"

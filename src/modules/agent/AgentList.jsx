@@ -252,9 +252,9 @@ export default function AgentList() {
   }
 
   return (
-    <div>
+    <div className="p-4 ">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between p-3 items-center mb-4 bg-[#dc5212]">
         <h2 className="text-xl font-bold">Agent Management</h2>
         <Link
           to="/agent/add"

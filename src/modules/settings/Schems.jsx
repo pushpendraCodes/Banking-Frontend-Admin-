@@ -7,8 +7,8 @@ const Schems = () => {
   const [loading, setLoading] = useState(true);
 
   const Navigate = useNavigate()
-const token = localStorage.getItem("token")
- useEffect(() => {
+  const token = localStorage.getItem("token")
+  useEffect(() => {
     const fetchSchemes = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_API_URL}admin/get`);
@@ -40,32 +40,32 @@ const token = localStorage.getItem("token")
     console.log("Edit scheme:", scheme);
   };
 
-const handleDeleteScheme = async (scheme) => {
-  if (window.confirm("Are you sure you want to delete this scheme?")) {
-    try {
-      const response = await axios.delete(
-        `${import.meta.env.VITE_API_URL}admin/schemes/delete/${scheme._id}`,
-        {
-          headers:{
+  const handleDeleteScheme = async (scheme) => {
+    if (window.confirm("Are you sure you want to delete this scheme?")) {
+      try {
+        const response = await axios.delete(
+          `${import.meta.env.VITE_API_URL}admin/schemes/delete/${scheme._id}`,
+          {
+            headers: {
               Authorization: `Bearer ${token}`
+            }
           }
+        );
+
+        if (response.data.success) {
+          alert("Scheme deleted successfully!");
+
+          // remove scheme from state so UI updates immediately
+          setSchemes((prev) => prev.filter((s) => s._id !== scheme._id));
+        } else {
+          alert(response.data.message || "Failed to delete scheme");
         }
-      );
-
-      if (response.data.success) {
-        alert("Scheme deleted successfully!");
-
-        // remove scheme from state so UI updates immediately
-        setSchemes((prev) => prev.filter((s) => s._id !== scheme._id));
-      } else {
-        alert(response.data.message || "Failed to delete scheme");
+      } catch (error) {
+        console.error("Error deleting scheme:", error);
+        alert("Something went wrong while deleting the scheme.");
       }
-    } catch (error) {
-      console.error("Error deleting scheme:", error);
-      alert("Something went wrong while deleting the scheme.");
     }
-  }
-};
+  };
 
 
   const handleViewScheme = (scheme) => {
@@ -82,24 +82,24 @@ const handleDeleteScheme = async (scheme) => {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf7f3] p-8">
+    <div className="min-h-screen p-8">
       {/* Header with Add Button */}
-      <div className="flex justify-between items-center mb-6">
-      <div className="flex gap-2 items-center">
+      <div className="flex justify-between bg-[#dc5212] p-3 items-center mb-6">
+        <div className="flex gap-2  items-center">
 
           <button
-            onClick={()=>Navigate(-1)}
-            className="flex items-center text-red-600 hover:text-red-700 mr-4"
+            onClick={() => Navigate(-1)}
+            className="flex items-center text-white hover:text-red-700 mr-4"
           >
             <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
             </svg>
             Back
           </button>
-        <h2 className="text-2xl font-bold text-red-600">
-          Available Schemes
-        </h2>
-      </div>
+          <h2 className="text-2xl font-bold text-white">
+            Available Schemes
+          </h2>
+        </div>
         <button
           onClick={handleAddScheme}
           className="flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
@@ -136,8 +136,8 @@ const handleDeleteScheme = async (scheme) => {
 
               {/* Description - Truncated */}
               <p className="text-sm text-gray-600 text-center mb-4 line-clamp-3">
-                {scheme.desc?.length > 100 
-                  ? `${scheme.desc.substring(0, 100)}...` 
+                {scheme.desc?.length > 100
+                  ? `${scheme.desc.substring(0, 100)}...`
                   : scheme.desc}
               </p>
 

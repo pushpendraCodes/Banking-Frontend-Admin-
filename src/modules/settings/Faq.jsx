@@ -62,8 +62,8 @@ const Faq = () => {
   if (loading) return <p className="text-center py-10">Loading FAQs...</p>;
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">FAQ Management</h1>
+    <div className=" mx-auto p-6">
+      <h1 className="text-3xl bg-[#dc5212] font-bold mb-6 p-3">FAQ Management</h1>
 
       {message && (
         <div

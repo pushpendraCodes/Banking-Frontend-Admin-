@@ -99,14 +99,14 @@ const AddCustomer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-yellow-50 to-white py-10 px-4">
+    <div className="min-h-screen bg-gradient-to-r   p-4">
       <div className="w-full mx-auto shadow-lg rounded-xl bg-white">
         {/* Header */}
-        <div className="flex justify-between border-b px-6 py-2 rounded-t-xl bg-gradient-to-r from-yellow-100 via-yellow-50 to-white">
-          <div className="flex gap-2">
+        <div className="flex justify-between border-b px-6 py-2 rounded-t-xl bg-gradient-to-r bg-[#dc5212]">
+          <div className="flex  gap-2 items-center">
             <button
               onClick={() => navigate(-1)}
-              className="text-gray-600 hover:text-yellow-500 p-2 rounded-full border transition-colors"
+              className="text-black-600 hover:text-yellow-500 p-2 rounded-full border transition-colors"
               title="Back"
             >
               <FaArrowLeft />

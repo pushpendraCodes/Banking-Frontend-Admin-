@@ -94,14 +94,14 @@ const UpdateGallery = () => {
   return (
     <>
       {/* Header */}
-      <div className="bg-[#fff7e6] flex items-center gap-3 mb-6 p-4 rounded-lg border border-yellow-200 shadow-sm">
+      <div className="bg-[#dc5212] flex m-2 items-center gap-3 mb-6 p-4 rounded-lg  shadow-sm">
         <button
           onClick={() => navigate(-1)}
           className="text-black p-2 border-2 border-yellow-400 rounded-full hover:bg-yellow-100 transition"
         >
           <FaArrowLeft />
         </button>
-        <h2 className="text-2xl font-bold text-yellow-700">Update Gallery</h2>
+        <h2 className="text-2xl font-bold text-black">Update Gallery</h2>
       </div>
 
       {/* Form Card */}

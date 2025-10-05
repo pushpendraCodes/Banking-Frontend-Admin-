@@ -67,10 +67,10 @@ const AddAreaManager = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-yellow-50 to-white px-4 flex justify-center items-center">
+    <div className="min-h-screen bg-gradient-to-r p-4 flex justify-center items-center">
       <div className="w-full shadow-lg rounded-xl bg-white">
         {/* Header */}
-        <div className="flex items-center justify-between border-b px-6 py-4 rounded-t-xl bg-gradient-to-r from-yellow-100 via-yellow-50 to-white">
+        <div className="flex items-center justify-between border-b p-4 rounded-t-xl bg-gradient-to-r bg-[#dc5212]">
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigate(-1)}
@@ -94,7 +94,7 @@ const AddAreaManager = () => {
         </div>
 
         <form id="addAgentForm" onSubmit={handleSubmit(onSubmit)}>
-          <div className="p-8 grid md:grid-cols-2 gap-6">
+          <div className="p-3 grid md:grid-cols-2 gap-6">
             {/* Name */}
             <div>
               <label className="block font-semibold text-sm mb-1 text-gray-700">

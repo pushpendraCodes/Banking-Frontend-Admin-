@@ -71,8 +71,8 @@ const UpdateBanner = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto mt-10 p-6 bg-white rounded shadow">
-      <div className="bg-[#fef7ef] flex items-center gap-2 mb-4 p-2 rounded">
+    <div className=" mx-auto mt-2 p-4 bg-white rounded shadow">
+      <div className="bg-[#dc5212] flex items-center gap-2 mb-4 p-3 rounded">
         <button
           onClick={() => navigate(-1)}
           className="text-black p-1 border-2 rounded-4xl"

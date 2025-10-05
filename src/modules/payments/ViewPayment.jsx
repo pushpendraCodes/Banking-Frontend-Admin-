@@ -99,10 +99,10 @@ const ViewPayment = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4 sm:p-6">
-      <div className="max-w-6xl mx-auto">
+      <div className=" mx-auto">
         {/* Header */}
         <div className="bg-white shadow-lg rounded-xl p-6 mb-6">
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-4 mb-4 bg-[#dc5212] p-3">
             <button
               onClick={() => navigate(-1)}
               className="flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors duration-200"
@@ -111,7 +111,7 @@ const ViewPayment = () => {
             </button>
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Payment Details</h1>
-              <p className="text-gray-500 mt-1">Transaction ID: {paymentData?.transactionId}</p>
+              <p className="text-black mt-1">Transaction ID: {paymentData?.transactionId}</p>
             </div>
           </div>
           

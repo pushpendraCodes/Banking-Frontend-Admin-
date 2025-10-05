@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState, useRef } from "react";
-import { FaEye, FaPen, FaTrash, FaChevronDown } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { FaEye, FaPen, FaTrash, FaChevronDown, FaArrowLeft } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 import DeletePopup from "../../component/DeletePopup";
 
 export default function AreaManagerList() {
@@ -18,14 +18,14 @@ export default function AreaManagerList() {
   // Manager dropdown functionality
   const [managers, setManagers] = useState([]);
   const [selectedManager, setSelectedManager] = useState("");
-  
+
   // Manager dropdown search functionality
   const [filteredManagers, setFilteredManagers] = useState([]);
   const [managerSearch, setManagerSearch] = useState("");
   const [selectedManagerObj, setSelectedManagerObj] = useState(null);
   const [isManagerDropdownOpen, setIsManagerDropdownOpen] = useState(false);
   const managerDropdownRef = useRef(null);
-
+ const navigate = useNavigate()
   const token = localStorage.getItem("token");
 
   // Fetch Managers for dropdown
@@ -138,15 +138,24 @@ export default function AreaManagerList() {
   if (error) {
     return <p className="text-center text-red-500">Error: {error.message}</p>;
   }
-
+ 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Area Manager Management</h2>
+    <div className="p-4">
+      <div className="flex justify-between bg-[#dc5212] items-center mb-4 p-3">
+        <div className="flex items-center gap-2 ">
+          <button
+            onClick={() => navigate(-1)}
+            className="text-gray-600 hover:text-yellow-500 p-2 rounded-full border transition-colors"
+          >
+            <FaArrowLeft />
+          </button>
+          <h2 className="text-xl font-semibold">Area Manager</h2>
+        </div>
         <Link
           to="/area-manager/add"
           className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded"
         >
+
           Add Area Manager
         </Link>
       </div>
@@ -182,11 +191,10 @@ export default function AreaManagerList() {
                 className="border border-gray-400 px-3 py-2 pr-8 rounded w-64 focus:outline-none focus:border-blue-500"
               />
               <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <FaChevronDown 
-                  className={`text-gray-400 transition-transform duration-200 ${
-                    isManagerDropdownOpen ? 'rotate-180' : ''
-                  }`} 
-                  size={12} 
+                <FaChevronDown
+                  className={`text-gray-400 transition-transform duration-200 ${isManagerDropdownOpen ? 'rotate-180' : ''
+                    }`}
+                  size={12}
                 />
               </div>
             </div>
@@ -199,15 +207,14 @@ export default function AreaManagerList() {
                 >
                   <span className="font-medium">All Managers</span>
                 </div>
-                
+
                 {filteredManagers.length > 0 ? (
                   filteredManagers.map((manager) => (
                     <div
                       key={manager._id}
                       onClick={() => handleManagerSelect(manager)}
-                      className={`px-4 py-2 hover:bg-blue-50 cursor-pointer ${
-                        selectedManagerObj?._id === manager._id ? 'bg-blue-100' : ''
-                      }`}
+                      className={`px-4 py-2 hover:bg-blue-50 cursor-pointer ${selectedManagerObj?._id === manager._id ? 'bg-blue-100' : ''
+                        }`}
                     >
                       <div className="font-medium">{manager.name}</div>
                       {manager.email && (

@@ -82,10 +82,10 @@ const token = localStorage.getItem("token")
   };
 
   return (
-    <div className="min-h-screen bg-white sm:p-6 md:p-8">
-      <div className="max-w-screen-md mx-auto">
+    <div className="min-h-screen sm:p-6 md:p-8">
+      <div className=" mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between bg-[#fef7ef] p-4 rounded mb-6">
+        <div className="flex items-center justify-between bg-[#dc5212] p-4 rounded mb-6">
           <div className="flex items-center gap-2 text-base sm:text-lg font-semibold">
             <button
               onClick={() => navigate(-1)}

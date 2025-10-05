@@ -94,11 +94,11 @@ const ViewEditManager = () => {
     );
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-yellow-50 to-white py-10 px-4">
+    <div className="min-h-screen bg-gradient-to-r  p-4 ">
       <div className="w-full mx-auto shadow-lg rounded-xl bg-white">
         {/* Header */}
-        <div className="flex items-center justify-between border-b px-6 py-4 rounded-t-xl bg-gradient-to-r from-yellow-100 via-yellow-50 to-white">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between border-b px-6 py-4 rounded-t-xl bg-gradient-to-r bg-[#dc5212]">
+          <div className="flex items-center gap-2 bg-[#dc5212]">
             <button
               onClick={() => navigate(-1)}
               className="text-gray-600 hover:text-yellow-500 p-2 rounded-full border transition-colors"
@@ -120,7 +120,7 @@ const ViewEditManager = () => {
         <form
           id="editAgentForm"
           onSubmit={handleSubmit(onSubmit)}
-          className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 w-full"
+          className=" grid grid-cols-1 md:grid-cols-2 p-3 gap-8 w-full"
         >
           {/* Left column */}
           <div>

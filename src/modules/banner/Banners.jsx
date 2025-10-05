@@ -65,9 +65,9 @@ export default function BannerList() {
   const banners = admin?.banners || [];
 
   return (
-    <div>
+    <div className="p-4">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between p-3 bg-[#dc5212] items-center mb-4">
         <h2 className="text-xl font-bold">Website Banners</h2>
         <Link
           to="/banner/add"

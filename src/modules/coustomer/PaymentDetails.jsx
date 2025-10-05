@@ -81,7 +81,7 @@ function PaymentDetails() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br p-4 from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 right-20 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
@@ -90,8 +90,8 @@ function PaymentDetails() {
 
         <div className="relative z-10">
           {/* Header */}
-          <div className="bg-gradient-to-r from-indigo-600 via-blue-600 to-purple-600 shadow-lg">
-            <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="bg-gradient-to-r bg-[#dc5212] shadow-lg">
+            <div className=" mx-auto px-6 py-6">
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => window.history.back()}
@@ -103,7 +103,7 @@ function PaymentDetails() {
                   <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
                     <CreditCard className="w-6 h-6 text-white" />
                   </div>
-                  <div>
+                  <div className="bg-[#dc5212]">
                     <h2 className="text-2xl font-bold text-white">Payment Details</h2>
                     <p className="text-blue-100 text-sm">View all transaction history</p>
                   </div>
@@ -113,7 +113,7 @@ function PaymentDetails() {
           </div>
 
           {/* Main Content */}
-          <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className=" mx-auto px-6 py-8">
             {/* Action Bar */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-6 mb-6">
               <div className="flex flex-col md:flex-row gap-4 items-center justify-between">

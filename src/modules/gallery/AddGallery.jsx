@@ -62,15 +62,15 @@ const AddGallery = () => {
   return (
     <>
       {/* Header Bar */}
-      <div className="bg-[#fff7e6] flex items-center gap-3 mb-6 p-4 rounded-lg border border-yellow-200 shadow-sm">
+      <div className="bg-[#dc5212] flex items-center gap-3 mb-6 m-2 rounded-lg  p-4 shadow-sm">
         <button
           onClick={() => navigate(-1)}
-          className="text-black p-2 border-2 border-yellow-400 rounded-full hover:bg-yellow-100 transition"
+          className="text-black p-2  rounded-full hover:bg-yellow-100 transition"
           aria-label="Go back"
         >
           <FaArrowLeft />
         </button>
-        <h2 className="text-2xl font-bold tracking-wide text-yellow-700">
+        <h2 className="text-2xl font-bold tracking-wide text-black">
           Add Gallery
         </h2>
       </div>

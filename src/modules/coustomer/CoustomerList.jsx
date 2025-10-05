@@ -241,9 +241,9 @@ export default function CustomerList() {
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
   return (
-    <div>
+    <div className=" p-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
+      <div className="flex flex-col p-2 rounded-md sm:flex-row justify-between items-start sm:items-center bg-[#dc5212] mb-4 gap-2">
         <h2 className="text-lg sm:text-xl font-bold">Customer Management</h2>
         <Link to="/customers/add" className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-2 rounded text-sm">
           Add Customer

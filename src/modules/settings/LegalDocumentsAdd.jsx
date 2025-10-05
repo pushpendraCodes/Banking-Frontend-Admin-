@@ -84,9 +84,9 @@ const token = localStorage.getItem("token")
   };
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white p-4 min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between bg-[#fef7ef] p-4 rounded">
+      <div className="flex items-center justify-between bg-[#dc5212] p-4 rounded">
         <div className="flex items-center gap-2 text-lg font-semibold">
           <button
             onClick={() => navigate(-1)}

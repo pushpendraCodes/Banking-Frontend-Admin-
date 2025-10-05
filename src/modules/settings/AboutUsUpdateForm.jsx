@@ -174,18 +174,18 @@ const token = localStorage.getItem("token")
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-      <div className="">
+    <div className=" mx-auto p-6 bg-white rounded-lg shadow-md">
+      <div className="bg-[#dc5212] flex gap-1 p-3 items-center">
         <button
           onClick={() => Navigate(-1)}
-          className="flex items-center text-red-600 hover:text-red-700 mr-4"
+          className="flex items-center  hover:text-red-700 mr-4"
         >
           <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
           </svg>
           Back
         </button>
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Update About Us Section</h1>
+        <h1 className="text-2xl font-bold text-gray-800 ">Update About Us Section</h1>
       </div>
 
       {message.text && (
@@ -200,10 +200,10 @@ const token = localStorage.getItem("token")
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6 p-3">
         {/* Title */}
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="title" className="block text-sm font-bold text-gray-700 mb-1">
             Title
           </label>
           <input
@@ -219,7 +219,7 @@ const token = localStorage.getItem("token")
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-bold text-gray-700 mb-1">
             Description
           </label>
           <ReactQuill
@@ -231,7 +231,7 @@ const token = localStorage.getItem("token")
 
         {/* Vision */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-bold text-gray-700 mb-1">
             Vision
           </label>
           <ReactQuill
@@ -243,7 +243,7 @@ const token = localStorage.getItem("token")
 
         {/* Mission */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-bold text-gray-700 mb-1">
             Mission
           </label>
           <ReactQuill
@@ -255,7 +255,7 @@ const token = localStorage.getItem("token")
 
         {/* Values */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-bold text-gray-700 mb-1">
             Values
           </label>
           <div className="space-y-4">
