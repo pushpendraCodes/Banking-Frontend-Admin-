@@ -43,7 +43,7 @@ function ViewManager() {
     <>
       <div className="min-h-screen  p-4">
         {/* Header */}
-        <div className=" shadow-md bg-[#dc5212] px-6 py-4 flex items-center gap-4">
+        <div className=" shadow-md bg-[#dc5212] rounded-md px-6 py-4 flex items-center gap-4">
           <button
             onClick={() => navigate(-1)}
             className="text-black-600 p-2 hover:bg-orange-100 rounded-full transition-colors"
