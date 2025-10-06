@@ -146,7 +146,7 @@ const token = localStorage.getItem("token");
                   type="number"
                   name="amount"
                   value={formData.amount}
-                  disabled
+              
                   onChange={handleInputChange}
                   className={`w-full px-4 py-3 border rounded-lg ${
                     errors.amount ? 'border-red-500' : 'border-gray-300'
@@ -196,10 +196,10 @@ const token = localStorage.getItem("token");
               <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                 <h4 className="text-sm font-medium text-green-800 mb-3">Transaction Summary</h4>
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
+                  {/* <div className="flex justify-between">
                     <span className="text-green-700">Customer ID:</span>
                     <span className="font-medium text-green-800">{formData.customerId || '-'}</span>
-                  </div>
+                  </div> */}
                   <div className="flex justify-between">
                     <span className="text-green-700">Pigmy Account:</span>
                     <span className="font-medium text-green-800">{formData.pigMyAccountNumber || '-'}</span>
