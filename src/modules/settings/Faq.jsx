@@ -63,7 +63,7 @@ const Faq = () => {
 
   return (
     <div className=" mx-auto p-6">
-      <h1 className="text-3xl bg-[#dc5212] font-bold mb-6 p-3">FAQ Management</h1>
+      <h1 className="text-3xl bg-gradient-to-br rounded-md from-orange-500 via-red-500 to-red-600 font-bold mb-6 p-3">FAQ Management</h1>
 
       {message && (
         <div

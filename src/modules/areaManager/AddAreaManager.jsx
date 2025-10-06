@@ -70,7 +70,7 @@ const AddAreaManager = () => {
     <div className="min-h-screen bg-gradient-to-r p-4 flex justify-center items-center">
       <div className="w-full shadow-lg rounded-xl bg-white">
         {/* Header */}
-        <div className="flex items-center justify-between border-b p-4 rounded-t-xl bg-gradient-to-r bg-[#dc5212]">
+        <div className="flex items-center justify-between border-b p-4 rounded-t-xl  bg-gradient-to-br from-orange-500 via-red-500 to-red-600">
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigate(-1)}

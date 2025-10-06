@@ -80,7 +80,7 @@ function ViewDetails() {
   return (
     <div className="min-h-screen bg-gradient-to-br p-4 ">
       {/* Header */}
-      <div className=" bg-[#dc5212] shadow-md px-6 py-4 flex items-center gap-4">
+      <div className=" bg-gradient-to-br rounded-md from-orange-500 via-red-500 to-red-600 shadow-md px-6 py-4 flex items-center gap-4">
         <button
           onClick={() => navigate(-1)}
           className="text-black p-2 hover:bg-orange-100 rounded-full transition-colors"

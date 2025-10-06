@@ -48,7 +48,7 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed z-40 top-0 left-0 h-full w-[220px] bg-[#dc5212]  drop-shadow-sm p-4 transition-transform transform ${
+        className={`fixed z-40 top-0 left-0 h-full w-[220px] bg-gradient-to-br from-orange-500 via-red-500 to-red-600  drop-shadow-sm p-4 transition-transform transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 lg:static lg:block`}
       >

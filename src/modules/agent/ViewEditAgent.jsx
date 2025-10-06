@@ -110,7 +110,7 @@ const ViewEditAgent = () => {
     <div className="min-h-screen  p-4">
       <div className="w-full mx-auto shadow-lg rounded-xl bg-white">
         {/* Header */}
-        <div className="flex items-center justify-between border-b px-6 py-4 rounded-t-xl bg-gradient-to-r bg-[#dc5212]">
+        <div className="flex items-center justify-between border-b px-6 py-4 rounded-t-xl bg-gradient-to-br from-orange-500 via-red-500 to-red-600">
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigate(-1)}

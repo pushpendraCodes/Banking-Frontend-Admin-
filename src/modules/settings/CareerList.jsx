@@ -50,7 +50,7 @@ const navigate = useNavigate()
   return (
     <div className="sm:p-6 lg:p-8">
       {/* Header and Add Button */}
-      <div className="flex flex-col bg-[#dc5212] p-3 sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+      <div className="flex rounded-md flex-col bg-gradient-to-br from-orange-500 via-red-500 to-red-600 p-3 sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
 
         <div className="flex gap-2 items-center">
            <button

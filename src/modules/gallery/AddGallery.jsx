@@ -62,7 +62,7 @@ const AddGallery = () => {
   return (
     <>
       {/* Header Bar */}
-      <div className="bg-[#dc5212] flex items-center gap-3 mb-6 m-2 rounded-lg  p-4 shadow-sm">
+      <div className="bg-gradient-to-br from-orange-500 via-red-500 to-red-600 flex items-center gap-3 mb-6 m-2 rounded-lg  p-4 shadow-sm">
         <button
           onClick={() => navigate(-1)}
           className="text-black p-2  rounded-full hover:bg-yellow-100 transition"

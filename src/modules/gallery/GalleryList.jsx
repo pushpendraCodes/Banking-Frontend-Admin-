@@ -61,7 +61,7 @@ const token = localStorage.getItem("token")
   return (
     <div className="p-4">
       {/* Header */}
-      <div className="flex justify-between p-3 rounded-md bg-[#dc5212] items-center mb-4">
+      <div className="flex justify-between p-3 rounded-md bg-gradient-to-br from-orange-500 via-red-500 to-red-600 items-center mb-4">
         <h2 className="text-xl font-bold">Gallery Management</h2>
         <Link
           to="/gallary/add"

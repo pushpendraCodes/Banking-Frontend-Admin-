@@ -254,7 +254,7 @@ export default function AgentList() {
   return (
     <div className="p-4 ">
       {/* Header */}
-      <div className="flex justify-between p-3 rounded-md items-center mb-4 bg-[#dc5212]">
+      <div className="flex justify-between p-3 rounded-md items-center mb-4 bg-gradient-to-br from-orange-500 via-red-500 to-red-600">
         <h2 className="text-xl font-bold">Agent Management</h2>
         <Link
           to="/agent/add"

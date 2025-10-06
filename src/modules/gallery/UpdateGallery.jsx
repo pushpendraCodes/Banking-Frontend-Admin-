@@ -94,10 +94,10 @@ const UpdateGallery = () => {
   return (
     <>
       {/* Header */}
-      <div className="bg-[#dc5212] flex m-2 items-center gap-3 mb-6 p-4 rounded-lg  shadow-sm">
+      <div className="bg-gradient-to-br from-orange-500 via-red-500 to-red-600 flex m-2 items-center gap-3 mb-6 p-4 rounded-lg  shadow-sm">
         <button
           onClick={() => navigate(-1)}
-          className="text-black p-2 border-2 border-yellow-400 rounded-full hover:bg-yellow-100 transition"
+          className="text-black p-2 border-2  rounded-full hover:bg-yellow-100 transition"
         >
           <FaArrowLeft />
         </button>

@@ -44,7 +44,7 @@ function ViewAreaManager() {
     <>
      <div className="min-h-screen p-4">
             {/* Header */}
-            <div className="bg-[#dc5212] shadow-md px-6 py-4 flex items-center gap-4">
+            <div className="bg-gradient-to-br from-orange-500 via-red-500 to-red-600 rounded-md shadow-md px-6 py-4 flex items-center gap-4">
               <button
                 onClick={() => navigate(-1)}
                 className="text-black p-2 hover:bg-orange-100 rounded-full transition-colors"

@@ -84,7 +84,7 @@ const Schems = () => {
   return (
     <div className="min-h-screen p-8">
       {/* Header with Add Button */}
-      <div className="flex justify-between bg-[#dc5212] p-3 items-center mb-6">
+      <div className="flex justify-between rounded-md bg-gradient-to-br from-orange-500 via-red-500 to-red-600 p-3 items-center mb-6">
         <div className="flex gap-2  items-center">
 
           <button

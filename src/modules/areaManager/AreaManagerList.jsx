@@ -141,7 +141,7 @@ export default function AreaManagerList() {
  
   return (
     <div className="p-4">
-      <div className="flex justify-between rounded-md bg-[#dc5212] items-center mb-4 p-3">
+      <div className="flex justify-between rounded-md bg-gradient-to-br from-orange-500 via-red-500 to-red-600 items-center mb-4 p-3">
         <div className="flex items-center gap-2 ">
           <button
             onClick={() => navigate(-1)}

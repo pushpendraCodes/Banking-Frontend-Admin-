@@ -175,7 +175,7 @@ const token = localStorage.getItem("token")
 
   return (
     <div className=" mx-auto p-6 bg-white rounded-lg shadow-md">
-      <div className="bg-[#dc5212] flex gap-1 p-3 items-center">
+      <div className="bg-gradient-to-br from-orange-500 via-red-500 to-red-600 rounded-md flex gap-1 p-3 items-center">
         <button
           onClick={() => Navigate(-1)}
           className="flex items-center  hover:text-red-700 mr-4"

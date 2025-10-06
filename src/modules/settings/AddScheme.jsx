@@ -191,7 +191,7 @@ const token = localStorage.getItem("token")
     <div className="min-h-screen bg-[#faf7f3] p-8">
       <div className=" mx-auto">
         {/* Header */}
-        <div className="flex bg-[#dc5212] p-3 items-center mb-6">
+        <div className="flex rounded-md p-3 bg-gradient-to-br from-orange-500 via-red-500 to-red-600p-3 items-center mb-6">
           <button
             onClick={handleGoBack}
             className="flex items-center text-white hover:text-red-700 mr-4"
